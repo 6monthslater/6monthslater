@@ -5,7 +5,8 @@
     "build": "remix build",
     "dev": "remix dev",
     "start": "remix-serve build",
-    "typecheck": "tsc"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint app && npm run typecheck"
   },
   "dependencies": {
     "@remix-run/node": "^1.11.1",
