@@ -18,6 +18,8 @@ jobs:
         with:
           node-version: 18
       - run: npm install
+        working-directory: ./server
       - name: Run Tests
+        working-directory: ./server
         timeout-minutes: 5
         run: npm run lint
