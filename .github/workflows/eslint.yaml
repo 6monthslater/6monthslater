@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: Lint with ESLint
+    name: Lint Server with ESLint
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
           node-version: 18
       - run: npm install
         working-directory: ./server
-      - name: Run Tests
+      - name: Run Linter
         working-directory: ./server
         timeout-minutes: 5
         run: npm run lint
