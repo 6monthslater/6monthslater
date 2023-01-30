@@ -1,0 +1,24 @@
+name: Linting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  lint:
+    name: Run tests for scraper with pytest
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          node-version: 3.10
+      - run: pip install -r requirements.txt
+        working-directory: ./scraper
+      - name: Run Tests
+        working-directory: ./scraper
+        timeout-minutes: 5
+        run: pytest
