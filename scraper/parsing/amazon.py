@@ -66,8 +66,8 @@ def parse_reviews(region: AmazonRegion, product_id: str) -> list[Review]:
     result = []
 
     for i in range(max_pages):
-        page = bs4.BeautifulSoup(request_reviews(region, product_id, i), features="html.parser")
-        page.child
+        html = request_reviews(region, product_id, i)
+        page = bs4.BeautifulSoup(html, features="html.parser")
 
         reviewElems = page.select(".review")
         if len(reviewElems) == 0:
@@ -116,13 +116,10 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     if not date:
         raise ParsingError("Failed to parse date")
 
-    review_id_elem = reviewElem.select_one("a.review-title")
-    review_id_url = review_id_elem.attrs["href"] if review_id_elem else None
-    review_id_match = re.search("(?<=customer-reviews\\/).+(?=\\/)", review_id_url) if review_id_url else None
-    review_id = review_id_match.group(0) if review_id_match else None
+    review_id = __review_id(reviewElem)
 
     attributes_elem = reviewElem.select_one(".review-format-strip .a-color-secondary")
-    attribute_nodes = attributes_elem.findAll(text=True) if attributes_elem else None
+    attribute_nodes = attributes_elem.findAll(string=True) if attributes_elem else None
     attributes: dict[str, str] = {}
     if attribute_nodes:
         for node in attribute_nodes:
@@ -141,7 +138,9 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     votes = int(votes_digits.group(0)) if votes_digits else 0
 
     positive_review_elem = page.select_one(".positive-review")
+    positive_review_id = __review_id(positive_review_elem) if positive_review_elem else None
     critical_review_elem = page.select_one(".critical-review")
+    critical_review_id = __review_id(critical_review_elem) if critical_review_elem else None
 
     country_match = re.search("(?<=in ).+(?=\\s+on)", date_elem.text) if date_elem else None
     country = country_match.group(0).strip() if country_match else None
@@ -159,9 +158,16 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
         attributes,
         verified_purchase_elem is not None,
         votes,
-        positive_review_elem is not None and reviewElem in positive_review_elem,
-        critical_review_elem is not None and reviewElem in critical_review_elem,
+        review_id is not None and positive_review_id == review_id,
+        review_id is not None and critical_review_id == review_id,
         [image.attrs["src"] for image in reviewElem.select("img.review-image-tile")],
         country,
         region
     )
+
+def __review_id(reviewElem: bs4.element.Tag) -> str | None:
+    # normal review, top review
+    review_id_elem = reviewElem.select_one("a.review-title, .readMore a")
+    review_id_url = review_id_elem.attrs["href"] if review_id_elem else None
+    review_id_match = re.search("(?<=customer-reviews\\/).+(?=\\/)", review_id_url) if review_id_url else None
+    return review_id_match.group(0) if review_id_match else None
