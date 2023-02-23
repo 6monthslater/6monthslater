@@ -31,8 +31,10 @@ def request_page(url: str) -> str:
 
     body = buffer.getvalue()
     response_code = c.getinfo(pycurl.RESPONSE_CODE)
+    c.close()
+    
     if response_code != 200:
         raise Exception(f"Failed to fetch {url} with status code: {response_code}")
 
-    c.close()
+
     return body.decode('utf-8')
