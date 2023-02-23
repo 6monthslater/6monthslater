@@ -1,13 +1,14 @@
+from enum import Enum
 from requester.request_maker import request_page
 
-class AmazonRegion:
+class AmazonRegion(Enum):
     COM = 1
     CA = 2
 
-def request_reviews(region: AmazonRegion, product_id: str, page = 0) -> str:
+def request_reviews(region: AmazonRegion, product_id: str, page: int = 0) -> str:
     return request_page(url_for_reviews(region, product_id, page))
 
-def url_for_reviews(region: AmazonRegion, product_id: str, page = 0) -> str:
+def url_for_reviews(region: AmazonRegion, product_id: str, page: int = 0) -> str:
     attributes = []
     if page > 0:
         attributes.append(f"pageNumber={page + 1}")
