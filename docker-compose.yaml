@@ -1,0 +1,10 @@
+version: '3'
+services:
+  queue:
+    container_name: queue
+    image: rabbitmq:3.11
+    volumes:
+      - ./docker/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    ports:
+      - 5673:5673
+    restart: always
