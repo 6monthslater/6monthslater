@@ -2,6 +2,9 @@ import pycurl
 import certifi
 from io import BytesIO
 
+class RequestError(Exception):
+    pass
+
 def request_page(url: str) -> str:
     buffer = BytesIO()
     c = pycurl.Curl()
@@ -34,7 +37,6 @@ def request_page(url: str) -> str:
     c.close()
     
     if response_code != 200:
-        raise Exception(f"Failed to fetch {url} with status code: {response_code}")
-
+        raise RequestError(f"Failed to fetch {url} with status code: {response_code}")
 
     return body.decode('utf-8')
