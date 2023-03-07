@@ -62,10 +62,10 @@ class Review:
         self.country_reviewed_in = country_reviewed_in
         self.region = region
 
-def parse_reviews(region: AmazonRegion, product_id: str) -> list[Review]:
+def parse_reviews(region: AmazonRegion, product_id: str, page_limit: int = max_pages) -> list[Review]:
     result = []
 
-    for i in range(max_pages):
+    for i in range(page_limit):
         html = request_reviews(region, product_id, i)
         page = bs4.BeautifulSoup(html, features="html.parser")
 

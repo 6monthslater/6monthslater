@@ -2,7 +2,7 @@ from requester.amazon import AmazonRegion
 from parsing import amazon
 
 def test_parse_reviews() -> None:
-    reviews = amazon.parse_reviews(AmazonRegion.CA, "B08B3K9K6P")
+    reviews = amazon.parse_reviews(AmazonRegion.CA, "B08B3K9K6P", 5)
 
     assert len(reviews) > 10
     assert len(reviews[0].author_name) > 0
