@@ -36,3 +36,4 @@ types-retry==0.9.9.2
 types-urllib3==1.26.25.7
 typing_extensions==4.4.0
 urllib3==1.26.14
+spacy==3.5.0
