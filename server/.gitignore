@@ -4,12 +4,3 @@ node_modules
 /build
 /public/build
 .env
-
-# Yarn
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
