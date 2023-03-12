@@ -134,8 +134,7 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
 
     votes_elem = reviewElem.select_one(".cr-vote-text")
     votes_text = votes_elem.text if votes_elem else None
-    votes_digits = re.search("\\d+", votes_text) if votes_text else None
-    votes = int(votes_digits.group(0)) if votes_digits else 0
+    votes = __parse_votes(votes_text) if votes_text else 0
 
     positive_review_elem = page.select_one(".positive-review")
     positive_review_id = __review_id(positive_review_elem) if positive_review_elem else None
@@ -171,3 +170,27 @@ def __review_id(reviewElem: bs4.element.Tag) -> str | None:
     review_id_url = review_id_elem.attrs["href"] if review_id_elem else None
     review_id_match = re.search("(?<=customer-reviews\\/).+(?=\\/)", review_id_url) if review_id_url else None
     return review_id_match.group(0) if review_id_match else None
+
+def __parse_votes(votes_text: str) -> int | None:
+    votes_digits = re.search("\\d+", votes_text) if votes_text else None
+    if votes_digits:
+        return int(votes_digits.group(0))
+    elif votes_text:
+        votes_number_words = re.search("\\S+", votes_text)
+        votes_number_word = votes_number_words.group(0) if votes_number_words else None
+        return number_words[votes_number_word.lower()] if votes_number_word else None
+    else:
+        return None
+
+number_words = {
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+    "six": 6,
+    "seven": 7,
+    "eight": 8,
+    "nine": 9,
+    "ten": 10
+}
