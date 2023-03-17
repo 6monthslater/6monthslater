@@ -1,4 +1,3 @@
-import datetime
 import bs4
 from requester.amazon import AmazonRegion, request_reviews
 import re
@@ -16,7 +15,7 @@ class Review:
     author_image_url: str
     title: str
     text: str
-    date: datetime.datetime
+    date: int
     date_text: str
     review_id: str | None
     attributes: dict[str, str]
@@ -34,7 +33,7 @@ class Review:
         author_name: str,
         title: str,
         text: str,
-        date: datetime.datetime,
+        date: int,
         date_text: str,
         review_id: str | None,
         attributes: dict[str, str],
@@ -112,7 +111,8 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     date_text = date_text_match.group(0).strip() if date_text_match else None
     if not date_text:
         raise ParsingError("Failed to parse date text")
-    date = parser.parse(date_text)
+    date_obj = parser.parse(date_text)
+    date = int(date_obj.utcnow().timestamp()) if date_obj else None
     if not date:
         raise ParsingError("Failed to parse date")
 
@@ -171,16 +171,16 @@ def __review_id(reviewElem: bs4.element.Tag) -> str | None:
     review_id_match = re.search("(?<=customer-reviews\\/).+(?=\\/)", review_id_url) if review_id_url else None
     return review_id_match.group(0) if review_id_match else None
 
-def __parse_votes(votes_text: str) -> int | None:
+def __parse_votes(votes_text: str) -> int:
     votes_digits = re.search("\\d+", votes_text) if votes_text else None
     if votes_digits:
         return int(votes_digits.group(0))
     elif votes_text:
         votes_number_words = re.search("\\S+", votes_text)
         votes_number_word = votes_number_words.group(0) if votes_number_words else None
-        return number_words[votes_number_word.lower()] if votes_number_word else None
+        return number_words[votes_number_word.lower()] if votes_number_word else 0
     else:
-        return None
+        return 0
 
 number_words = {
     "one": 1,
