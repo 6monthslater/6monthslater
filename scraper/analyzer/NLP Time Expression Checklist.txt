@@ -1,0 +1,37 @@
+Checklist for NLP time expressions
+
+Name/Examples																MATCH		PARSE
+A - Relative Time Expressions												Good		Good
+A1 - 5 months ago, a week ago, 3 years ago									Good		Good
+A2 - Yesterday, Today, Tomorrow												Good		Good
+A3 - Last year, this month, next week										Good		Good
+
+B - Exact Date Expressions
+B1 - every way to write a date without the year (August 15, 12th of May)	
+B2 - idem. with the year (August 15, 2020)
+B3 - in April, mid-august, late September
+
+C - Time Span Expressions
+C1 - For 6 months, for a week
+C2 - After 5 days, after a year
+C3 - Since
+
+D - Vague Expressions
+
+E - Time of Day
+
+F - Ordinal Expressions
+
+G - Comparative Expressions
+
+H - Special Events
+H1 - Christmas/Easter/etc. 
+H2 - Christmas/Easter/etc. 2021
+H3 - Last/Next Christmas/Easter/etc.
+
+I - All of the above, but with typos...
+
+
+Todo: 
+- D, E, F, G, fill with examples
+- Find more edge cases with GPT
