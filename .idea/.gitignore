@@ -1,0 +1,12 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Discord
+misc.xml
+discord.xml
+
+# other
+codeStyles/codeStyleConfig.xml
+jsLibraryMappings.xml
