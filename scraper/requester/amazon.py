@@ -3,8 +3,8 @@ from requester.request_maker import request_page, RequestError
 from retry import retry
 
 class AmazonRegion(Enum):
-    COM = 1
-    CA = 2
+    COM = "com"
+    CA = "ca"
 
 @retry(RequestError, tries=10, delay=2)
 def request_reviews(region: AmazonRegion, product_id: str, page: int = 0) -> str:
