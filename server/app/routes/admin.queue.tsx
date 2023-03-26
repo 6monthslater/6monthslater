@@ -58,11 +58,11 @@ export default function Index() {
       <Form method="post">
         <div>
           <label>
-            <textarea 
+            <textarea
               defaultValue={actionData?.data}
               name="data"
-              rows={ 20 }
-              cols={ 100 }
+              rows={20}
+              cols={100}
               style={{
                 border: "1px solid #ccc",
               }}
