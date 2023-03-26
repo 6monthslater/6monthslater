@@ -9,3 +9,38 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Review {
+  id String @id @default(cuid())
+  author_id String?
+  author_name String
+  author_image_url String?
+  title String
+  text String
+  date DateTime
+  date_text String
+  review_id String?
+  attributes Json
+  verified_purchase Boolean
+  found_helpful_count Int
+  is_top_positive_review Boolean
+  is_top_critical_review Boolean
+  images ReviewImage[]
+  country_reviewed_in String
+  region AmazonRegion
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ReviewImage {
+  id String @id @default(cuid())
+  image_url String
+  createdAt DateTime @default(now())
+  review Review @relation(fields: [reviewId], references: [id])
+  reviewId String
+}
+
+enum AmazonRegion {
+  com
+  ca
+}

@@ -1,4 +1,5 @@
 import amqp from "amqplib";
+import { db } from "../utils/db.server";
 
 export enum ReviewSource {
   AMAZON = "amazon"
@@ -43,10 +44,42 @@ export async function startListeningForReviews() {
     durable: true
   });
 
-  channel.consume("parsed_reviews", (msg) => {
+  channel.consume("parsed_reviews", async (msg) => {
     if (msg !== null) {
-      console.log(msg.content.toString());
-      channel.ack(msg);
+      try {
+        const reviews = JSON.parse(msg.content.toString());
+
+        for (const review of reviews) {
+          await db.review.create({
+            data: {
+              author_id: review.author_id,
+              author_name: review.author_name,
+              author_image_url: review.author_image_url,
+              title: review.title,
+              text: review.text,
+              date: new Date(review.date * 1000),
+              date_text: review.date_text,
+              review_id: review.review_id,
+              attributes: review.attributes,
+              verified_purchase: review.verified_purchase,
+              found_helpful_count: review.found_helpful_count,
+              is_top_positive_review: review.is_top_positive_review,
+              is_top_critical_review: review.is_top_critical_review,
+              images: {
+                create: review.images.map((image) => ({
+                  image_url: image,
+                }))
+              },
+              country_reviewed_in: review.country_reviewed_in,
+              region: review.region,
+            }
+          });
+        }
+
+        channel.ack(msg);
+      } catch (e) {
+        console.error(`Failed to parse parsed review from queue: ${e}`);
+      }
     }
   });
 }

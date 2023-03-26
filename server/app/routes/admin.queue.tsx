@@ -1,8 +1,8 @@
 import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import type { Product } from "../queue-handling/review";
-import { ReviewRegion, ReviewSource, sendProductToQueue } from "../queue-handling/review";
+import type { Product } from "../queue-handling/review.server";
+import { ReviewRegion, ReviewSource, sendProductToQueue } from "../queue-handling/review.server";
 
 interface ActionData {
   data?: string;

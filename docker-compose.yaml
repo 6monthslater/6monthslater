@@ -7,3 +7,14 @@ services:
     ports:
       - 5673:5673
     restart: always
+  database:
+    image: postgres:15
+    env_file: 
+      - ./docker/database.env
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    ports:
+      - 5832:5432
+    restart: always
+volumes:
+  database-data:
