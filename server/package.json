@@ -14,6 +14,7 @@
     "lint": "eslint app && npm run typecheck"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.13",
     "@remix-run/node": "^1.11.1",
     "@remix-run/react": "^1.11.1",
     "@remix-run/serve": "^1.11.1",
