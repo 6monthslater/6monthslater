@@ -41,8 +41,8 @@ def __on_parse_message(channel: pika.adapters.blocking_connection.BlockingChanne
 def start_parsing_listener(host: str, port: int) -> None:
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
     channel = connection.channel()
-    channel.queue_declare(queue='parse')
-    channel.queue_declare(queue='parsed_reviews')
+    channel.queue_declare(queue='parse', durable=True)
+    channel.queue_declare(queue='parsed_reviews', durable=True)
 
     channel.basic_consume('parse', __on_parse_message)
     try:
