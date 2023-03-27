@@ -22,13 +22,17 @@ declare global {
   var __queue: amqp.Connection | undefined; //eslint-disable-line
 }
 
-async function setupConnection(): Promise<void> {
+async function setupConnection(): Promise<boolean> {
+  let result = false;
   if (!global.__queue) {
     const port = process.env.QUEUE_PORT || 5672;
     global.__queue = await amqp.connect(`amqp://${process.env.QUEUE_HOST}:${port}`);
+
+    result = true;
   }
 
   connection = global.__queue;
+  return result;
 }
 
 export async function startListeningForReviews() {
@@ -44,7 +48,7 @@ export async function startListeningForReviews() {
     durable: true
   });
 
-  channel.consume("parsed_reviews", async (msg) => {
+  await channel.consume("parsed_reviews", async (msg) => {
     if (msg !== null) {
       try {
         const reviews = JSON.parse(msg.content.toString());
@@ -84,14 +88,37 @@ export async function startListeningForReviews() {
   });
 }
 
+export interface QueueStatus {
+  messageCount: number;
+  consumerCount: number;
+}
+
 // Used because of hot reload
-setupConnection().then(() => {
-  startListeningForReviews();
+const connectionPromise = setupConnection();
+connectionPromise.then((newInstance) => {
+  if (newInstance) startListeningForReviews();
 });
+
+export async function getStatusOfQueue(queueId: string): Promise<QueueStatus> {
+  if (!connection) {
+    await connectionPromise;
+    if (!connection) throw new Error("Queue connection not set up");
+  }
+
+  const channel = await connection.createChannel();
+  const queueData = await channel.assertQueue(queueId);
+
+  channel.close();
+  return {
+    messageCount: queueData.messageCount,
+    consumerCount: queueData.consumerCount,
+  };
+}
 
 export async function sendProductToQueue(product: Product) {
   if (!connection) {
-    throw new Error("Queue connection not set up");
+    await connectionPromise;
+    if (!connection) throw new Error("Queue connection not set up");
   }
 
   const channel = await connection.createChannel();
