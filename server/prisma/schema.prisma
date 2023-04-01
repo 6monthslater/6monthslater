@@ -30,6 +30,7 @@ model Review {
   region AmazonRegion
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Report Report?
 }
 
 model ReviewImage {
@@ -38,9 +39,48 @@ model ReviewImage {
   createdAt DateTime @default(now())
   review Review @relation(fields: [reviewId], references: [id])
   reviewId String
+  issue_image IssueImage?
 }
 
 enum AmazonRegion {
   com
   ca
+}
+
+model Report {
+  id String @id @default(cuid())
+  report_weight Float
+  issues Issue[]
+  review Review @relation(fields: [review_id], references: [id])
+  review_id String @unique
+  reliability_keyframes ReliabilityKeyframe[]
+}
+
+model ReliabilityKeyframe {
+  id String @id @default(cuid())
+  rel_timestamp Int
+  sentiment Float
+  interp String
+  report Report @relation(fields: [report_id], references: [id])
+  report_id String
+}
+
+model Issue {
+  id String @id @default(cuid())
+  text String
+  summary String
+  criticality Float
+  rel_timestamp Int
+  frequency String
+  images IssueImage[]
+  report Report @relation(fields: [report_id], references: [id])
+  report_id String
+}
+
+model IssueImage {
+  id String @id @default(cuid())
+  review_image ReviewImage @relation(fields: [review_image_id], references: [id])
+  review_image_id String @unique
+  issue Issue @relation(fields: [issue_id], references: [id])
+  issue_id String
 }
