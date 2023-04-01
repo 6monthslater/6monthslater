@@ -68,40 +68,42 @@ export async function startListeningForReviews() {
             },
           });
 
-          const manufacurerCreateObject = manufacturerId?.manufacturer_id ? {
-            connectOrCreate: {
-              create: {
-                name: review.manufacturer_name,
-                store_ids: {
-                  connectOrCreate: {
-                    create: {
-                      store_id: review.manufacturer_id,
-                    },
-                    where: {
-                      store_id: review.manufacturer_id,
-                    },
-                  },
-                }
-              },
-              where: {
-                id: manufacturerId?.manufacturer_id,
-              },
-            },
-          } : {
-            create: {
-              name: review.manufacturer_name,
-              store_ids: {
+          const manufacurerCreateObject = manufacturerId?.manufacturer_id
+            ? {
                 connectOrCreate: {
                   create: {
-                    store_id: review.manufacturer_id,
+                    name: review.manufacturer_name,
+                    store_ids: {
+                      connectOrCreate: {
+                        create: {
+                          store_id: review.manufacturer_id,
+                        },
+                        where: {
+                          store_id: review.manufacturer_id,
+                        },
+                      },
+                    },
                   },
                   where: {
-                    store_id: review.manufacturer_id,
+                    id: manufacturerId?.manufacturer_id,
                   },
                 },
               }
-            },
-          }
+            : {
+                create: {
+                  name: review.manufacturer_name,
+                  store_ids: {
+                    connectOrCreate: {
+                      create: {
+                        store_id: review.manufacturer_id,
+                      },
+                      where: {
+                        store_id: review.manufacturer_id,
+                      },
+                    },
+                  },
+                },
+              };
 
           await db.review.create({
             data: {
