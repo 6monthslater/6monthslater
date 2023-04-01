@@ -59,6 +59,52 @@ export async function startListeningForReviews() {
         const reviews = JSON.parse(msg.content.toString());
 
         for (const review of reviews) {
+          const manufacturerId = await db.manufacturerStoreId.findUnique({
+            where: {
+              store_id: review.manufacturer_id,
+            },
+            select: {
+              manufacturer_id: true,
+            },
+          });
+
+          const manufacurerCreateObject = manufacturerId?.manufacturer_id
+            ? {
+                connectOrCreate: {
+                  create: {
+                    name: review.manufacturer_name,
+                    store_ids: {
+                      connectOrCreate: {
+                        create: {
+                          store_id: review.manufacturer_id,
+                        },
+                        where: {
+                          store_id: review.manufacturer_id,
+                        },
+                      },
+                    },
+                  },
+                  where: {
+                    id: manufacturerId?.manufacturer_id,
+                  },
+                },
+              }
+            : {
+                create: {
+                  name: review.manufacturer_name,
+                  store_ids: {
+                    connectOrCreate: {
+                      create: {
+                        store_id: review.manufacturer_id,
+                      },
+                      where: {
+                        store_id: review.manufacturer_id,
+                      },
+                    },
+                  },
+                },
+              };
+
           await db.review.create({
             data: {
               author_id: review.author_id,
@@ -81,6 +127,17 @@ export async function startListeningForReviews() {
               },
               country_reviewed_in: review.country_reviewed_in,
               region: review.region,
+              product: {
+                connectOrCreate: {
+                  create: {
+                    name: review.product_name,
+                    manufacturer: manufacurerCreateObject,
+                  },
+                  where: {
+                    name: review.product_name,
+                  },
+                },
+              },
             },
           });
         }
