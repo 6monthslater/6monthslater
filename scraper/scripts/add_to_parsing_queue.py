@@ -15,7 +15,7 @@ def add_amazon_item() -> None:
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
     channel = connection.channel()
-    channel.queue_declare(queue='parse')
+    channel.queue_declare(queue='parse', durable=True)
 
     channel.basic_publish(
         exchange='',

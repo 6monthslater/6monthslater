@@ -16,10 +16,14 @@
     "style": "prettier --write ."
   },
   "dependencies": {
+    "@prisma/client": "^4.11.0",
     "@headlessui/react": "^1.7.13",
     "@remix-run/node": "^1.11.1",
     "@remix-run/react": "^1.11.1",
     "@remix-run/serve": "^1.11.1",
+    "@tremor/react": "^2.0.2",
+    "@types/amqplib": "^0.10.1",
+    "amqplib": "^0.10.3",
     "isbot": "^3.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
