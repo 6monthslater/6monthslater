@@ -1,0 +1,25 @@
+name: Style
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  lint:
+    name: Check code style with Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      # Initialization
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm ci
+        working-directory: ./server
+      - name: Run Prettier
+        working-directory: ./server
+        timeout-minutes: 5
+        run: npx prettier --check .
