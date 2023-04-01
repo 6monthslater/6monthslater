@@ -26,6 +26,9 @@ class Review:
     images: list[str]
     country_reviewed_in: str
     region: AmazonRegion
+    product_name: str | None
+    manufacturer_name: str | None
+    manufacturer_id: str | None
 
     def __init__(
         self,
@@ -44,6 +47,9 @@ class Review:
         images: list[str],
         country_reviewed_in: str,
         region: AmazonRegion,
+        product_name: str | None,
+        manufacturer_name: str | None,
+        manufacturer_id: str | None,
     ):
         self.author_id = author_id
         self.author_name = author_name
@@ -60,6 +66,9 @@ class Review:
         self.images = images
         self.country_reviewed_in = country_reviewed_in
         self.region = region
+        self.product_name = product_name
+        self.manufacturer_name = manufacturer_name
+        self.manufacturer_id = manufacturer_id
 
 def parse_reviews(region: AmazonRegion, product_id: str, page_limit: int = max_pages) -> list[Review]:
     result = []
@@ -146,6 +155,15 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     if not country:
         raise ParsingError("Failed to parse country")
 
+    product_name_elem = page.select_one("[data-hook=\"product-link\"]")
+    product_name = product_name_elem.text.strip() if product_name_elem else None
+
+    manufacturer_name_elem = page.select_one(".product-by-line a")
+    manufacturer_name = manufacturer_name_elem.text.strip() if manufacturer_name_elem else None
+    manufacturer_attrs = manufacturer_name_elem.attrs if manufacturer_name_elem else None
+    manufacturer_id_regex = re.search("(?<=page\\/)[^?\\/]+", manufacturer_attrs["href"]) if manufacturer_attrs else None
+    manufacturer_id = manufacturer_id_regex.group(0) if manufacturer_id_regex else None
+
     return Review(
         author_id,
         author_name,
@@ -161,7 +179,10 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
         review_id is not None and critical_review_id == review_id,
         [image.attrs["src"] for image in reviewElem.select("img.review-image-tile")],
         country,
-        region
+        region,
+        product_name,
+        manufacturer_name,
+        manufacturer_id,
     )
 
 def __review_id(reviewElem: bs4.element.Tag) -> str | None:
