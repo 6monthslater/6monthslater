@@ -39,7 +39,6 @@ model ReviewImage {
   createdAt DateTime @default(now())
   review Review @relation(fields: [reviewId], references: [id])
   reviewId String
-  issue_image IssueImage?
 }
 
 enum AmazonRegion {
@@ -79,8 +78,8 @@ model Issue {
 
 model IssueImage {
   id String @id @default(cuid())
-  review_image ReviewImage @relation(fields: [review_image_id], references: [id])
-  review_image_id String @unique
+  image_url String
+  createdAt DateTime @default(now())
   issue Issue @relation(fields: [issue_id], references: [id])
   issue_id String
 }

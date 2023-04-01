@@ -47,6 +47,9 @@ export async function startListeningForReviews() {
   await channel.assertQueue("parsed_reviews", {
     durable: true
   });
+  await channel.assertQueue("reports", {
+    durable: true
+  });
 
   await channel.consume("parsed_reviews", async (msg) => {
     if (msg !== null) {
@@ -83,6 +86,52 @@ export async function startListeningForReviews() {
         channel.ack(msg);
       } catch (e) {
         console.error(`Failed to parse parsed review from queue: ${e}`);
+      }
+    }
+  });
+
+  await channel.consume("reports", async (msg) => {
+    if (msg !== null) {
+      try {
+        const reports = JSON.parse(msg.content.toString());
+
+        for (const report of reports) {
+          await db.report.create({
+            data: {
+              report_weight: report.report_weight,
+              issues: {
+                create: report.issues.map((issue) => ({
+                  text: issue.text,
+                  summary: issue.summary,
+                  criticality: issue.criticality,
+                  rel_timestamp: issue.rel_timestamp,
+                  frequency: issue.frequency,
+                  images: {
+                    create: issue.images.map((image) => ({
+                      image_url: image,
+                    }))
+                  },
+                }))
+              },
+              reliability_keyframes: {
+                create: report.reliability_keyframes.map((keyframe) => ({
+                  rel_timestamp: keyframe.rel_timestamp,
+                  sentiment: keyframe.sentiment,
+                  interp: keyframe.interp,
+                }))
+              },
+              review: {
+                connect: {
+                  id: report.review_id,
+                }
+              }
+            }
+          });
+        }
+
+        channel.ack(msg);
+      } catch (e) {
+        console.error(`Failed to parse reports from queue: ${e}`);
       }
     }
   });
