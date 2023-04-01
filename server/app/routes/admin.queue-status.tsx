@@ -16,7 +16,7 @@ export const loader = async (): Promise<LoaderData> => {
 
   return {
     parseQueue: await parseQueue,
-    processQueue: await processQueue
+    processQueue: await processQueue,
   };
 };
 
@@ -32,7 +32,6 @@ export default function Index() {
     }
   }, [nextQueueData]);
 
-
   useEffect(() => {
     if (interval.current) clearInterval(interval.current);
 
@@ -41,7 +40,9 @@ export default function Index() {
     }, 3000);
   });
 
-  const previousData = allQueueDataRef.current[allQueueDataRef.current.length - 2] || initialQueueData;
+  const previousData =
+    allQueueDataRef.current[allQueueDataRef.current.length - 2] ||
+    initialQueueData;
   const nextData = nextQueueData.data;
 
   return (
@@ -53,34 +54,36 @@ export default function Index() {
       <Grid numCols={2}>
         <Col numColSpan={1}>
           <Card>
-            <Title>
-              Products to scrape
-            </Title>
+            <Title>Products to scrape</Title>
 
-            {
-              getBadge(nextData?.parseQueue?.messageCount, previousData?.parseQueue?.messageCount, "message")
-            }
+            {getBadge(
+              nextData?.parseQueue?.messageCount,
+              previousData?.parseQueue?.messageCount,
+              "message"
+            )}
 
-            {
-              getBadge(nextData?.parseQueue?.consumerCount, previousData?.parseQueue?.consumerCount, "consumer")
-            }
-
+            {getBadge(
+              nextData?.parseQueue?.consumerCount,
+              previousData?.parseQueue?.consumerCount,
+              "consumer"
+            )}
           </Card>
         </Col>
         <Col numColSpan={1}>
           <Card>
-            <Title>
-              Reviews to process
-            </Title>
+            <Title>Reviews to process</Title>
 
-            {
-              getBadge(nextData?.processQueue?.messageCount, previousData?.processQueue?.messageCount, "message")
-            }
+            {getBadge(
+              nextData?.processQueue?.messageCount,
+              previousData?.processQueue?.messageCount,
+              "message"
+            )}
 
-            {
-              getBadge(nextData?.processQueue?.consumerCount, previousData?.processQueue?.consumerCount, "consumer")
-            }
-
+            {getBadge(
+              nextData?.processQueue?.consumerCount,
+              previousData?.processQueue?.consumerCount,
+              "consumer"
+            )}
           </Card>
         </Col>
       </Grid>

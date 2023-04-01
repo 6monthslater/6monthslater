@@ -2,12 +2,12 @@ import amqp from "amqplib";
 import { db } from "../utils/db.server";
 
 export enum ReviewSource {
-  AMAZON = "amazon"
+  AMAZON = "amazon",
 }
 
 export enum ReviewRegion {
   COM = "com",
-  CA = "ca"
+  CA = "ca",
 }
 
 export interface Product {
@@ -26,7 +26,9 @@ async function setupConnection(): Promise<boolean> {
   let result = false;
   if (!global.__queue) {
     const port = process.env.QUEUE_PORT || 5672;
-    global.__queue = await amqp.connect(`amqp://${process.env.QUEUE_HOST}:${port}`);
+    global.__queue = await amqp.connect(
+      `amqp://${process.env.QUEUE_HOST}:${port}`
+    );
 
     result = true;
   }
@@ -42,13 +44,13 @@ export async function startListeningForReviews() {
 
   const channel = await connection.createChannel();
   await channel.assertQueue("parse", {
-    durable: true
+    durable: true,
   });
   await channel.assertQueue("parsed_reviews", {
-    durable: true
+    durable: true,
   });
   await channel.assertQueue("reports", {
-    durable: true
+    durable: true,
   });
 
   await channel.consume("parsed_reviews", async (msg) => {
@@ -75,11 +77,11 @@ export async function startListeningForReviews() {
               images: {
                 create: review.images.map((image) => ({
                   image_url: image,
-                }))
+                })),
               },
               country_reviewed_in: review.country_reviewed_in,
               region: review.region,
-            }
+            },
           });
         }
 
@@ -109,23 +111,23 @@ export async function startListeningForReviews() {
                   images: {
                     create: issue.images.map((image) => ({
                       image_url: image,
-                    }))
+                    })),
                   },
-                }))
+                })),
               },
               reliability_keyframes: {
                 create: report.reliability_keyframes.map((keyframe) => ({
                   rel_timestamp: keyframe.rel_timestamp,
                   sentiment: keyframe.sentiment,
                   interp: keyframe.interp,
-                }))
+                })),
               },
               review: {
                 connect: {
                   id: report.review_id,
-                }
-              }
-            }
+                },
+              },
+            },
           });
         }
 
@@ -172,7 +174,7 @@ export async function sendProductToQueue(product: Product) {
 
   const channel = await connection.createChannel();
   await channel.assertQueue("parse", {
-    durable: true
+    durable: true,
   });
 
   channel.sendToQueue("parse", Buffer.from(JSON.stringify(product)));

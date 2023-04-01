@@ -2,7 +2,11 @@ import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import type { Product } from "../queue-handling/review.server";
-import { ReviewRegion, ReviewSource, sendProductToQueue } from "../queue-handling/review.server";
+import {
+  ReviewRegion,
+  ReviewSource,
+  sendProductToQueue,
+} from "../queue-handling/review.server";
 
 interface ActionData {
   data?: string;
@@ -12,7 +16,6 @@ interface ActionData {
 export const action: ActionFunction = async ({
   request,
 }): Promise<Response | ActionData> => {
-
   const { data } = Object.fromEntries(await request.formData());
   if (typeof data !== "string" || data.length === 0) {
     return { formError: `Data missing` };
@@ -29,7 +32,7 @@ export const action: ActionFunction = async ({
       const product: Product = {
         id: match[1],
         region: ReviewRegion.CA,
-        type: ReviewSource.AMAZON
+        type: ReviewSource.AMAZON,
       };
 
       sendProductToQueue(product);
@@ -49,11 +52,15 @@ export default function Index() {
   const actionData = useActionData<ActionData | undefined>();
 
   return (
-    <div style={{
-      margin: "10px",
-      textAlign: "center",
-    }}>
-      <h1 className="text-1xl font-bold">Add a review to queue to be scraped</h1>
+    <div
+      style={{
+        margin: "10px",
+        textAlign: "center",
+      }}
+    >
+      <h1 className="text-1xl font-bold">
+        Add a review to queue to be scraped
+      </h1>
 
       <Form method="post">
         <div>
@@ -69,13 +76,9 @@ export default function Index() {
             />
           </label>
         </div>
-        {
-          actionData?.formError && (
-            <div className="text-red-500">
-              {actionData.formError}
-            </div>
-          )
-        }
+        {actionData?.formError && (
+          <div className="text-red-500">{actionData.formError}</div>
+        )}
         <button type="submit" className="button">
           Add
         </button>
