@@ -12,6 +12,8 @@ import {
 
 import stylesheet from "~/tailwind.css";
 
+import Navbar from "~/components/navbar";
+
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
@@ -30,6 +32,7 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <Navbar />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
