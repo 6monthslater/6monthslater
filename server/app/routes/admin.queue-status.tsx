@@ -35,9 +35,11 @@ export default function Index() {
   useEffect(() => {
     if (interval.current) clearInterval(interval.current);
 
-    interval.current = setInterval(() => {
+    const intervalId = (interval.current = setInterval(() => {
       nextQueueData.load("/admin/queue-status");
-    }, 3000);
+    }, 3000));
+
+    return () => clearInterval(intervalId);
   });
 
   const previousData =
