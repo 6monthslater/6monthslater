@@ -196,16 +196,41 @@ export async function startListeningForReviews() {
   });
 }
 
-export interface QueueStatus {
-  messageCount: number;
-  consumerCount: number;
-}
-
 // Used because of hot reload
 const connectionPromise = setupConnection();
 connectionPromise.then((newInstance) => {
   if (newInstance) startListeningForReviews();
 });
+
+export type CrawlerCommand = {
+  command: "set";
+  url: string;
+  review_info: {
+    type: ReviewSource;
+    region: ReviewRegion;
+  };
+} | {
+  command: "cancel";
+};
+
+export async function sendCrawlerCommand(command: CrawlerCommand) {
+  if (!connection) {
+    await connectionPromise;
+    if (!connection) throw new Error("Queue connection not set up");
+  }
+
+  const channel = await connection.createChannel();
+  await channel.assertExchange("to_crawl", "fanout", {
+    durable: false,
+  });
+
+  channel.publish("to_crawl", '', Buffer.from(JSON.stringify(command)));
+}
+
+export interface QueueStatus {
+  messageCount: number;
+  consumerCount: number;
+}
 
 export async function getStatusOfQueue(queueId: string): Promise<QueueStatus> {
   if (!connection) {
