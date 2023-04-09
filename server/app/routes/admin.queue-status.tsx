@@ -1,6 +1,6 @@
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import type { DeltaType } from "@tremor/react";
-import { BadgeDelta, Card, Col, Grid, Title } from "@tremor/react";
+import { BadgeDelta, Card, Title } from "@tremor/react";
 import { useEffect, useRef } from "react";
 import type { QueueStatus } from "~/queue-handling/review.server";
 import { getStatusOfQueue } from "~/queue-handling/review.server";
@@ -35,9 +35,11 @@ export default function Index() {
   useEffect(() => {
     if (interval.current) clearInterval(interval.current);
 
-    interval.current = setInterval(() => {
+    const intervalId = (interval.current = setInterval(() => {
       nextQueueData.load("/admin/queue-status");
-    }, 3000);
+    }, 3000));
+
+    return () => clearInterval(intervalId);
   });
 
   const previousData =
@@ -46,15 +48,13 @@ export default function Index() {
   const nextData = nextQueueData.data;
 
   return (
-    <>
-      <Card style={{ textAlign: "center" }}>
-        <h1>Queue Statuses</h1>
-      </Card>
+    <div className="space-y-4 self-center px-6 text-center lg:w-3/5">
+      <h1 className="text-2xl font-bold">Admin: Queue Status</h1>
 
-      <Grid numCols={2}>
-        <Col numColSpan={1}>
+      <div className="grid grid-cols-2 space-x-4">
+        <div className="col col-span-1">
           <Card>
-            <Title>Products to scrape</Title>
+            <Title>Product Scraping Queue</Title>
 
             {getBadge(
               nextData?.parseQueue?.messageCount,
@@ -68,10 +68,10 @@ export default function Index() {
               "consumer"
             )}
           </Card>
-        </Col>
-        <Col numColSpan={1}>
+        </div>
+        <div className="col col-span-1">
           <Card>
-            <Title>Reviews to process</Title>
+            <Title>Review Processing Queue</Title>
 
             {getBadge(
               nextData?.processQueue?.messageCount,
@@ -85,9 +85,9 @@ export default function Index() {
               "consumer"
             )}
           </Card>
-        </Col>
-      </Grid>
-    </>
+        </div>
+      </div>
+    </div>
   );
 }
 
