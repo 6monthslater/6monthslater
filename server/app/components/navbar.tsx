@@ -15,10 +15,10 @@ const Navbar = () => {
             Home
           </NavLink>
           <NavLink to="/admin/queue" className="px-2">
-            Admin Queue
+            Add to Queue
           </NavLink>
           <NavLink to="/admin/queue-status" className="px-2">
-            Admin Queue Status
+            Queue Status
           </NavLink>
         </div>
       </div>
