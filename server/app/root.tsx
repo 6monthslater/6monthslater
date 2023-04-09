@@ -32,7 +32,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="flex min-h-screen flex-col">
+      <body className="flex min-h-screen flex-col space-y-4">
         <Navbar />
         <Outlet />
         <ScrollRestoration />
