@@ -13,6 +13,7 @@ import {
 import stylesheet from "~/tailwind.css";
 
 import Navbar from "~/components/navbar";
+import Footer from "~/components/footer";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -37,6 +38,7 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+        <Footer />
       </body>
     </html>
   );
