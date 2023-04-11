@@ -2,14 +2,11 @@ import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import {
-  CrawlerCommand,
-  Product,
   sendCrawlerCommand,
 } from "../queue-handling/review.server";
 import {
   ReviewRegion,
   ReviewSource,
-  sendProductToQueue,
 } from "../queue-handling/review.server";
 
 interface ActionData {
@@ -45,35 +42,6 @@ export const action: ActionFunction = async ({
       break;
   }
 
-  // const { data } = Object.fromEntries(await request.formData());
-  // if (typeof data !== "string" || data.length === 0) {
-  //   return { formError: `Data missing` };
-  // }
-
-  // let errors = "";
-
-  // const lines = data.split("\n");
-  // for (const line of lines) {
-  //   // get first group from regex
-  //   const productIDRegex = /amazon\..+\/dp\/(.+?)\//;
-  //   const match = line.match(productIDRegex);
-  //   if (match && match.length > 1) {
-  //     const product: Product = {
-  //       id: match[1],
-  //       region: ReviewRegion.CA,
-  //       type: ReviewSource.AMAZON,
-  //     };
-
-  //     sendProductToQueue(product);
-  //   } else {
-  //     errors += `Invalid product ID: ${line}\n`;
-  //   }
-  // }
-
-  // if (errors.length > 0) {
-  //   return { formError: errors };
-  // }
-
   return redirect("");
 };
 
@@ -93,7 +61,6 @@ export default function Index() {
         <div>
           <label>
             <textarea
-              defaultValue={actionData?.url}
               name="url"
               rows={1}
               cols={100}
