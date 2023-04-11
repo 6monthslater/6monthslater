@@ -3,6 +3,7 @@ import { redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { sendCrawlerCommand } from "~/queue-handling/review.server";
 import { ReviewRegion, ReviewSource } from "~/queue-handling/review.server";
+import Button from "~/components/button";
 
 interface ActionData {
   data?: string;
@@ -44,13 +45,8 @@ export default function Index() {
   const actionData = useActionData<ActionData | undefined>();
 
   return (
-    <div
-      style={{
-        margin: "10px",
-        textAlign: "center",
-      }}
-    >
-      <h1 className="text-1xl font-bold">Control the product crawler</h1>
+    <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
+      <h1 className="text-2xl font-bold">Control the product crawler</h1>
 
       <Form method="post">
         <div>
@@ -59,24 +55,22 @@ export default function Index() {
               name="url"
               rows={1}
               cols={100}
-              style={{
-                border: "1px solid #ccc",
-              }}
+              className="resize-y rounded-md border-2"
             />
           </label>
         </div>
         {actionData?.formError && (
           <div className="text-red-500">{actionData.formError}</div>
         )}
-        <button type="submit" className="button" name="command" value="set">
+        <Button type="submit" className="mt-4" name="command" value="set">
           Set crawler category
-        </button>
+        </Button>
       </Form>
 
       <Form method="post">
-        <button type="submit" className="button" name="command" value="cancel">
+        <Button type="submit" className="" name="command" value="cancel">
           Stop crawler
-        </button>
+        </Button>
       </Form>
     </div>
   );

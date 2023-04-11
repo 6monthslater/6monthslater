@@ -65,7 +65,7 @@ export default function Route() {
   const reviews = useLoaderData<typeof loader>();
 
   return (
-    <div>
+    <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
       <h1 className="text-center text-2xl font-bold">
         Recently Scraped Reviews
       </h1>
