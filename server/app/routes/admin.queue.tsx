@@ -1,12 +1,13 @@
 import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import type { Product } from "../queue-handling/review.server";
+import type { Product } from "~/queue-handling/review.server";
 import {
   ReviewRegion,
   ReviewSource,
   sendProductToQueue,
-} from "../queue-handling/review.server";
+} from "~/queue-handling/review.server";
+import Button from "~/components/button";
 
 interface ActionData {
   data?: string;
@@ -52,15 +53,8 @@ export default function Index() {
   const actionData = useActionData<ActionData | undefined>();
 
   return (
-    <div
-      style={{
-        margin: "10px",
-        textAlign: "center",
-      }}
-    >
-      <h1 className="text-1xl font-bold">
-        Add a review to queue to be scraped
-      </h1>
+    <div className="space-y-4 text-center">
+      <h1 className="text-2xl font-bold">Admin: Add Review to Queue</h1>
 
       <Form method="post">
         <div>
@@ -70,18 +64,16 @@ export default function Index() {
               name="data"
               rows={20}
               cols={100}
-              style={{
-                border: "1px solid #ccc",
-              }}
+              className="resize-y rounded-md border-2"
             />
           </label>
         </div>
         {actionData?.formError && (
           <div className="text-red-500">{actionData.formError}</div>
         )}
-        <button type="submit" className="button">
+        <Button type="submit" className="mt-4">
           Add
-        </button>
+        </Button>
       </Form>
     </div>
   );
