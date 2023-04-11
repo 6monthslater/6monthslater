@@ -11,15 +11,13 @@ const Navbar = () => {
       </div>
       <div className="block w-full flex-grow lg:flex lg:w-auto lg:items-center">
         <div className="text-sm lg:flex-grow">
-          <NavLink to="/" end className="px-2">
+          <NavLink to="/" end>
             Home
           </NavLink>
-          <NavLink to="/admin/queue" className="px-2">
-            Add to Queue
-          </NavLink>
-          <NavLink to="/admin/queue-status" className="px-2">
-            Queue Status
-          </NavLink>
+          <NavLink to="/admin/queue">Add to Queue</NavLink>
+          <NavLink to="/admin/queue-status">Queue Status</NavLink>
+          <NavLink to="/admin/crawler">Product Crawler</NavLink>
+          <NavLink to="/admin/reviews">View Reviews</NavLink>
         </div>
       </div>
     </nav>
