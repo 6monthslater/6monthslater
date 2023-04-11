@@ -20,6 +20,12 @@ const Navbar = () => {
           <NavLink to="/admin/queue-status" className="px-2">
             Queue Status
           </NavLink>
+          <NavLink to="/admin/crawler" className="px-2">
+            Product Crawler
+          </NavLink>
+          <NavLink to="/admin/reviews" className="px-2">
+            View Reviews
+          </NavLink>
         </div>
       </div>
     </nav>
