@@ -202,16 +202,18 @@ connectionPromise.then((newInstance) => {
   if (newInstance) startListeningForReviews();
 });
 
-export type CrawlerCommand = {
-  command: "set";
-  url: string;
-  review_info: {
-    type: ReviewSource;
-    region: ReviewRegion;
-  };
-} | {
-  command: "cancel";
-};
+export type CrawlerCommand =
+  | {
+      command: "set";
+      url: string;
+      review_info: {
+        type: ReviewSource;
+        region: ReviewRegion;
+      };
+    }
+  | {
+      command: "cancel";
+    };
 
 export async function sendCrawlerCommand(command: CrawlerCommand) {
   if (!connection) {
@@ -224,7 +226,7 @@ export async function sendCrawlerCommand(command: CrawlerCommand) {
     durable: false,
   });
 
-  channel.publish("to_crawl", '', Buffer.from(JSON.stringify(command)));
+  channel.publish("to_crawl", "", Buffer.from(JSON.stringify(command)));
 }
 
 export interface QueueStatus {

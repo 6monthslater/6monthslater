@@ -46,17 +46,17 @@ export const loader = async ({ params }: { params: { pageNum: string } }) => {
         images: {
           select: {
             image_url: true,
-          }
+          },
         },
         country_reviewed_in: true,
         region: true,
-        createdAt: true
+        createdAt: true,
       },
       orderBy: {
         createdAt: "desc",
       },
       skip: page * pageSize,
-      take: pageSize
+      take: pageSize,
     })
   );
 };
@@ -66,10 +66,10 @@ export default function Route() {
 
   return (
     <div>
-      <h1 className="text-center font-bold text-2xl">
+      <h1 className="text-center text-2xl font-bold">
         Recently Scraped Reviews
       </h1>
-      <div className="flex flex-wrap flex-row">
+      <div className="flex flex-row flex-wrap">
         {reviews && getReviewBoxes(reviews)}
       </div>
     </div>
@@ -79,12 +79,17 @@ export default function Route() {
 function getReviewBoxes(reviews: SerializeFrom<ReviewData>[]) {
   return reviews.map((review) => {
     return (
-      <Card key={review.id} className="basis-72 grow m-5">
+      <Card key={review.id} className="m-5 grow basis-72">
         <Title>{review.title}</Title>
         <div className="my-3">
           <div>
             <b>By</b>: {review.author_name}
-            {review.author_image_url && <img src={review.author_image_url} alt={`Avatar for ${review.author_name}`}/>}
+            {review.author_image_url && (
+              <img
+                src={review.author_image_url}
+                alt={`Avatar for ${review.author_name}`}
+              />
+            )}
           </div>
           <div>
             <b>Scraped on</b>: {review.createdAt}
@@ -110,18 +115,27 @@ function getReviewBoxes(reviews: SerializeFrom<ReviewData>[]) {
           <div>
             <b>Top Critical</b>: {review.is_top_critical_review ? "Yes" : "No"}
           </div>
-          {!!review.attributes &&
+          {!!review.attributes && (
             <div>
-              <b>Attributes</b>: {Object.entries(review.attributes as Record<string, string>)
-                ?.map((a) => `${a[0]}: ${a[1]}`)?.join(", ")}
+              <b>Attributes</b>:{" "}
+              {Object.entries(review.attributes as Record<string, string>)
+                ?.map((a) => `${a[0]}: ${a[1]}`)
+                ?.join(", ")}
             </div>
-          }
-          {review.images?.length > 0 && 
+          )}
+          {review.images?.length > 0 && (
             <div>
-              <b>Images</b>: {review.images.map((image) => /* eslint-disable-next-line jsx-a11y/img-redundant-alt */
-                <img key={image.image_url} src={image.image_url} alt="Photo Submitted By Author"/>)}
+              <b>Images</b>:{" "}
+              {review.images.map((image) => (
+                // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                <img
+                  key={image.image_url}
+                  src={image.image_url}
+                  alt="Photo Submitted By Author"
+                />
+              ))}
             </div>
-          }
+          )}
         </div>
 
         <Text>{review.text}</Text>

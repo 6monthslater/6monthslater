@@ -1,7 +1,11 @@
 import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import { CrawlerCommand, Product, sendCrawlerCommand } from "../queue-handling/review.server";
+import {
+  CrawlerCommand,
+  Product,
+  sendCrawlerCommand,
+} from "../queue-handling/review.server";
 import {
   ReviewRegion,
   ReviewSource,
@@ -30,20 +34,16 @@ export const action: ActionFunction = async ({
         review_info: {
           region: ReviewRegion.COM,
           type: ReviewSource.AMAZON,
-        }
+        },
       });
       break;
     }
     case "cancel":
       sendCrawlerCommand({
-        command: formData.command
+        command: formData.command,
       });
       break;
   }
-
-
-
-
 
   // const { data } = Object.fromEntries(await request.formData());
   // if (typeof data !== "string" || data.length === 0) {
@@ -87,9 +87,7 @@ export default function Index() {
         textAlign: "center",
       }}
     >
-      <h1 className="text-1xl font-bold">
-        Control the product crawler
-      </h1>
+      <h1 className="text-1xl font-bold">Control the product crawler</h1>
 
       <Form method="post">
         <div>
