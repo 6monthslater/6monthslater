@@ -7,7 +7,9 @@ const NavLink = (props: RemixNavLinkProps) => {
       {...props}
       className={({ isActive, isPending }) =>
         `${props.className} px-2 ${isPending ? "pending" : ""} ${
-          isActive ? "active font-bold underline underline-offset-4" : ""
+          isActive
+            ? "active font-bold underline underline-offset-4"
+            : "hover:font-semibold"
         }`
       }
     >
