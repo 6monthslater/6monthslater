@@ -1,6 +1,7 @@
 import { Button as TremorButton } from "@tremor/react";
+import type { ButtonProps } from "@tremor/react/dist/cjs/components/input-elements/Button/Button";
 
-const Button = (props) => {
+const Button = (props: ButtonProps) => {
   return (
     <TremorButton
       {...props}
