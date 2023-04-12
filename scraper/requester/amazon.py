@@ -1,14 +1,24 @@
 from enum import Enum
-from requester.request_maker import request_page, RequestError
+from requester.request_maker import request_page, RequestError, reset_cookies
 from retry import retry
 
 class AmazonRegion(Enum):
-    COM = 1
-    CA = 2
+    COM = "com"
+    CA = "ca"
 
 @retry(RequestError, tries=10, delay=2)
 def request_reviews(region: AmazonRegion, product_id: str, page: int = 0) -> str:
-    return request_page(url_for_reviews(region, product_id, page))
+    """
+    Requests the reviews page for a product. 
+    Resets cookies on error.
+    Auto retries on RequestError.
+    """
+    try:
+        return request_page(url_for_reviews(region, product_id, page))
+    except RequestError:
+        reset_cookies()
+        raise
+        
 
 def url_for_reviews(region: AmazonRegion, product_id: str, page: int = 0) -> str:
     attributes = []

@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-import datetime
+from attr import dataclass
 import bs4
 from requester.amazon import AmazonRegion, request_reviews
 import re
@@ -20,7 +19,7 @@ class Review:
     author_image_url: str
     title: str
     text: str
-    date: datetime.datetime
+    date: int
     date_text: str
     review_id: str | None
     attributes: dict[str, str]
@@ -31,7 +30,9 @@ class Review:
     images: list[str]
     country_reviewed_in: str
     region: AmazonRegion
-
+    product_name: str | None
+    manufacturer_name: str | None
+    manufacturer_id: str | None
 
 def parse_reviews(region: AmazonRegion, product_id: str, page_limit: int = max_pages) -> list[Review]:
     result = []
@@ -84,7 +85,8 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     date_text = date_text_match.group(0).strip() if date_text_match else None
     if not date_text:
         raise ParsingError("Failed to parse date text")
-    date = parser.parse(date_text)
+    date_obj = parser.parse(date_text)
+    date = int(date_obj.utcnow().timestamp()) if date_obj else None
     if not date:
         raise ParsingError("Failed to parse date")
 
@@ -106,8 +108,7 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
 
     votes_elem = reviewElem.select_one(".cr-vote-text")
     votes_text = votes_elem.text if votes_elem else None
-    votes_digits = re.search("\\d+", votes_text) if votes_text else None
-    votes = int(votes_digits.group(0)) if votes_digits else 0
+    votes = __parse_votes(votes_text) if votes_text else 0
 
     positive_review_elem = page.select_one(".positive-review")
     positive_review_id = __review_id(positive_review_elem) if positive_review_elem else None
@@ -119,22 +120,35 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     if not country:
         raise ParsingError("Failed to parse country")
 
+    product_name_elem = page.select_one("[data-hook=\"product-link\"]")
+    product_name = product_name_elem.text.strip() if product_name_elem else None
+
+    manufacturer_name_elem = page.select_one(".product-by-line a")
+    manufacturer_name = manufacturer_name_elem.text.strip() if manufacturer_name_elem else None
+    manufacturer_attrs = manufacturer_name_elem.attrs if manufacturer_name_elem else None
+    manufacturer_id_regex = re.search("(?<=page\\/)[^?\\/]+", manufacturer_attrs["href"]) if manufacturer_attrs else None
+    manufacturer_id = manufacturer_id_regex.group(0) if manufacturer_id_regex else None
+
     return Review(
-        author_id,
-        author_name,
-        title,
-        text,
-        date,
-        date_text,
-        review_id,
-        attributes,
-        verified_purchase_elem is not None,
-        votes,
-        review_id is not None and positive_review_id == review_id,
-        review_id is not None and critical_review_id == review_id,
-        [image.attrs["src"] for image in reviewElem.select("img.review-image-tile")],
-        country,
-        region
+        author_id=author_id,
+        author_name=author_name,
+        author_image_url=author_image_url,
+        title=title,
+        text=text,
+        date=date,
+        date_text=date_text,
+        review_id=review_id,
+        attributes=attributes,
+        verified_purchase=verified_purchase_elem is not None,
+        found_helpful_count=votes,
+        is_top_positive_review=review_id is not None and positive_review_id == review_id,
+        is_top_critical_review=review_id is not None and critical_review_id == review_id,
+        images=[image.attrs["src"] for image in reviewElem.select("img.review-image-tile")],
+        country_reviewed_in=country,
+        region=region,
+        product_name=product_name,
+        manufacturer_name=manufacturer_name,
+        manufacturer_id=manufacturer_id,
     )
 
 
@@ -144,3 +158,27 @@ def __review_id(reviewElem: bs4.element.Tag) -> str | None:
     review_id_url = review_id_elem.attrs["href"] if review_id_elem else None
     review_id_match = re.search("(?<=customer-reviews\\/).+(?=\\/)", review_id_url) if review_id_url else None
     return review_id_match.group(0) if review_id_match else None
+
+def __parse_votes(votes_text: str) -> int:
+    votes_digits = re.search("\\d+", votes_text) if votes_text else None
+    if votes_digits:
+        return int(votes_digits.group(0))
+    elif votes_text:
+        votes_number_words = re.search("\\S+", votes_text)
+        votes_number_word = votes_number_words.group(0) if votes_number_words else None
+        return number_words[votes_number_word.lower()] if votes_number_word else 0
+    else:
+        return 0
+
+number_words = {
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+    "six": 6,
+    "seven": 7,
+    "eight": 8,
+    "nine": 9,
+    "ten": 10
+}

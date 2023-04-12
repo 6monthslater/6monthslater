@@ -18,3 +18,9 @@ def test_parse_reviews() -> None:
     assert any(len(review.images) > 0 and len(review.images[0]) > 0 for review in reviews) > 0
     assert any(review.country_reviewed_in for review in reviews) > 0
     assert reviews[0].region == AmazonRegion.CA
+
+def test_parse_votes_number() -> None:
+    assert amazon.__parse_votes("2 people found this helpful") == 2 # pyright: ignore
+
+def test_parse_votes_word() -> None:
+    assert amazon.__parse_votes("One person found this helpful") == 1 # pyright: ignore

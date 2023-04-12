@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Manufacturer {
+  id String @id @default(cuid())
+  name String
+  store_ids ManufacturerStoreId[] // Amazon or others
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  products Product[]
+}
+
+model ManufacturerStoreId {
+  id String @id @default(cuid())
+  store_id String @unique
+  manufacturer_id String @unique
+  manufacturer Manufacturer @relation(fields: [manufacturer_id], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id String @id @default(cuid())
+  name String @unique
+  manufacturer_id String
+  manufacturer Manufacturer @relation(fields: [manufacturer_id], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews Review[]
+}
+
+model Review {
+  id String @id @default(cuid())
+  author_id String?
+  author_name String
+  author_image_url String?
+  title String
+  text String
+  date DateTime
+  date_text String
+  review_id String?
+  attributes Json
+  verified_purchase Boolean
+  found_helpful_count Int
+  is_top_positive_review Boolean
+  is_top_critical_review Boolean
+  images ReviewImage[]
+  country_reviewed_in String
+  region AmazonRegion
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Report Report?
+  product Product @relation(fields: [product_id], references: [id])
+  product_id String
+}
+
+model ReviewImage {
+  id String @id @default(cuid())
+  image_url String
+  createdAt DateTime @default(now())
+  review Review @relation(fields: [reviewId], references: [id])
+  reviewId String
+}
+
+enum AmazonRegion {
+  com
+  ca
+}
+
+model Report {
+  id String @id @default(cuid())
+  report_weight Float
+  issues Issue[]
+  review Review @relation(fields: [review_id], references: [id])
+  review_id String @unique
+  reliability_keyframes ReliabilityKeyframe[]
+}
+
+model ReliabilityKeyframe {
+  id String @id @default(cuid())
+  rel_timestamp Int
+  sentiment Float
+  interp String
+  report Report @relation(fields: [report_id], references: [id])
+  report_id String
+}
+
+model Issue {
+  id String @id @default(cuid())
+  text String
+  summary String
+  criticality Float
+  rel_timestamp Int
+  frequency String
+  images IssueImage[]
+  report Report @relation(fields: [report_id], references: [id])
+  report_id String
+}
+
+model IssueImage {
+  id String @id @default(cuid())
+  image_url String
+  createdAt DateTime @default(now())
+  issue Issue @relation(fields: [issue_id], references: [id])
+  issue_id String
+}

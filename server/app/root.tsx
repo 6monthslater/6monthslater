@@ -1,4 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
+// noinspection HtmlRequiredTitleElement
+
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -8,9 +10,18 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
+import stylesheet from "~/tailwind.css";
+
+import Navbar from "~/components/navbar";
+import Footer from "~/components/footer";
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesheet },
+];
+
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "New Remix App",
+  title: "6 Months Later",
   viewport: "width=device-width,initial-scale=1",
 });
 
@@ -21,11 +32,13 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="flex min-h-screen flex-col space-y-4">
+        <Navbar />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+        <Footer />
       </body>
     </html>
   );
