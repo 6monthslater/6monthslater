@@ -1,28 +1,17 @@
 from dataclasses import dataclass
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Optional
+import typing
 import spacy
 from spacy.tokens import Doc, Token, Span
-from spacy.matcher import Matcher
 from spacy.symbols import xcomp
-import re
-from spacytextblob.spacytextblob import SpacyTextBlob
 from textblob.classifiers import NaiveBayesClassifier 
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from parsing.amazon import Review
 from datetime import datetime
 import dateparser
-from sutime import SUTime
-import os
-
-#todo remove
-import json
-from analyzer.cache import *
-_DEBUG = True
+from analyzer.cache import cache1, cache2, cache3, cache4, cache5, cache6, cache7, cache8, cache9, cache10, cache11, cache12
 
 nlp = spacy.load("en_core_web_lg")
 #nlp = spacy.load("en_core_web_sm")
-
-nlp.add_pipe('spacytextblob')
 
 with open('analyzer/train_relevance.json', 'r') as fp:
     cl_relevance = NaiveBayesClassifier(fp, format="json")
@@ -98,7 +87,7 @@ class Report:
     original_text_for_demo: str
     
 
-def extract_keyframes(debug_cache: List[Dict], review_text_doc: Doc, doc_clauses: List[Span], review_date: datetime) -> List[Keyframe]:
+def extract_keyframes(debug_cache: List[Dict[str, str | int]], review_text_doc: Doc, doc_clauses: List[Span], review_date: datetime) -> List[Keyframe]:
     '''
     Returns a list of ownership-relevant keyframes, sorted by time relative to first keyframe (assumed to be date of sale).
     
@@ -122,7 +111,7 @@ def extract_keyframes(debug_cache: List[Dict], review_text_doc: Doc, doc_clauses
     keyframes = []
        
     #1. Extract relative and exact date expressions (relative to review post date)
-    time_expressions = []
+    time_expressions: typing.Any = []
         
     #parse_results = sutime.parse(review_text_doc.text, str(review_date))
     #print("cache = " + json.dumps(parse_results))
@@ -132,8 +121,8 @@ def extract_keyframes(debug_cache: List[Dict], review_text_doc: Doc, doc_clauses
    
     for result in parse_results:
         if result['type'] in ['DATE', 'TIME']:
-            relative_date = review_date if result['value'] == 'PRESENT_REF' else dateparser.parse(result['value'])
-            time_expression_span = review_text_doc.char_span(result['start'], result['end'])
+            relative_date = review_date if result['value'] == 'PRESENT_REF' else dateparser.parse(typing.cast(str, result['value']))
+            time_expression_span = review_text_doc.char_span(typing.cast(int, result['start']), typing.cast(int, result['end']))
             relevant_phrase = extract_relevant_phrase(time_expression_span)
             
             #Filter them based on relevance to product ownership (90% should be a very reasonable threshold with few false negatives)
@@ -142,7 +131,8 @@ def extract_keyframes(debug_cache: List[Dict], review_text_doc: Doc, doc_clauses
             if relevance_to_ownership_exp >= 0.9: 
                 time_expressions.append((relative_date, relevant_phrase, time_expression_span))
             else:
-                print("DEBUG: Filtered expression '" + relevant_phrase + "' based on relevance to ownership experience (prob = " + "{:.2f}".format(relevance_to_ownership_exp) + ")")
+                print("DEBUG: Filtered expression '" + relevant_phrase + "' based on relevance to ownership experience (prob = " +
+                    "{:.2f}".format(relevance_to_ownership_exp) + ")")
             
     #2. Find the earliest time expression and set that as our reference point (date of sale)
     ref_date = review_date
@@ -277,12 +267,12 @@ def extract_clauses(doc: Doc) -> List[Span]:
                     in_current_clause = (get_governing_verb(t) == verb)
                     
                 if in_current_clause and t.pos_ not in ['CCONJ', 'PUNCT', 'ADP']:
-                    if start == None:
+                    if start is None:
                         start = t.i
                         
                     end = t.i + 1
             
-            if start != None and end != None:
+            if start is not None and end is not None:
                 clauses.append(doc[start:end])
                             
     #remove clauses contained in other clauses
@@ -298,7 +288,7 @@ def extract_clauses(doc: Doc) -> List[Span]:
     
     return filtered_clauses
         
-def get_governing_verb(t: Token) -> Token:
+def get_governing_verb(t: Token) -> Token | None:
     governing_verb = None
     
     while t.head != t:
@@ -312,7 +302,7 @@ def get_governing_verb(t: Token) -> Token:
     
     
 #def process_reviews(reviews: List[Review]) -> List[Report]:
-def process_reviews(reviews: List[Dict]) -> List[Report]:
+def process_reviews(reviews: List[Dict[str, typing.Any]]) -> List[Report]:
     result = []
 
     for review in reviews:
@@ -337,22 +327,29 @@ def process_reviews(reviews: List[Dict]) -> List[Report]:
         if len(report.issues) > 0:
             print("Issues:")
             for issue in report.issues:
-                print(f"• Issue: {issue.text} (classification: {issue.classification}, criticality: {issue.criticality}, rel. timestamp: {issue.rel_timestamp})")
+                print(f"• Issue: {issue.text} (classification: {issue.classification}, criticality: {issue.criticality}, rel. timestamp: " + 
+                    f"{issue.rel_timestamp})")
         print()
 
     return result
 
 process_reviews([
-    {"review_id": 1,  "cache": cache1, "text": "I bought this product a week ago and it broke yesterday. I was really disappointed.",  "date": datetime(2023, 3, 10)},
-    {"review_id": 2,  "cache": cache2, "text": "My family went camping last week; I bought this product a week ago and it broke yesterday. I was really disappointed.",  "date": datetime(2023, 3, 10)},
+    {"review_id": 1,  "cache": cache1, "text": "I bought this product a week ago and it broke yesterday. I was really disappointed.",  
+        "date": datetime(2023, 3, 10)},
+    {"review_id": 2,  "cache": cache2, 
+        "text": "My family went camping last week; I bought this product a week ago and it broke yesterday. I was really disappointed.",  
+        "date": datetime(2023, 3, 10)},
     {"review_id": 3,  "cache": cache3, "text": "I got this last month, and it's been working great ever since.",  "date": datetime(2023, 2, 20)},
     {"review_id": 4,  "cache": cache4, "text": "I've had this item for 6 months now, and it's still going strong.",  "date": datetime(2023, 3, 15)},
-    {"review_id": 5,  "cache": cache5, "text": "Bought it two years ago, and it's never given me any problems. Highly recommend!",  "date": datetime(2023, 3, 17)},
+    {"review_id": 5,  "cache": cache5, "text": "Bought it two years ago, and it's never given me any problems. Highly recommend!",  
+        "date": datetime(2023, 3, 17)},
     {"review_id": 6,  "cache": cache6, "text": "It arrived on March 1st and stopped working on March 10th. Terrible quality!",  "date": datetime(2023, 3, 17)},
     {"review_id": 7,  "cache": cache7, "text": "Purchased this item in January 2022, and it's been fantastic so far.",  "date": datetime(2023, 1, 25)},
     {"review_id": 8,  "cache": cache8, "text": "I got it as a gift on Christmas 2022, and I've been using it daily since.",  "date": datetime(2023, 3, 10)},
     {"review_id": 9,  "cache": cache9, "text": "Thus 3 months ago I bought it.",  "date": datetime(2023, 3, 10)},
-    {"review_id": 10, "cache": cache10, "text": "It arrived on March 1st, 2020 and stopped working on APRIL 5. Terrible quality!",  "date": datetime(2023, 3, 17)},
+    {"review_id": 10, "cache": cache10, "text": "It arrived on March 1st, 2020 and stopped working on APRIL 5. Terrible quality!",
+        "date": datetime(2023, 3, 17)},
     {"review_id": 11, "cache": cache11, "text": "It arrived on Mar 1st and stopped working on Apr 5. Terrible quality!",  "date": datetime(2023, 3, 17)},
-    {"review_id": 12, "cache": cache12, "text": "It arrived in mid-August and stopped working in late December. Terrible quality!",  "date": datetime(2023, 3, 17)},
+    {"review_id": 12, "cache": cache12, "text": "It arrived in mid-August and stopped working in late December. Terrible quality!",
+        "date": datetime(2023, 3, 17)},
 ])
