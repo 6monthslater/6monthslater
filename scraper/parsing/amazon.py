@@ -4,7 +4,7 @@ from requester.amazon import AmazonRegion, request_reviews
 import re
 from dateutil import parser
 
-max_pages = 1000
+max_pages = 1
 
 
 class ParsingError(Exception):
