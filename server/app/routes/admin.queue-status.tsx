@@ -59,13 +59,13 @@ export default function Index() {
             {getBadge(
               nextData?.parseQueue?.messageCount,
               previousData?.parseQueue?.messageCount,
-              "message"
+              "product"
             )}
 
             {getBadge(
               nextData?.parseQueue?.consumerCount,
               previousData?.parseQueue?.consumerCount,
-              "consumer"
+              "scraper instance"
             )}
           </Card>
         </div>
@@ -76,13 +76,13 @@ export default function Index() {
             {getBadge(
               nextData?.processQueue?.messageCount,
               previousData?.processQueue?.messageCount,
-              "message"
+              "review"
             )}
 
             {getBadge(
               nextData?.processQueue?.consumerCount,
               previousData?.processQueue?.consumerCount,
-              "consumer"
+              "processing instance"
             )}
           </Card>
         </div>
