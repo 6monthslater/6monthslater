@@ -8,8 +8,13 @@ from textblob.classifiers import NaiveBayesClassifier
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from datetime import datetime
 import dateparser
-from analyzer.cache import cache1, cache2, cache3, cache4, cache5, cache6, cache7, cache8, cache9, cache10, cache11, cache12
+from analyzer.cache import cache1, cache2, cache3, cache4, cache5, cache6, cache7, cache8, cache9, cache10, cache11, cache12 # TODO: Change after demo
 
+# TODO: Docstrings for every method
+# TODO: Private fields
+
+# Large EN model has word vectors and a bunch of goodies, but maybe slightly slower.
+# You can swap the uncommented and commented lines below to test performance with both.
 nlp = spacy.load("en_core_web_lg")
 #nlp = spacy.load("en_core_web_sm")
 
@@ -24,6 +29,7 @@ with open('analyzer/train_issue_class.json', 'r') as fp:
 
 sent_analyzer = SentimentIntensityAnalyzer()
 
+# TODO: Change after demo
 #sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'jars'))
 
 criticalities = {
@@ -107,12 +113,14 @@ def extract_keyframes(debug_cache: List[Dict[str, str | int]], review_text_doc: 
             keyframes (List[Keyframe]): Sorted keyframes
     '''
     
+    # TODO: Debug print
     #print("KEYFRAMES: " + review_text_doc.text)
     keyframes = []
        
     #1. Extract relative and exact date expressions (relative to review post date)
     time_expressions: typing.Any = []
         
+    # TODO: Change after demo (remove caching)
     #parse_results = sutime.parse(review_text_doc.text, str(review_date))
     #print("cache = " + json.dumps(parse_results))
     #print()
@@ -149,7 +157,7 @@ def extract_keyframes(debug_cache: List[Dict[str, str | int]], review_text_doc: 
                                   interp = None))
         #print(keyframes[-1])
     
-    #TODO: Add sentiment from potentially related but independent clauses!!!!!!!!!
+    # TODO: Add sentiment from potentially related but independent clauses!
     
     #4. Return sorted by time
     return sorted(keyframes, key = lambda k: k.rel_timestamp)
@@ -169,6 +177,7 @@ def extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: Lis
             issues (List[Issue]): Product issues
     '''
     
+    # TODO: Debug print
     #print("ISSUES: " + review_text_doc.text)
     issues = []
        
@@ -181,10 +190,12 @@ def extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: Lis
             if prob_dist.prob(prob_dist.max()) >= 0.9: #need to be sure to label
                 issue_clauses.append((clause, prob_dist.max()))
             else:
-                issue_clauses.append((clause, "UNKNOWN_ISSUE")) #TODO auto-classification
+                issue_clauses.append((clause, "UNKNOWN_ISSUE")) # TODO: Auto-classification
                 
     #2. Iterate and merge clauses with the same class (and associated time expression if applicable)
     for issue_clause in issue_clauses:
+
+        # TODO: Proper merging of clauses (IF this is deemed actually useful)
         #acc_text += ";" + issue_clause[0]
     
         #if True:
@@ -213,7 +224,8 @@ def extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: Lis
                             frequency = None,
                             image = None,
                             resolution = None))
-                            
+
+        # TODO: Debug print         
         #print(issues[-1])
     
     return issues
@@ -224,7 +236,7 @@ def extract_relevant_phrase(ent: Span) -> str:
     if governing_verb is not None:
         rel_phrase = []
         
-        #in the relevant phrase
+        #in the relevant phrase...
         for t in governing_verb.subtree:
             in_current_clause = True
             
@@ -249,10 +261,12 @@ def extract_relevant_phrase(ent: Span) -> str:
     else:
         return ent.sent.text
         
+# TODO: Refactor
 def extract_clauses(doc: Doc) -> List[Span]:
     clauses = []
     
-    #bruteforce approach, similar to above method; todo refactor; todo nonverbal clauses
+    #bruteforce approach, similar to above method; 
+    # TODO: nonverbal clauses
     for verb in doc:
         if verb.pos_ == 'VERB':
             start = None
@@ -283,6 +297,7 @@ def extract_clauses(doc: Doc) -> List[Span]:
         )
     ]
     
+    # TODO: Debug print
     #for clause in filtered_clauses:
     #    print("Clause: " + clause.text)
     
@@ -300,7 +315,7 @@ def get_governing_verb(t: Token) -> Token | None:
     return governing_verb
     
     
-    
+# TODO: Change after demo
 #def process_reviews(reviews: List[Review]) -> List[Report]:
 def process_reviews(reviews: List[Dict[str, typing.Any]]) -> List[Report]:
     result = []
@@ -333,6 +348,7 @@ def process_reviews(reviews: List[Dict[str, typing.Any]]) -> List[Report]:
 
     return result
 
+# TODO: Debugging, to be removed
 process_reviews([
     {"review_id": 1,  "cache": cache1, "text": "I bought this product a week ago and it broke yesterday. I was really disappointed.",  
         "date": datetime(2023, 3, 10)},
