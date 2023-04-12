@@ -64,7 +64,7 @@ export default function Route() {
               { name: "Score", value: 8.5 },
               { name: "Remainder", value: 2.5 },
             ]}
-            label="8.5"
+            label="8.5/10"
             showLabel
             colors={["cyan", "slate"]}
           />
