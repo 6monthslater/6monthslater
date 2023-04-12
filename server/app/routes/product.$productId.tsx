@@ -50,13 +50,24 @@ export default function Route() {
   }, [reports]);
 
   return (
-    <div className="mx-4 h-full grow content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
+    <div className="mx-4 h-full grow content-center items-center space-y-4 py-4 text-center md:container md:mx-auto">
       <h1 className="text-xl font-semibold">{product?.name}</h1>
       <div className="mx-auto md:w-1/2">
         <Card>
           <Title className="font-semibold">Top Issues</Title>
           <BarList data={issueBarChartData} />
         </Card>
+      </div>
+      <div>
+        <h2 className="text-lg font-semibold">Recent Reports</h2>
+      </div>
+      <div className="spacing-y-4 mx-auto columns-sm">
+        {reports.map((report) => (
+          <Card key={report.id} className="mb-4 break-inside-avoid-column">
+            <Title className="font-semibold">{report.review.title}</Title>
+            <p>{report.review.text}</p>
+          </Card>
+        ))}
       </div>
     </div>
   );
