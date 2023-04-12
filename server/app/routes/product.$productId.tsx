@@ -65,6 +65,29 @@ export default function Route() {
         {reports.map((report) => (
           <Card key={report.id} className="mb-4 break-inside-avoid-column">
             <Title className="font-semibold">{report.review.title}</Title>
+            {report.review.is_top_positive_review ? (
+              <p>
+                <b>Top Positive Review</b>
+              </p>
+            ) : null}
+            {report.review.is_top_critical_review ? (
+              <p>
+                <b>Top Critical Review</b>
+              </p>
+            ) : null}
+            <p>
+              <b>Date: </b>
+              {report.review.date_text}
+            </p>
+            <p>
+              <b>Verified Purchase: </b>
+              {report.review.verified_purchase ? "Yes" : "No"}
+            </p>
+            <p>
+              <b>"Found Helpful" Votes: </b>
+              {report.review.found_helpful_count}
+            </p>
+            <hr className="my-2" />
             <p>{report.review.text}</p>
           </Card>
         ))}
