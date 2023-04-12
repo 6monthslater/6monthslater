@@ -37,7 +37,39 @@ sent_analyzer = SentimentIntensityAnalyzer()
 
 #sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'jars'))
 
-criticalities = {"issue1": 1.0, "issue2": 0.0}
+criticalities = {
+    "Unexpected System Shutdown": 0.9,
+    "System Inoperable": 0.9,
+    "Loose Connection": 0.4,
+    "Display Flickering": 0.3,
+    "Poor Battery Life": 0.6,
+    "Slow Boot Time": 0.5,
+    "Unstable Wi-Fi Connection": 0.4,
+    "Overheating": 0.7,
+    "Excessive Fan Noise": 0.2,
+    "Faulty Keyboard": 0.5,
+    "Unreliable Touchpad": 0.4,
+    "Audio Distortion": 0.3,
+    "Non-functional USB Port": 0.5,
+    "GPU Crashing": 0.8,
+    "Firmware Update Issue": 0.6,
+    "Defective Power Button": 0.7,
+    "Loose Charging Port": 0.4,
+    "Faulty Charging": 0.7,
+    "Unstable Bluetooth Connection": 0.4,
+    "System Freezing": 0.8,
+    "Low Webcam Quality": 0.3,
+    "Stiff Hinge": 0.3,
+    "Excessive Weight": 0.2,
+    "Poor Screen Visibility": 0.3,
+    "Poor Display Color": 0.2,
+    "Low Speaker Volume": 0.2,
+    "Unexpected System Reboot": 0.8,
+    "Ink Cartridge Recognition Issue": 0.6,
+    "Sleep Mode Wake Issue": 0.5,
+    "Hard Drive Clicking Noise": 0.7,
+    "Monitor Power Issue": 0.9,
+}
 
 @dataclass
 class Keyframe:
@@ -63,6 +95,7 @@ class Report:
     report_weight: float
     reliability_keyframes: List[Keyframe]
     issues: List[Issue]
+    original_text_for_demo: str
     
 
 def extract_keyframes(debug_cache: List[Dict], review_text_doc: Doc, doc_clauses: List[Span], review_date: datetime) -> List[Keyframe]:
@@ -95,7 +128,7 @@ def extract_keyframes(debug_cache: List[Dict], review_text_doc: Doc, doc_clauses
     #print("cache = " + json.dumps(parse_results))
     #print()
     
-    parse_results = debug_cache    # todo remove cache stuff before pushing
+    parse_results = debug_cache    
    
     for result in parse_results:
         if result['type'] in ['DATE', 'TIME']:
@@ -292,13 +325,15 @@ def process_reviews(reviews: List[Dict]) -> List[Report]:
             review_id = review['review_id'], 
             report_weight = 1, 
             reliability_keyframes = keyframes, 
-            issues = issues))
+            issues = issues,
+            original_text_for_demo = review['text']))
 
     for report in result:
         print(f"REPORT FOR REVIEW #{report.review_id} (weight: {report.report_weight})")
+        print(report.original_text_for_demo)
         print("Keyframes:")
         for keyframe in report.reliability_keyframes:
-            print(f"• Keyframe: {keyframe.text} (rel. timestamp: {keyframe.rel_timestamp})")
+            print(f"• Keyframe: {keyframe.text} (rel. timestamp: {keyframe.rel_timestamp}, sentiment: {keyframe.sentiment})")
         if len(report.issues) > 0:
             print("Issues:")
             for issue in report.issues:
