@@ -161,4 +161,4 @@ cython_debug/
 
 
 # SUTime jars
-analyzer-sutime/jars/
+jars

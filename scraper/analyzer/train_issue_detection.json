@@ -1,0 +1,4 @@
+[
+    {"text": "I love this sandwich.", "label": "is_issue"},
+    {"text": "This is an amazing place!", "label": "not_issue"}
+]

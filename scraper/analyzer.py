@@ -16,7 +16,7 @@ import os
 
 #todo remove
 import json
-from cache import *
+from analyzer.cache import *
 _DEBUG = True
 
 nlp = spacy.load("en_core_web_lg")
@@ -24,13 +24,13 @@ nlp = spacy.load("en_core_web_lg")
 
 nlp.add_pipe('spacytextblob')
 
-with open('train_relevance.json', 'r') as fp:
+with open('analyzer/train_relevance.json', 'r') as fp:
     cl_relevance = NaiveBayesClassifier(fp, format="json")
     
-with open('train_issue_detection.json', 'r') as fp:
+with open('analyzer/train_issue_detection.json', 'r') as fp:
     cl_issue_detect = NaiveBayesClassifier(fp, format="json")
     
-with open('train_issue_class.json', 'r') as fp:
+with open('analyzer/train_issue_class.json', 'r') as fp:
     cl_issue_classify = NaiveBayesClassifier(fp, format="json")
 
 sent_analyzer = SentimentIntensityAnalyzer()

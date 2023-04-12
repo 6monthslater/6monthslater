@@ -1,0 +1,4 @@
+[
+    {"text": "It randomly stopped working", "label": "Unexpected System Shutdown"},
+    {"text": "The cable wouldn't work unless I pressed on it", "label": "Loose Connection"}
+]

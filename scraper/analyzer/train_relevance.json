@@ -1,0 +1,11 @@
+[
+    {"text": "I bought this product", "label": "relevant"},
+    {"text": "it broke", "label": "relevant"},
+    {"text": "I've had this item", "label": "relevant"},
+    {"text": "It arrived", "label": "relevant"},
+    {"text": "stopped working", "label": "relevant"},
+    {"text": "Purchased this item in", "label": "relevant"},
+    {"text": "It's been working great", "label": "relevant"},
+    {"text": "My dog ate my python homework", "label": "irrelevant"},
+    {"text": "I went to school", "label": "irrelevant"}
+]
