@@ -44,6 +44,7 @@ export default function Route() {
     for (const [name, value] of issueCounter) {
       issueData.push({ name, value });
     }
+    issueData.sort((a, b) => b.value - a.value);
 
     setIssueBarChartData(issueData);
   }, [reports]);
