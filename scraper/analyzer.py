@@ -146,7 +146,7 @@ def extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: Lis
             issues (List[Issue]): Product issues
     '''
     
-    print("ISSUES: " + review_text_doc.text)
+    #print("ISSUES: " + review_text_doc.text)
     issues = []
        
     #1. Find clauses that describe issues
@@ -191,7 +191,7 @@ def extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: Lis
                             image = None,
                             resolution = None))
                             
-        print(issues[-1])
+        #print(issues[-1])
     
     return issues
 
@@ -294,10 +294,21 @@ def process_reviews(reviews: List[Dict]) -> List[Report]:
             reliability_keyframes = keyframes, 
             issues = issues))
 
+    for report in result:
+        print(f"REPORT FOR REVIEW #{report.review_id} (weight: {report.report_weight})")
+        print("Keyframes:")
+        for keyframe in report.reliability_keyframes:
+            print(f"• Keyframe: {keyframe.text} (rel. timestamp: {keyframe.rel_timestamp})")
+        if len(report.issues) > 0:
+            print("Issues:")
+            for issue in report.issues:
+                print(f"• Issue: {issue.text} (classification: {issue.classification}, criticality: {issue.criticality}, rel. timestamp: {issue.rel_timestamp})")
+        print()
+
     return result
 
 process_reviews([
-    {"review_id": 1,  "cache": cache1, "text": "I bought this product a week ago and it broke yesterday. I was really disappointed. I love this sandwich.",  "date": datetime(2023, 3, 10)},
+    {"review_id": 1,  "cache": cache1, "text": "I bought this product a week ago and it broke yesterday. I was really disappointed.",  "date": datetime(2023, 3, 10)},
     {"review_id": 2,  "cache": cache2, "text": "My family went camping last week; I bought this product a week ago and it broke yesterday. I was really disappointed.",  "date": datetime(2023, 3, 10)},
     {"review_id": 3,  "cache": cache3, "text": "I got this last month, and it's been working great ever since.",  "date": datetime(2023, 2, 20)},
     {"review_id": 4,  "cache": cache4, "text": "I've had this item for 6 months now, and it's still going strong.",  "date": datetime(2023, 3, 15)},
