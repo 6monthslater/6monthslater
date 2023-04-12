@@ -32,11 +32,11 @@ def __on_parse_message(channel: pika.adapters.blocking_connection.BlockingChanne
                 delivery_mode=2, # persistent
             )
         )
+
+        channel.basic_ack(delivery_tag=method_frame.delivery_tag)
     except Exception as e:
         print(e)
         return
-
-    channel.basic_ack(delivery_tag=method_frame.delivery_tag)
     
 def start_parsing_listener(host: str, port: int) -> None:
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
