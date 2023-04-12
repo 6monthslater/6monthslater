@@ -62,7 +62,7 @@ export default function Route() {
           <DonutChart
             data={[
               { name: "Score", value: 8.5 },
-              { name: "Remainder", value: 2.5 },
+              { name: "Remainder", value: 1.5 },
             ]}
             label="8.5/10"
             showLabel
