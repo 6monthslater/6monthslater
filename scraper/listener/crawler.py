@@ -8,6 +8,9 @@ current_crawl = None
 
 def __on_crawl_message(channel: pika.adapters.blocking_connection.BlockingChannel,
         method_frame: pika.spec.Basic.Deliver, header_frame: pika.BasicProperties, body: bytes) -> None:
+    """
+    Callback for when a message is received on the to_crawl exchange.
+    """
     global current_crawl
     if not method_frame.delivery_tag:
         return
@@ -44,6 +47,11 @@ def __on_crawl_message(channel: pika.adapters.blocking_connection.BlockingChanne
         return
     
 def start_crawling_listener(host: str, port: int) -> None:
+    """
+    Start listening for messages on the to_crawl exchange.
+    Will stop the previous crawl if asked to crawl another url.
+    Will stop crawling if a stop command is recieved.
+    """
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
     channel = connection.channel()
     channel.exchange_declare(exchange='to_crawl', exchange_type=ExchangeType.fanout)

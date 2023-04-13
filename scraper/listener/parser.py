@@ -7,10 +7,15 @@ from requester.amazon import AmazonRegion
 from utils import class_to_json
 
 class ReviewSource(Enum):
-    AMAZON = "amazon"
+    AMAZON = "amazon",
+    UNKNOWN = "unknown"
 
 def __on_parse_message(channel: pika.adapters.blocking_connection.BlockingChannel,
         method_frame: pika.spec.Basic.Deliver, header_frame: pika.BasicProperties, body: bytes) -> None:
+    """
+    Callback for when a message is received on the parse queue.
+    Will get all reviews for the given product id and publish them to the parsed_reviews queue.
+    """
     if not method_frame.delivery_tag:
         return
 
@@ -52,6 +57,9 @@ def start_parsing_listener(host: str, port: int) -> None:
     connection.close()
 
 def __get_reviews(parsed: dict[str, Any]) -> list[amazon.Review]:
+    """
+    Get all reviews for the given product id from the scraper.
+    """
     source = ReviewSource(parsed["type"])
 
     match source:
