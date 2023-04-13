@@ -21,7 +21,10 @@ def request_reviews(region: AmazonRegion, product_id: str, page: int = 0) -> str
         
 
 def url_for_reviews(region: AmazonRegion, product_id: str, page: int = 0) -> str:
-    attributes = []
+    """
+    Get the url to fetch reviews for the given page.
+    """
+    attributes: list[str] = []
     if page > 0:
         attributes.append(f"pageNumber={page + 1}")
     attributes_str = "" if len(attributes) == 0 else f"?{'&'.join(attributes)}"
@@ -29,9 +32,15 @@ def url_for_reviews(region: AmazonRegion, product_id: str, page: int = 0) -> str
     return f"https://{domain_for_region(region)}/product-reviews/{product_id}/{attributes_str}"
 
 def url_for_review(region: AmazonRegion, review_id: str) -> str:
+    """
+    Base url generation for reviews of a product without a page number.
+    """
     return f"https://{domain_for_region(region)}/gp/customer-reviews/{review_id}/"
 
 def domain_for_region(region: AmazonRegion) -> str:
+    """
+    Get the domain for the given region.
+    """
     if region == AmazonRegion.COM:
         return "www.amazon.com"
     elif region == AmazonRegion.CA:

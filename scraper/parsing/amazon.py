@@ -71,7 +71,10 @@ class Review:
         self.manufacturer_id = manufacturer_id
 
 def parse_reviews(region: AmazonRegion, product_id: str, page_limit: int = max_pages) -> list[Review]:
-    result = []
+    """
+    Continue requesting the next page of reviews until the page_limit is reached or no more reviews are found.
+    """
+    result: list[Review] = []
 
     for i in range(page_limit):
         html = request_reviews(region, product_id, i)
@@ -90,6 +93,9 @@ def parse_reviews(region: AmazonRegion, product_id: str, page_limit: int = max_p
     return result
 
 def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: AmazonRegion) -> Review:
+    """
+    Parse a single review from the page into a Review object.
+    """
     profile_elem = reviewElem.select_one("a.a-profile")
     profile_elem_attrs = profile_elem.attrs if profile_elem else None
     author_regex = re.search("(?<=profile\\/).+(?=\\/)", profile_elem_attrs["href"]) if profile_elem_attrs else None
@@ -186,6 +192,9 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     )
 
 def __review_id(reviewElem: bs4.element.Tag) -> str | None:
+    """
+    Get the review id from the review element using regex.
+    """
     # normal review, top review
     review_id_elem = reviewElem.select_one("a.review-title, .readMore a")
     review_id_url = review_id_elem.attrs["href"] if review_id_elem else None
@@ -193,6 +202,9 @@ def __review_id(reviewElem: bs4.element.Tag) -> str | None:
     return review_id_match.group(0) if review_id_match else None
 
 def __parse_votes(votes_text: str) -> int:
+    """
+    Parse the votes text into an integer.
+    """
     votes_digits = re.search("\\d+", votes_text) if votes_text else None
     if votes_digits:
         return int(votes_digits.group(0))
