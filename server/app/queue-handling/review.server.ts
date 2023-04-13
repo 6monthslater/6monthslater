@@ -17,11 +17,14 @@ export interface Product {
 }
 
 let connection: amqp.Connection | undefined;
-// Used because of hot reload
+// Used because of hot reload to not create multiple connections each time
 declare global {
   var __queue: amqp.Connection | undefined; //eslint-disable-line
 }
 
+/**
+ * Sets up the connection to the queue, and reuses the connection from the global object if it exists
+ */
 async function setupConnection(): Promise<boolean> {
   let result = false;
   if (!global.__queue) {
@@ -37,6 +40,9 @@ async function setupConnection(): Promise<boolean> {
   return result;
 }
 
+/**
+ * When a review is parsed, it is sent to the queue to be stored in the database
+ */
 export async function startListeningForReviews() {
   if (!connection) {
     throw new Error("Queue connection not set up");
@@ -234,6 +240,9 @@ export interface QueueStatus {
   consumerCount: number;
 }
 
+/**
+ * Meta information about a specific queue in a serializable format for pages to use
+ */
 export async function getStatusOfQueue(queueId: string): Promise<QueueStatus> {
   if (!connection) {
     await connectionPromise;
