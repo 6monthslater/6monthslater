@@ -1,3 +1,4 @@
+from attr import dataclass
 import bs4
 from requester.amazon import AmazonRegion, request_reviews
 import re
@@ -5,10 +6,13 @@ from dateutil import parser
 
 max_pages = 1000
 
+
 class ParsingError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
+
+@dataclass
 class Review:
     author_id: str | None
     author_name: str
@@ -29,46 +33,6 @@ class Review:
     product_name: str | None
     manufacturer_name: str | None
     manufacturer_id: str | None
-
-    def __init__(
-        self,
-        author_id: str | None,
-        author_name: str,
-        title: str,
-        text: str,
-        date: int,
-        date_text: str,
-        review_id: str | None,
-        attributes: dict[str, str],
-        verified_purchase: bool,
-        found_helpful_count: int,
-        is_top_positive_review: bool,
-        is_top_critical_review: bool,
-        images: list[str],
-        country_reviewed_in: str,
-        region: AmazonRegion,
-        product_name: str | None,
-        manufacturer_name: str | None,
-        manufacturer_id: str | None,
-    ):
-        self.author_id = author_id
-        self.author_name = author_name
-        self.title = title
-        self.text = text
-        self.date = date
-        self.date_text = date_text
-        self.review_id = review_id
-        self.attributes = attributes
-        self.verified_purchase = verified_purchase
-        self.found_helpful_count = found_helpful_count
-        self.is_top_positive_review = is_top_positive_review
-        self.is_top_critical_review = is_top_critical_review
-        self.images = images
-        self.country_reviewed_in = country_reviewed_in
-        self.region = region
-        self.product_name = product_name
-        self.manufacturer_name = manufacturer_name
-        self.manufacturer_id = manufacturer_id
 
 def parse_reviews(region: AmazonRegion, product_id: str, page_limit: int = max_pages) -> list[Review]:
     """
@@ -91,6 +55,7 @@ def parse_reviews(region: AmazonRegion, product_id: str, page_limit: int = max_p
                 print(e)
 
     return result
+
 
 def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: AmazonRegion) -> Review:
     """
@@ -171,25 +136,27 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     manufacturer_id = manufacturer_id_regex.group(0) if manufacturer_id_regex else None
 
     return Review(
-        author_id,
-        author_name,
-        title,
-        text,
-        date,
-        date_text,
-        review_id,
-        attributes,
-        verified_purchase_elem is not None,
-        votes,
-        review_id is not None and positive_review_id == review_id,
-        review_id is not None and critical_review_id == review_id,
-        [image.attrs["src"] for image in reviewElem.select("img.review-image-tile")],
-        country,
-        region,
-        product_name,
-        manufacturer_name,
-        manufacturer_id,
+        author_id=author_id,
+        author_name=author_name,
+        author_image_url=author_image_url,
+        title=title,
+        text=text,
+        date=date,
+        date_text=date_text,
+        review_id=review_id,
+        attributes=attributes,
+        verified_purchase=verified_purchase_elem is not None,
+        found_helpful_count=votes,
+        is_top_positive_review=review_id is not None and positive_review_id == review_id,
+        is_top_critical_review=review_id is not None and critical_review_id == review_id,
+        images=[image.attrs["src"] for image in reviewElem.select("img.review-image-tile")],
+        country_reviewed_in=country,
+        region=region,
+        product_name=product_name,
+        manufacturer_name=manufacturer_name,
+        manufacturer_id=manufacturer_id,
     )
+
 
 def __review_id(reviewElem: bs4.element.Tag) -> str | None:
     """
