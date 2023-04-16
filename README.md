@@ -20,7 +20,7 @@ Folder Structure:
 
 `│   ├── scraper.py` The Python Scraper application.  Starts a daemon that waits for messages in RabbitMQ
 
-`│   ├── analysis.py` The Python Analysis application
+`│   ├── analyzer.py` The Python Analysis application
 
 ### Postgres and RabbitMQ
 
@@ -45,13 +45,16 @@ Then you can start the server with `npm run dev` or `npm run start` in productio
 
 The scraper is a Python application and is divided into three parts.
 
-You first must install create a Python Virtual Environment and install the dependencies.
+Firstly, run the `setup.sh` bash script to install the SUTime library used by the analyzer. The script may fail if Maven is not installed on your system: if `mvn -v` is not recognized as a command, please first [install Maven](https://maven.apache.org/install.html). If the script succeeds, the folder `analyzer/jars` should now exist.
+
+You must then install create a Python Virtual Environment and install the remaining dependencies.
 
 ```bash
 cd scraper
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 
+python -m textblob.download_corpora
 pip install -r requirements.txt
 ```
 
@@ -59,4 +62,5 @@ Then you can start the daemons with `python crawler.py` and `python scraper.py`.
 
 These daemons will wait for messages in RabbitMQ, and execute accordingly.
 
-The analyzer is currently a not a daemon and currently only analyze sample reviews hardcoded in the file.
+The analyzer is currently a not a daemon and currently only analyzes sample reviews hardcoded in the file.
+The provided sample reviews (at the end of `analyzer.py`) test various capabilities of the analyzer; you can modify them, remove or add new ones by providing the review text and posting date. Then, you can run the tests with `python analyzer.py`.

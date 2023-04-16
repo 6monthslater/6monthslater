@@ -7,8 +7,9 @@ from spacy.symbols import xcomp
 from textblob.classifiers import NaiveBayesClassifier 
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from datetime import datetime
+from sutime import SUTime
+import os
 import dateparser
-from analyzer.cache import cache1, cache2, cache3, cache4, cache5, cache6, cache7, cache8, cache9, cache10, cache11, cache12 # TODO: Change after demo
 
 # TODO: Docstrings for every method
 # TODO: Private fields
@@ -29,8 +30,7 @@ with open('analyzer/train_issue_class.json', 'r') as fp:
 
 sent_analyzer = SentimentIntensityAnalyzer()
 
-# TODO: Change after demo
-#sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'jars'))
+sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'analyzer/jars'))
 
 criticalities = {
     "Unexpected System Shutdown": 0.9,
@@ -93,7 +93,7 @@ class Report:
     original_text_for_demo: str
     
 
-def extract_keyframes(debug_cache: List[Dict[str, str | int]], review_text_doc: Doc, doc_clauses: List[Span], review_date: datetime) -> List[Keyframe]:
+def extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_date: datetime) -> List[Keyframe]:
     '''
     Returns a list of ownership-relevant keyframes, sorted by time relative to first keyframe (assumed to be date of sale).
     
@@ -121,12 +121,12 @@ def extract_keyframes(debug_cache: List[Dict[str, str | int]], review_text_doc: 
     time_expressions: typing.Any = []
         
     # TODO: Change after demo (remove caching)
-    #parse_results = sutime.parse(review_text_doc.text, str(review_date))
+    parse_results = sutime.parse(review_text_doc.text, str(review_date))
+    
+    # TODO: Debug prints used to generate cache.py
     #print("cache = " + json.dumps(parse_results))
     #print()
-    
-    parse_results = debug_cache    
-   
+       
     for result in parse_results:
         if result['type'] in ['DATE', 'TIME']:
             relative_date = review_date if result['value'] == 'PRESENT_REF' else dateparser.parse(typing.cast(str, result['value']))
@@ -155,7 +155,6 @@ def extract_keyframes(debug_cache: List[Dict[str, str | int]], review_text_doc: 
                                   time_expr = time_expression[2],
                                   sentiment = (sent_analyzer.polarity_scores(time_expression[1])['compound']+1)/2, 
                                   interp = None))
-        #print(keyframes[-1])
     
     # TODO: Add sentiment from potentially related but independent clauses!
     
@@ -323,7 +322,7 @@ def process_reviews(reviews: List[Dict[str, typing.Any]]) -> List[Report]:
     for review in reviews:
         doc = nlp(review['text'])
         clauses = extract_clauses(doc)
-        keyframes = extract_keyframes(review['cache'], doc, clauses, review['date'])
+        keyframes = extract_keyframes(doc, clauses, review['date'])
         issues = extract_issues(doc, clauses, keyframes)
         
         result.append(Report(
@@ -348,24 +347,42 @@ def process_reviews(reviews: List[Dict[str, typing.Any]]) -> List[Report]:
 
     return result
 
-# TODO: Debugging, to be removed
+# TODO: Debugging, to be removed by integrating analyzer into pipeline.
 process_reviews([
-    {"review_id": 1,  "cache": cache1, "text": "I bought this product a week ago and it broke yesterday. I was really disappointed.",  
+    {"review_id": 1, 
+        "text": "I bought this product a week ago and it broke yesterday. I was really disappointed.",  
         "date": datetime(2023, 3, 10)},
-    {"review_id": 2,  "cache": cache2, 
+    {"review_id": 2, 
         "text": "My family went camping last week; I bought this product a week ago and it broke yesterday. I was really disappointed.",  
         "date": datetime(2023, 3, 10)},
-    {"review_id": 3,  "cache": cache3, "text": "I got this last month, and it's been working great ever since.",  "date": datetime(2023, 2, 20)},
-    {"review_id": 4,  "cache": cache4, "text": "I've had this item for 6 months now, and it's still going strong.",  "date": datetime(2023, 3, 15)},
-    {"review_id": 5,  "cache": cache5, "text": "Bought it two years ago, and it's never given me any problems. Highly recommend!",  
+    {"review_id": 3, 
+        "text": "I got this last month, and it's been working great ever since.",  
+        "date": datetime(2023, 2, 20)},
+    {"review_id": 4, 
+        "text": "I've had this item for 6 months now, and it's still going strong.",  
+        "date": datetime(2023, 3, 15)},
+    {"review_id": 5, 
+        "text": "Bought it two years ago, and it's never given me any problems. Highly recommend!",  
         "date": datetime(2023, 3, 17)},
-    {"review_id": 6,  "cache": cache6, "text": "It arrived on March 1st and stopped working on March 10th. Terrible quality!",  "date": datetime(2023, 3, 17)},
-    {"review_id": 7,  "cache": cache7, "text": "Purchased this item in January 2022, and it's been fantastic so far.",  "date": datetime(2023, 1, 25)},
-    {"review_id": 8,  "cache": cache8, "text": "I got it as a gift on Christmas 2022, and I've been using it daily since.",  "date": datetime(2023, 3, 10)},
-    {"review_id": 9,  "cache": cache9, "text": "Thus 3 months ago I bought it.",  "date": datetime(2023, 3, 10)},
-    {"review_id": 10, "cache": cache10, "text": "It arrived on March 1st, 2020 and stopped working on APRIL 5. Terrible quality!",
+    {"review_id": 6, 
+        "text": "It arrived on March 1st and stopped working on March 10th. Terrible quality!",
         "date": datetime(2023, 3, 17)},
-    {"review_id": 11, "cache": cache11, "text": "It arrived on Mar 1st and stopped working on Apr 5. Terrible quality!",  "date": datetime(2023, 3, 17)},
-    {"review_id": 12, "cache": cache12, "text": "It arrived in mid-August and stopped working in late December. Terrible quality!",
+    {"review_id": 7, 
+        "text": "Purchased this item in January 2022, and it's been fantastic so far.",  
+        "date": datetime(2023, 1, 25)},
+    {"review_id": 8, 
+        "text": "I got it as a gift on Christmas 2022, and I've been using it daily since.",  
+        "date": datetime(2023, 3, 10)},
+    {"review_id": 9, 
+        "text": "Thus 3 months ago I bought it.",  
+        "date": datetime(2023, 3, 10)},
+    {"review_id": 10, 
+        "text": "It arrived on March 1st, 2020 and stopped working on APRIL 5. Terrible quality!",
+        "date": datetime(2023, 3, 17)},
+    {"review_id": 11, 
+        "text": "It arrived on Mar 1st and stopped working on Apr 5. Terrible quality!",  
+        "date": datetime(2023, 3, 17)},
+    {"review_id": 12, 
+        "text": "It arrived in mid-August and stopped working in late December. Terrible quality!",
         "date": datetime(2023, 3, 17)},
 ])
