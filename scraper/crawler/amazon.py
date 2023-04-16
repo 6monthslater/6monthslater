@@ -7,6 +7,9 @@ import re
 max_pages = 1000
 
 def crawl_for_reviews(url: str, page_num: int, review_info: Any, publish_callback: Callable[[str], None]) -> None:
+    """
+    Crawl for product urls on a given url on the given page.
+    """
     html = request_page(url=f"{url}&page={page_num + 1}")
     page = bs4.BeautifulSoup(html, features="html.parser")
 

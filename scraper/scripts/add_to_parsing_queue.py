@@ -1,10 +1,15 @@
 import json
 import pika
 
+# This is a testing script for testing out the parsing queue
+
 host = "localhost"
 port = 5673
 
 def add_amazon_item() -> None:
+    """
+    Add an example item to the parsing queue.
+    """
     item = {
         "type": "amazon",
         "region": "com",
