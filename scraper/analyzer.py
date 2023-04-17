@@ -7,64 +7,34 @@ from spacy.symbols import xcomp
 from textblob.classifiers import NaiveBayesClassifier 
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from datetime import datetime
+from sutime import SUTime
+from analyzer.issues import criticalities
+import os
 import dateparser
-from analyzer.cache import cache1, cache2, cache3, cache4, cache5, cache6, cache7, cache8, cache9, cache10, cache11, cache12 # TODO: Change after demo
 
-# TODO: Docstrings for every method
 # TODO: Private fields
 
 # Large EN model has word vectors and a bunch of goodies, but maybe slightly slower.
 # You can swap the uncommented and commented lines below to test performance with both.
-nlp = spacy.load("en_core_web_lg")
-#nlp = spacy.load("en_core_web_sm")
+_nlp = spacy.load("en_core_web_lg")
+#_nlp = spacy.load("en_core_web_sm")
 
+#Trains classifiers for:
+#Relevance of clause to product ownership experience
 with open('analyzer/train_relevance.json', 'r') as fp:
-    cl_relevance = NaiveBayesClassifier(fp, format="json")
+    _cl_relevance = NaiveBayesClassifier(fp, format="json")
     
+#Relevance of clause to experience of an issue
 with open('analyzer/train_issue_detection.json', 'r') as fp:
-    cl_issue_detect = NaiveBayesClassifier(fp, format="json")
+    _cl_issue_detect = NaiveBayesClassifier(fp, format="json")
     
+#Classifying an issue
 with open('analyzer/train_issue_class.json', 'r') as fp:
-    cl_issue_classify = NaiveBayesClassifier(fp, format="json")
+    _cl_issue_class = NaiveBayesClassifier(fp, format="json")
 
-sent_analyzer = SentimentIntensityAnalyzer()
+_sent_analyzer = SentimentIntensityAnalyzer() #VADER library
+_sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'analyzer/jars'))
 
-# TODO: Change after demo
-#sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'jars'))
-
-criticalities = {
-    "Unexpected System Shutdown": 0.9,
-    "System Inoperable": 0.9,
-    "Loose Connection": 0.4,
-    "Display Flickering": 0.3,
-    "Poor Battery Life": 0.6,
-    "Slow Boot Time": 0.5,
-    "Unstable Wi-Fi Connection": 0.4,
-    "Overheating": 0.7,
-    "Excessive Fan Noise": 0.2,
-    "Faulty Keyboard": 0.5,
-    "Unreliable Touchpad": 0.4,
-    "Audio Distortion": 0.3,
-    "Non-functional USB Port": 0.5,
-    "GPU Crashing": 0.8,
-    "Firmware Update Issue": 0.6,
-    "Defective Power Button": 0.7,
-    "Loose Charging Port": 0.4,
-    "Faulty Charging": 0.7,
-    "Unstable Bluetooth Connection": 0.4,
-    "System Freezing": 0.8,
-    "Low Webcam Quality": 0.3,
-    "Stiff Hinge": 0.3,
-    "Excessive Weight": 0.2,
-    "Poor Screen Visibility": 0.3,
-    "Poor Display Color": 0.2,
-    "Low Speaker Volume": 0.2,
-    "Unexpected System Reboot": 0.8,
-    "Ink Cartridge Recognition Issue": 0.6,
-    "Sleep Mode Wake Issue": 0.5,
-    "Hard Drive Clicking Noise": 0.7,
-    "Monitor Power Issue": 0.9,
-}
 
 @dataclass
 class Keyframe:
@@ -89,11 +59,10 @@ class Report:
     review_id: int
     report_weight: float
     reliability_keyframes: List[Keyframe]
-    issues: List[Issue]
-    original_text_for_demo: str
-    
+    issues: List[Issue]    
 
-def extract_keyframes(debug_cache: List[Dict[str, str | int]], review_text_doc: Doc, doc_clauses: List[Span], review_date: datetime) -> List[Keyframe]:
+
+def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_date: datetime) -> List[Keyframe]:
     '''
     Returns a list of ownership-relevant keyframes, sorted by time relative to first keyframe (assumed to be date of sale).
     
@@ -113,28 +82,24 @@ def extract_keyframes(debug_cache: List[Dict[str, str | int]], review_text_doc: 
             keyframes (List[Keyframe]): Sorted keyframes
     '''
     
-    # TODO: Debug print
-    #print("KEYFRAMES: " + review_text_doc.text)
     keyframes = []
        
     #1. Extract relative and exact date expressions (relative to review post date)
     time_expressions: typing.Any = []
-        
-    # TODO: Change after demo (remove caching)
-    #parse_results = sutime.parse(review_text_doc.text, str(review_date))
+    parse_results = _sutime.parse(review_text_doc.text, str(review_date))
+    
+    # Debug prints used to generate cache.py
     #print("cache = " + json.dumps(parse_results))
     #print()
-    
-    parse_results = debug_cache    
-   
+       
     for result in parse_results:
-        if result['type'] in ['DATE', 'TIME']:
+        if result['type'] in ['DATE', 'TIME']: # TODO: Support for other time expression categories, e.g. periodic
             relative_date = review_date if result['value'] == 'PRESENT_REF' else dateparser.parse(typing.cast(str, result['value']))
             time_expression_span = review_text_doc.char_span(typing.cast(int, result['start']), typing.cast(int, result['end']))
-            relevant_phrase = extract_relevant_phrase(time_expression_span)
+            relevant_phrase = _extract_relevant_phrase(time_expression_span)
             
             #Filter them based on relevance to product ownership (90% should be a very reasonable threshold with few false negatives)
-            relevance_to_ownership_exp = cl_relevance.prob_classify(relevant_phrase).prob("relevant")
+            relevance_to_ownership_exp = _cl_relevance.prob_classify(relevant_phrase).prob("relevant")
             
             if relevance_to_ownership_exp >= 0.9: 
                 time_expressions.append((relative_date, relevant_phrase, time_expression_span))
@@ -153,22 +118,25 @@ def extract_keyframes(debug_cache: List[Dict[str, str | int]], review_text_doc: 
         keyframes.append(Keyframe(rel_timestamp = (time_expression[0] - ref_date).days, 
                                   text = time_expression[1],
                                   time_expr = time_expression[2],
-                                  sentiment = (sent_analyzer.polarity_scores(time_expression[1])['compound']+1)/2, 
-                                  interp = None))
-        #print(keyframes[-1])
+                                  sentiment = (_sent_analyzer.polarity_scores(time_expression[1])['compound']+1)/2, 
+                                  interp = None)) # TODO: Keyframe interpolation
     
-    # TODO: Add sentiment from potentially related but independent clauses!
+    # TODO: Add sentiment from potentially related but independent clauses! (e.g. "(...) on March 12th. Terrible quality!")
     
-    #4. Return sorted by time
+    #4. Return keyframes sorted by time
     return sorted(keyframes, key = lambda k: k.rel_timestamp)
 
 
-def extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: List[Keyframe]) -> List[Issue]:
+def _extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: List[Keyframe]) -> List[Issue]:
     '''
     Returns a list of issues with the product.
     
     Approach:
-    todo
+    Iterate through list of independent clauses in the review
+    Use classifier to detect issue-relevant clauses
+    Use classifier to determine issue class
+    Iterate through issue-relevant clauses and merge those that relate to the same issue
+    Create and return issues list
        
         Parameters:
             review_text_doc (Doc): spaCy document object
@@ -177,46 +145,32 @@ def extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: Lis
             issues (List[Issue]): Product issues
     '''
     
-    # TODO: Debug print
-    #print("ISSUES: " + review_text_doc.text)
     issues = []
        
     #1. Find clauses that describe issues
     issue_clauses = []
     for clause in doc_clauses:
-        if cl_issue_detect.prob_classify(clause.text).prob("is_issue") >= 0.9:
-            prob_dist = cl_issue_classify.prob_classify(clause.text)
+        if _cl_issue_detect.prob_classify(clause.text).prob("is_issue") >= 0.9:
+            prob_dist = _cl_issue_class.prob_classify(clause.text)
             
             if prob_dist.prob(prob_dist.max()) >= 0.9: #need to be sure to label
                 issue_clauses.append((clause, prob_dist.max()))
             else:
-                issue_clauses.append((clause, "UNKNOWN_ISSUE")) # TODO: Auto-classification
+                issue_clauses.append((clause, "UNKNOWN_ISSUE")) # TODO: Issue auto-classification
                 
-    #2. Iterate and merge clauses with the same class (and associated time expression if applicable)
+    #2. Iterate through clauses and create issues
+    # TODO: Merge clauses with the same class (and associated time expression if applicable) into one issue
     for issue_clause in issue_clauses:
-
-        # TODO: Proper merging of clauses (IF this is deemed actually useful)
-        #acc_text += ";" + issue_clause[0]
-    
-        #if True:
-        #    pass
-        #    
-        #else: 
-        #    issues.append(Issue(text = acc_text,
-        #                        classification = cur_class,
-        #                        criticality = criticalities[cur_class] if cur_class in criticalities else 0.5f,
-        #                        rel_timestamp = cur_rel_timestamp,
-        #                        frequency = None,
-        #                        image = None,
-        #                        resolution = None))
-        
         cur_rel_timestamp = None
         
+        #Get issue timestamp from contained keyframe time expression if applicable
         for keyframe in keyframes:
             if keyframe.time_expr.start >= issue_clause[0].start and keyframe.time_expr.end <= issue_clause[0].end:
                 cur_rel_timestamp = keyframe.rel_timestamp
                 break
         
+        #Create issue object from text, class, hardcoded criticality and extracted timestamp.
+        # TODO: Other fields (frequency for periodic time expressions, relevant image, issue resolution info)
         issues.append(Issue(text = issue_clause[0].text,
                             classification = issue_clause[1],
                             criticality = criticalities[issue_clause[1]] if issue_clause[1] in criticalities else 0.5,
@@ -224,14 +178,28 @@ def extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: Lis
                             frequency = None,
                             image = None,
                             resolution = None))
-
-        # TODO: Debug print         
-        #print(issues[-1])
     
     return issues
 
-def extract_relevant_phrase(ent: Span) -> str:    
-    governing_verb = get_governing_verb(ent.root)
+def _extract_relevant_phrase(time_expr: Span) -> str:    
+    '''
+    Returns clause relevant to a time expression span, excluding the span itself and leading/trailing punctuation and conjunctions.
+    
+    Approach:
+    Finds the governing verb of the clause containing the span
+    Aggregates tokens from governing verb clause, excluding those of sub-clauses and those of the span itself
+    Removes leading and trailing punctuations and conjunctions
+    Builds a string from the aggregated tokens and returns it
+    If the sentence is non-verbal, returns the sentence itself.
+       
+        Parameters:
+            time_expr (Span): spaCy span object corresponding to matched time expression
+            
+        Returns: 
+            phrase (str): Trimmed relevant phrase
+    '''
+    
+    governing_verb = _get_governing_verb(time_expr.root)
     
     if governing_verb is not None:
         rel_phrase = []
@@ -243,9 +211,9 @@ def extract_relevant_phrase(ent: Span) -> str:
             if t.pos_ == 'VERB': #the governing verb, as well as any composite verbs relating to it
                 in_current_clause = (t == governing_verb or (t.head == governing_verb and t.dep == xcomp))
             else: #tokens governed by the same verb (eg. in the clause)
-                in_current_clause = (get_governing_verb(t) == governing_verb)
+                in_current_clause = (_get_governing_verb(t) == governing_verb)
                                 
-            if in_current_clause and (t.i < ent.start or t.i >= ent.end): #excluding the time expression itself
+            if in_current_clause and (t.i < time_expr.start or t.i >= time_expr.end): #excluding the time expression itself
                 rel_phrase.append(t)
         
         #exclude leading punctuation and conjunctions
@@ -259,28 +227,43 @@ def extract_relevant_phrase(ent: Span) -> str:
         return ''.join(t.text + t.whitespace_ for t in rel_phrase).strip()
     
     else:
-        return ent.sent.text
+        return time_expr.sent.text
         
-# TODO: Refactor
-def extract_clauses(doc: Doc) -> List[Span]:
+# TODO: Refactor (duplicate logic with above method)
+def _extract_clauses(doc: Doc) -> List[Span]:
+    '''
+    Returns list of all independent clauses in a given document.
+    
+    Approach (bruteforce, to be refined):
+    For every verb in the document, determines span boundaries of clause, excluding sub-clauses
+    Filters clauses from the list if they are contained in another clause.
+       
+        Parameters:
+            doc (Doc): spaCy document object
+            
+        Returns: 
+            filtered_clauses (str): List of independent clauses
+    '''
     clauses = []
     
-    #bruteforce approach, similar to above method; 
-    # TODO: nonverbal clauses
+    # TODO: Support nonverbal clauses
+    #Iterates document verbs
     for verb in doc:
         if verb.pos_ == 'VERB':
-            start = None
+            start = None 
             end = None
             
+            #Determines clause boundaries from subtree tokens
             for t in verb.subtree:
                 in_current_clause = True
                 
-                if t.pos_ == 'VERB': 
+                if t.pos_ == 'VERB': #the governing verb, as well as any composite verbs relating to it
                     in_current_clause = (t == verb or (t.head == verb and t.dep == xcomp))
-                else: 
-                    in_current_clause = (get_governing_verb(t) == verb)
+                else: #tokens governed by the same verb (eg. in the clause)
+                    in_current_clause = (_get_governing_verb(t) == verb)
                     
-                if in_current_clause and t.pos_ not in ['CCONJ', 'PUNCT', 'ADP']:
+                #exclude leading/trailing punctuation and conjunctions
+                if in_current_clause and t.pos_ not in ['CCONJ', 'PUNCT', 'ADP']: 
                     if start is None:
                         start = t.i
                         
@@ -289,7 +272,7 @@ def extract_clauses(doc: Doc) -> List[Span]:
             if start is not None and end is not None:
                 clauses.append(doc[start:end])
                             
-    #remove clauses contained in other clauses
+    #Filters clauses contained in other clauses
     filtered_clauses = [
         span1 for span1 in clauses
         if not any(
@@ -297,13 +280,20 @@ def extract_clauses(doc: Doc) -> List[Span]:
         )
     ]
     
-    # TODO: Debug print
-    #for clause in filtered_clauses:
-    #    print("Clause: " + clause.text)
-    
     return filtered_clauses
         
-def get_governing_verb(t: Token) -> Token | None:
+def _get_governing_verb(t: Token) -> Token | None:
+    '''
+    Returns verb token which governs the given token's clause, if available.
+    Walks through the head tokens (parents) of t until a verb (/root of a composite verb) is found.
+    Only the root verb in a composite verb (e.g. "stopped" in "stopped working") actually governs the sentence.
+       
+        Parameters:
+            t (Token): spaCy token object
+            
+        Returns: 
+            governing_verb (Token): spaCy token object for governing verb
+    '''
     governing_verb = None
     
     while t.head != t:
@@ -314,58 +304,96 @@ def get_governing_verb(t: Token) -> Token | None:
         
     return governing_verb
     
-    
-# TODO: Change after demo
-#def process_reviews(reviews: List[Review]) -> List[Report]:
-def process_reviews(reviews: List[Dict[str, typing.Any]]) -> List[Report]:
-    result = []
-
-    for review in reviews:
-        doc = nlp(review['text'])
-        clauses = extract_clauses(doc)
-        keyframes = extract_keyframes(review['cache'], doc, clauses, review['date'])
-        issues = extract_issues(doc, clauses, keyframes)
-        
-        result.append(Report(
-            review_id = review['review_id'], 
-            report_weight = 1, 
-            reliability_keyframes = keyframes, 
-            issues = issues,
-            original_text_for_demo = review['text']))
-
-    for report in result:
+def _print_reports(reports: List[Report]):
+    '''
+    Fancy printing method for list of Report dataclasses. 
+       
+        Parameters:
+            reports (List[Report]): list of reports to print
+    '''
+    for report in reports:
         print(f"REPORT FOR REVIEW #{report.review_id} (weight: {report.report_weight})")
-        print(report.original_text_for_demo)
         print("Keyframes:")
+        
         for keyframe in report.reliability_keyframes:
             print(f"• Keyframe: {keyframe.text} (rel. timestamp: {keyframe.rel_timestamp}, sentiment: {keyframe.sentiment})")
+            
         if len(report.issues) > 0:
             print("Issues:")
+            
             for issue in report.issues:
                 print(f"• Issue: {issue.text} (classification: {issue.classification}, criticality: {issue.criticality}, rel. timestamp: " + 
                     f"{issue.rel_timestamp})")
+                    
         print()
+   
+# TODO: Switch to passing actual review objects   
+#def process_reviews(reviews: List[Review]) -> List[Report]:
+def process_reviews(reviews: List[Dict[str, typing.Any]]) -> List[Report]:
+    '''
+    Public method to process reviews and generate actionable reports. 
+    Calls upon private methods to extract clauses, keyframes and issues from the review text.
+    
+        Parameters:
+            reviews (List[Review]): list of reviews to process
+            
+        Returns: 
+            reports (List[Report]): list of generated reports
+    '''
+    result = []
 
+    for review in reviews:
+        doc = _nlp(review['text'])
+        clauses = _extract_clauses(doc)
+        keyframes = _extract_keyframes(doc, clauses, review['date'])
+        issues = _extract_issues(doc, clauses, keyframes)
+        
+        result.append(Report(
+            review_id = review['review_id'], 
+            report_weight = 1, # TODO: Report weighing
+            reliability_keyframes = keyframes, 
+            issues = issues))
+
+    _print_reports(result)
+    
     return result
 
-# TODO: Debugging, to be removed
+# TODO: Debugging, to be removed by integrating analyzer into pipeline.
 process_reviews([
-    {"review_id": 1,  "cache": cache1, "text": "I bought this product a week ago and it broke yesterday. I was really disappointed.",  
+    {"review_id": 1, 
+        "text": "I bought this product a week ago and it broke yesterday. I was really disappointed.",  
         "date": datetime(2023, 3, 10)},
-    {"review_id": 2,  "cache": cache2, 
+    {"review_id": 2, 
         "text": "My family went camping last week; I bought this product a week ago and it broke yesterday. I was really disappointed.",  
         "date": datetime(2023, 3, 10)},
-    {"review_id": 3,  "cache": cache3, "text": "I got this last month, and it's been working great ever since.",  "date": datetime(2023, 2, 20)},
-    {"review_id": 4,  "cache": cache4, "text": "I've had this item for 6 months now, and it's still going strong.",  "date": datetime(2023, 3, 15)},
-    {"review_id": 5,  "cache": cache5, "text": "Bought it two years ago, and it's never given me any problems. Highly recommend!",  
+    {"review_id": 3, 
+        "text": "I got this last month, and it's been working great ever since.",  
+        "date": datetime(2023, 2, 20)},
+    {"review_id": 4, 
+        "text": "I've had this item for 6 months now, and it's still going strong.",  
+        "date": datetime(2023, 3, 15)},
+    {"review_id": 5, 
+        "text": "Bought it two years ago, and it's never given me any problems. Highly recommend!",  
         "date": datetime(2023, 3, 17)},
-    {"review_id": 6,  "cache": cache6, "text": "It arrived on March 1st and stopped working on March 10th. Terrible quality!",  "date": datetime(2023, 3, 17)},
-    {"review_id": 7,  "cache": cache7, "text": "Purchased this item in January 2022, and it's been fantastic so far.",  "date": datetime(2023, 1, 25)},
-    {"review_id": 8,  "cache": cache8, "text": "I got it as a gift on Christmas 2022, and I've been using it daily since.",  "date": datetime(2023, 3, 10)},
-    {"review_id": 9,  "cache": cache9, "text": "Thus 3 months ago I bought it.",  "date": datetime(2023, 3, 10)},
-    {"review_id": 10, "cache": cache10, "text": "It arrived on March 1st, 2020 and stopped working on APRIL 5. Terrible quality!",
+    {"review_id": 6, 
+        "text": "It arrived on March 1st and stopped working on March 10th. Terrible quality!",
         "date": datetime(2023, 3, 17)},
-    {"review_id": 11, "cache": cache11, "text": "It arrived on Mar 1st and stopped working on Apr 5. Terrible quality!",  "date": datetime(2023, 3, 17)},
-    {"review_id": 12, "cache": cache12, "text": "It arrived in mid-August and stopped working in late December. Terrible quality!",
+    {"review_id": 7, 
+        "text": "Purchased this item in January 2022, and it's been fantastic so far.",  
+        "date": datetime(2023, 1, 25)},
+    {"review_id": 8, 
+        "text": "I got it as a gift on Christmas 2022, and I've been using it daily since.",  
+        "date": datetime(2023, 3, 10)},
+    {"review_id": 9, 
+        "text": "Thus 3 months ago I bought it.",  
+        "date": datetime(2023, 3, 10)},
+    {"review_id": 10, 
+        "text": "It arrived on March 1st, 2020 and stopped working on APRIL 5. Terrible quality!",
+        "date": datetime(2023, 3, 17)},
+    {"review_id": 11, 
+        "text": "It arrived on Mar 1st and stopped working on Apr 5. Terrible quality!",  
+        "date": datetime(2023, 3, 17)},
+    {"review_id": 12, 
+        "text": "It arrived in mid-August and stopped working in late December. Terrible quality!",
         "date": datetime(2023, 3, 17)},
 ])
