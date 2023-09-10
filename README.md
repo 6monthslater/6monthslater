@@ -54,8 +54,8 @@ cd scraper
 python3 -m venv venv
 source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 
-python -m textblob.download_corpora
 pip install -r requirements.txt
+python -m textblob.download_corpora
 ```
 
 Then you can start the daemons with `python crawler.py` and `python scraper.py`.
