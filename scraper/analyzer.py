@@ -33,7 +33,7 @@ with open('analyzer/train_issue_class.json', 'r') as fp:
     _cl_issue_class = NaiveBayesClassifier(fp, format="json")
 
 _sent_analyzer = SentimentIntensityAnalyzer() #VADER library
-_sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'analyzer/jars'))
+_sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'analyzer', 'jars'))
 
 
 @dataclass
