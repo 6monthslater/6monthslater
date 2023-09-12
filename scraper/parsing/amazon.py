@@ -21,7 +21,7 @@ class Review:
     text: str
     date: int
     date_text: str
-    review_id: str | None
+    review_id: str
     attributes: dict[str, str]
     verified_purchase: bool
     found_helpful_count: int
@@ -97,6 +97,8 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
         raise ParsingError("Failed to parse date")
 
     review_id = __review_id(reviewElem)
+    if review_id is None:
+        raise ParsingError("Failed to parse review id")
 
     attributes_elem = reviewElem.select_one(".review-format-strip .a-color-secondary")
     attribute_nodes = attributes_elem.findAll(string=True) if attributes_elem else None
