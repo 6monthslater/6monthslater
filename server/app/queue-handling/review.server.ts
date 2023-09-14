@@ -164,17 +164,21 @@ export async function startListeningForReviews() {
         const reports = JSON.parse(msg.content.toString());
 
         for (const report of reports) {
-          const id = (await db.review.findFirst({
-            where: {
-              review_id: report.review_id
-            },
-            select: {
-              id: true
-            }
-          }))?.id;
+          const id = (
+            await db.review.findFirst({
+              where: {
+                review_id: report.review_id,
+              },
+              select: {
+                id: true,
+              },
+            })
+          )?.id;
 
           if (!id) {
-            throw new Error(`Failed to find review with id ${report.review_id}`);
+            throw new Error(
+              `Failed to find review with id ${report.review_id}`
+            );
           }
 
           await db.report.create({
@@ -187,9 +191,11 @@ export async function startListeningForReviews() {
                   rel_timestamp: issue.rel_timestamp,
                   frequency: issue.frequency,
                   images: {
-                    create: issue.images ? issue.images.map((image) => ({
-                      image_url: image,
-                    })) : undefined,
+                    create: issue.images
+                      ? issue.images.map((image) => ({
+                          image_url: image,
+                        }))
+                      : undefined,
                   },
                 })),
               },
