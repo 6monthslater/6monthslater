@@ -2,7 +2,7 @@ from enum import Enum
 from requester.request_maker import request_page, RequestError, reset_cookies
 from retry import retry
 
-class AmazonRegion(Enum):
+class AmazonRegion(str, Enum):
     COM = "com"
     CA = "ca"
 

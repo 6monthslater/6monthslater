@@ -164,20 +164,32 @@ export async function startListeningForReviews() {
         const reports = JSON.parse(msg.content.toString());
 
         for (const report of reports) {
+          const id = (await db.review.findFirst({
+            where: {
+              review_id: report.review_id
+            },
+            select: {
+              id: true
+            }
+          }))?.id;
+
+          if (!id) {
+            throw new Error(`Failed to find review with id ${report.review_id}`);
+          }
+
           await db.report.create({
             data: {
               report_weight: report.report_weight,
               issues: {
                 create: report.issues.map((issue) => ({
                   text: issue.text,
-                  summary: issue.summary,
                   criticality: issue.criticality,
                   rel_timestamp: issue.rel_timestamp,
                   frequency: issue.frequency,
                   images: {
-                    create: issue.images.map((image) => ({
+                    create: issue.images ? issue.images.map((image) => ({
                       image_url: image,
-                    })),
+                    })) : undefined,
                   },
                 })),
               },
@@ -190,7 +202,7 @@ export async function startListeningForReviews() {
               },
               review: {
                 connect: {
-                  id: report.review_id,
+                  id,
                 },
               },
             },
