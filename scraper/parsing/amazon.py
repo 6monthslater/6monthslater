@@ -167,7 +167,7 @@ def __review_id(reviewElem: bs4.element.Tag) -> str | None:
     # normal review, top review
     review_id_elem = reviewElem.select_one("a.review-title, .readMore a")
     review_id_url = review_id_elem.attrs["href"] if review_id_elem else None
-    review_id_match = re.search("(?<=customer-reviews\\/).+(?=\\/)", review_id_url) if review_id_url else None
+    review_id_match = re.search(r"(?<=customer-reviews\/).+(?=\/|\?)", review_id_url) if review_id_url else None
     return review_id_match.group(0) if review_id_match else None
 
 def __parse_votes(votes_text: str) -> int:
