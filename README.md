@@ -56,6 +56,8 @@ source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 
 pip install -r requirements.txt
 python -m textblob.download_corpora
+
+cp .env.example .env # Create environment variables file based on the example
 ```
 
 Then you can start the daemons with `python crawler.py` and `python scraper.py`.
