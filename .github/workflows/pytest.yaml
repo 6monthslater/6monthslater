@@ -24,3 +24,5 @@ jobs:
         working-directory: ./scraper
         timeout-minutes: 5
         run: pytest
+        env:
+          AMAZON_COOKIE: ${{ secrets.AMAZON_COOKIE }}
