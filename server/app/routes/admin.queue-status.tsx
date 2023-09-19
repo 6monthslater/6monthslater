@@ -12,7 +12,7 @@ interface LoaderData {
 
 export const loader = async (): Promise<LoaderData> => {
   const parseQueue = getStatusOfQueue("parse");
-  const processQueue = getStatusOfQueue("parsed_reviews");
+  const processQueue = getStatusOfQueue("to_analyze");
 
   return {
     parseQueue: await parseQueue,

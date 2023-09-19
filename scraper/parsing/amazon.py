@@ -21,7 +21,7 @@ class Review:
     text: str
     date: int
     date_text: str
-    review_id: str | None
+    review_id: str
     attributes: dict[str, str]
     verified_purchase: bool
     found_helpful_count: int
@@ -97,6 +97,8 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
         raise ParsingError("Failed to parse date")
 
     review_id = __review_id(reviewElem)
+    if review_id is None:
+        raise ParsingError("Failed to parse review id")
 
     attributes_elem = reviewElem.select_one(".review-format-strip .a-color-secondary")
     attribute_nodes = attributes_elem.findAll(string=True) if attributes_elem else None
@@ -165,7 +167,7 @@ def __review_id(reviewElem: bs4.element.Tag) -> str | None:
     # normal review, top review
     review_id_elem = reviewElem.select_one("a.review-title, .readMore a")
     review_id_url = review_id_elem.attrs["href"] if review_id_elem else None
-    review_id_match = re.search("(?<=customer-reviews\\/).+(?=\\/)", review_id_url) if review_id_url else None
+    review_id_match = re.search(r"(?<=customer-reviews\/)[^\/]+(?=\/|\?)", review_id_url) if review_id_url else None
     return review_id_match.group(0) if review_id_match else None
 
 def __parse_votes(votes_text: str) -> int:

@@ -47,7 +47,7 @@ model Review {
   text String
   date DateTime
   date_text String
-  review_id String?
+  review_id String @unique
   attributes Json
   verified_purchase Boolean
   found_helpful_count Int
@@ -58,7 +58,7 @@ model Review {
   region AmazonRegion
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Report Report?
+  reports Report[]
   product Product @relation(fields: [product_id], references: [id])
   product_id String
 }
@@ -81,7 +81,7 @@ model Report {
   report_weight Float
   issues Issue[]
   review Review @relation(fields: [review_id], references: [id])
-  review_id String @unique
+  review_id String
   reliability_keyframes ReliabilityKeyframe[]
 }
 
@@ -89,7 +89,7 @@ model ReliabilityKeyframe {
   id String @id @default(cuid())
   rel_timestamp Int
   sentiment Float
-  interp String
+  interp String?
   report Report @relation(fields: [report_id], references: [id])
   report_id String
 }
@@ -97,10 +97,9 @@ model ReliabilityKeyframe {
 model Issue {
   id String @id @default(cuid())
   text String
-  summary String
-  criticality Float
-  rel_timestamp Int
-  frequency String
+  criticality Float?
+  rel_timestamp Int?
+  frequency String?
   images IssueImage[]
   report Report @relation(fields: [report_id], references: [id])
   report_id String
