@@ -6,7 +6,7 @@ import parsing.amazon as amazon
 from requester.amazon import AmazonRegion
 from utils import class_to_json
 
-class ReviewSource(Enum):
+class ReviewSource(str, Enum):
     AMAZON = "amazon",
     UNKNOWN = "unknown"
 
@@ -38,6 +38,16 @@ def __on_parse_message(channel: pika.adapters.blocking_connection.BlockingChanne
             )
         )
 
+        channel.basic_publish(
+            exchange='',
+            routing_key='to_analyze',
+            body=reviews_json,
+            properties=pika.BasicProperties(
+                content_type='application/json',
+                delivery_mode=2, # persistent
+            )
+        )
+
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
     except Exception as e:
         print(e)
@@ -48,6 +58,7 @@ def start_parsing_listener(host: str, port: int) -> None:
     channel = connection.channel()
     channel.queue_declare(queue='parse', durable=True)
     channel.queue_declare(queue='parsed_reviews', durable=True)
+    channel.queue_declare(queue='to_analyze', durable=True)
 
     channel.basic_consume('parse', __on_parse_message)
     try:
