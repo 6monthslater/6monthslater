@@ -24,6 +24,7 @@
     "@tremor/react": "^2.0.2",
     "@types/amqplib": "^0.10.1",
     "amqplib": "^0.10.3",
+    "firebase": "^10.4.0",
     "isbot": "^3.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
