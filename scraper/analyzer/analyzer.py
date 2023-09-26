@@ -61,8 +61,26 @@ class Report:
     review_id: str
     report_weight: float
     reliability_keyframes: List[Keyframe]
-    issues: List[Issue]    
-
+    issues: List[Issue]
+    
+    def __str__(self):
+        '''
+        Fancy printing method.
+        '''
+        result = f"REPORT FOR REVIEW #{self.review_id} (weight: {self.report_weight})\n"
+        result += "Keyframes:\n"
+        
+        for keyframe in self.reliability_keyframes:
+            result += f"• Keyframe: {keyframe.text} (rel. timestamp: {keyframe.rel_timestamp}, sentiment: {keyframe.sentiment})\n"
+            
+        if len(self.issues) > 0:
+            result += "Issues:\n"
+            
+            for issue in self.issues:
+                result += f"• Issue: {issue.text} (classification: {issue.classification}, criticality: {issue.criticality}, "
+                result += f"rel. timestamp: {issue.rel_timestamp})\n"
+        
+        return result
 
 def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_date: int) -> List[Keyframe]:
     '''
@@ -314,30 +332,7 @@ def _get_governing_verb(t: Token) -> Token | None:
         t = t.head
         
     return governing_verb
-    
-def _print_reports(reports: List[Report]) -> None:
-    '''
-    Fancy printing method for list of Report dataclasses. 
-       
-        Parameters:
-            reports (List[Report]): list of reports to print
-    '''
-    for report in reports:
-        print(f"REPORT FOR REVIEW #{report.review_id} (weight: {report.report_weight})")
-        print("Keyframes:")
-        
-        for keyframe in report.reliability_keyframes:
-            print(f"• Keyframe: {keyframe.text} (rel. timestamp: {keyframe.rel_timestamp}, sentiment: {keyframe.sentiment})")
             
-        if len(report.issues) > 0:
-            print("Issues:")
-            
-            for issue in report.issues:
-                print(f"• Issue: {issue.text} (classification: {issue.classification}, criticality: {issue.criticality}, rel. timestamp: " + 
-                    f"{issue.rel_timestamp})")
-                    
-        print()
-   
 def process_reviews(reviews: List[Review]) -> List[Report]:
     '''
     Public method to process reviews and generate actionable reports. 
