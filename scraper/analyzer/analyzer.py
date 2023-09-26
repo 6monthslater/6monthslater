@@ -106,19 +106,25 @@ def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_dat
        
     #1. Extract relative and exact date expressions (relative to review post date)
     time_expressions: Any = []
-    parse_results = _sutime.parse(review_text_doc.text, str(review_date))
+    parse_results = _sutime.parse(review_text_doc.text, str(datetime.utcfromtimestamp(review_date)))
        
     for result in parse_results:
-
         if _debug:
             print("---")
             print(f"Value {result['value']} | Type {result['type']}")
-
-        if result['type'] in ['DATE', 'TIME']: # TODO: Support for other time expression categories, e.g. periodic
-            # TODO: Handle "PAST_REF" and "THIS P1D" in a different way from "PRESENT_REF" https://github.com/stanfordnlp/CoreNLP/blob/b5a632c8de4b05d95bb95b35a5042ae38e3ab921/src/edu/stanford/nlp/time/SUTime.java#L705
-            parsed_date = dateparser.parse(typing.cast(str, result['value']))
-            relative_date = datetime.utcfromtimestamp(review_date) if parsed_date is None else parsed_date
-            time_expression_span = review_text_doc.char_span(typing.cast(int, result['start']), typing.cast(int, result['end']))
+            
+        # TODO: Support for other time expression categories, e.g. periodic
+        if result['type'] in ['DATE', 'TIME'] and result['value'] not in ['PAST_REF', 'FUTURE_REF']:
+            relative_date = dateparser.parse(str(result['value']))
+            if _debug:
+                print(f"Value {result['value']} | Type {result['type']} ||| {relative_date}")
+            
+            if relative_date is None:
+                if result['value'] != 'PRESENT_REF':
+                    print(f"WARNING: Failed to parse expression '{result['value']}' from SUTime result; defaulting to review date.")
+                relative_date = datetime.utcfromtimestamp(review_date)
+                
+            time_expression_span = review_text_doc.char_span(int(result['start']), int(result['end']))
             relevant_phrase = _extract_relevant_phrase(time_expression_span)
 
             #Filter them based on relevance to product ownership (90% should be a very reasonable threshold with few false negatives)
