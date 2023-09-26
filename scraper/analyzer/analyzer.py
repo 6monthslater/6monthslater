@@ -333,32 +333,38 @@ def _get_governing_verb(t: Token) -> Token | None:
         
     return governing_verb
             
+def _process_review(review: Review) -> Report:
+    '''
+    Private method to process a review and generate an actionable report.
+    Calls upon private methods to extract clauses, keyframes and issues from the review text.
+    
+        Parameters:
+            review (Review): review to process
+            
+        Returns: 
+            report (Report): resulting report
+    '''
+    doc = _nlp(review.text)
+    clauses = _extract_clauses(doc)
+
+    keyframes = _extract_keyframes(doc, clauses, review.date)
+    issues = _extract_issues(doc, clauses, keyframes)
+    
+    return Report(
+            review_id = review.review_id, 
+            report_weight = 1, # TODO: Report weighing
+            reliability_keyframes = keyframes, 
+            issues = issues)
+   
 def process_reviews(reviews: List[Review]) -> List[Report]:
     '''
-    Public method to process reviews and generate actionable reports. 
-    Calls upon private methods to extract clauses, keyframes and issues from the review text.
+    Public method to process a set of reviews.
+    Calls upon private worker method _process_review.
     
         Parameters:
             reviews (List[Review]): list of reviews to process
             
-        Returns: 
+        Returns:
             reports (List[Report]): list of generated reports
     '''
-    result = []
-
-    for review in reviews:
-        doc = _nlp(review.text)
-        clauses = _extract_clauses(doc)
-
-        keyframes = _extract_keyframes(doc, clauses, review.date)
-        issues = _extract_issues(doc, clauses, keyframes)
-        
-        result.append(Report(
-            review_id = review.review_id, 
-            report_weight = 1, # TODO: Report weighing
-            reliability_keyframes = keyframes, 
-            issues = issues))
-
-    _print_reports(result)
-    
-    return result
+    return [_process_review(review) for review in reviews]
