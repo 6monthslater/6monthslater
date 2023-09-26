@@ -131,7 +131,7 @@ def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_dat
             relevance_to_ownership_exp = _cl_relevance.prob_classify(relevant_phrase).prob("relevant")
             
             if relevance_to_ownership_exp >= 0.9: 
-                time_expressions.append((relative_date, relevant_phrase, time_expression_span))
+                time_expressions.append((relative_date.date(), relevant_phrase, time_expression_span))
                 if _debug:
                     print(time_expressions[-1])
             else:
@@ -139,7 +139,7 @@ def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_dat
                     f"ownership experience (prob = {relevance_to_ownership_exp:.2f})")
             
     #2. Find the earliest time expression and set that as our reference point (date of sale)
-    ref_date = datetime.utcfromtimestamp(review_date)
+    ref_date = datetime.utcfromtimestamp(review_date).date()
     for time_expression in time_expressions:
         if time_expression[0] <= ref_date:
             ref_date = time_expression[0]
