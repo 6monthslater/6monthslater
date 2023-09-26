@@ -1,20 +1,19 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
-import typing
+from typing import List, Optional, Any
+import os
+
+import dateparser
 import spacy
 from spacy.tokens import Doc, Token, Span
 from spacy.symbols import xcomp
 from textblob.classifiers import NaiveBayesClassifier 
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from sutime import SUTime
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
 from analyzer.issues import criticalities
-import os
-import dateparser
-
 from parsing.amazon import Review
-
-# TODO: Private fields
+from utils.env import get_env
 
 # Large EN model has word vectors and a bunch of goodies, but maybe slightly slower.
 # You can swap the uncommented and commented lines below to test performance with both.
@@ -36,7 +35,7 @@ with open('analyzer/train_issue_class.json', 'r') as fp:
 
 _sent_analyzer = SentimentIntensityAnalyzer() #VADER library
 _sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'jars'))
-
+_debug = get_env("DEBUG") == "1"
 
 @dataclass
 class Keyframe:
@@ -88,14 +87,15 @@ def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_dat
     keyframes = []
        
     #1. Extract relative and exact date expressions (relative to review post date)
-    time_expressions: typing.Any = []
+    time_expressions: Any = []
     parse_results = _sutime.parse(review_text_doc.text, str(review_date))
-    
-    # Debug prints used to generate cache.py
-    #print("cache = " + json.dumps(parse_results))
-    #print()
        
     for result in parse_results:
+
+        if _debug:
+            print("---")
+            print(f"Value {result['value']} | Type {result['type']}")
+
         if result['type'] in ['DATE', 'TIME']: # TODO: Support for other time expression categories, e.g. periodic
             # TODO: Handle "PAST_REF" and "THIS P1D" in a different way from "PRESENT_REF" https://github.com/stanfordnlp/CoreNLP/blob/b5a632c8de4b05d95bb95b35a5042ae38e3ab921/src/edu/stanford/nlp/time/SUTime.java#L705
             parsed_date = dateparser.parse(typing.cast(str, result['value']))
@@ -108,9 +108,11 @@ def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_dat
             
             if relevance_to_ownership_exp >= 0.9: 
                 time_expressions.append((relative_date, relevant_phrase, time_expression_span))
+                if _debug:
+                    print(time_expressions[-1])
             else:
-                print("DEBUG: Filtered expression '" + relevant_phrase + "' based on relevance to ownership experience (prob = " +
-                    "{:.2f}".format(relevance_to_ownership_exp) + ")")
+                print(f"WARNING: Filtered expression '{relevant_phrase}' based on relevance to "
+                    f"ownership experience (prob = {relevance_to_ownership_exp:.2f})")
             
     #2. Find the earliest time expression and set that as our reference point (date of sale)
     ref_date = datetime.utcfromtimestamp(review_date)
@@ -279,7 +281,9 @@ def _extract_clauses(doc: Doc) -> List[Span]:
                 clauses.append(doc[start:end])
                             
     #Filters clauses contained in other clauses
-    print(f"clauses {clauses}")
+    if _debug:
+        print(f"clauses {clauses}")
+
     filtered_clauses = [
         span1 for span1 in clauses
         if not any(
