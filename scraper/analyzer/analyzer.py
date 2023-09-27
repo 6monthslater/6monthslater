@@ -82,7 +82,7 @@ class Report:
 
         return result
 
-def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_date: int) -> List[Keyframe]:
+def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]:
     '''
     Returns a list of ownership-relevant keyframes, sorted by time relative to first keyframe (assumed to be date of sale).
 
@@ -111,13 +111,13 @@ def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_dat
     for result in parse_results:
         if _debug:
             print("---")
-            print(f"Value {result['value']} | Type {result['type']}")
+            print(f"Type {result['type']} | Value {result['value']}")
 
         # TODO: Support for other time expression categories, e.g. periodic
         if result['type'] in ['DATE', 'TIME'] and result['value'] not in ['PAST_REF', 'FUTURE_REF']:
             relative_date = dateparser.parse(str(result['value']))
             if _debug:
-                print(f"Value {result['value']} | Type {result['type']} ||| {relative_date}")
+                print(f"Type {result['type']} | Value {result['value']} ||| {relative_date}")
 
             if relative_date is None:
                 if result['value'] != 'PRESENT_REF':
@@ -159,7 +159,7 @@ def _extract_keyframes(review_text_doc: Doc, doc_clauses: List[Span], review_dat
     return sorted(keyframes, key = lambda k: k.rel_timestamp)
 
 
-def _extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: List[Keyframe]) -> List[Issue]:
+def _extract_issues(doc_clauses: List[Span], keyframes: List[Keyframe]) -> List[Issue]:
     '''
     Returns a list of issues with the product.
 
@@ -171,7 +171,8 @@ def _extract_issues(review_text_doc: Doc, doc_clauses: List[Span], keyframes: Li
     Create and return issues list
 
         Parameters:
-            review_text_doc (Doc): spaCy document object
+            doc_clauses (List[Span]): List of independent document clauses
+            keyframes (List[Keyframe]): List of keyframes to relate issues to
 
         Returns:
             issues (List[Issue]): Product issues
@@ -353,8 +354,8 @@ def _process_review(review: Review) -> Report:
     doc = _nlp(review.text)
     clauses = _extract_clauses(doc)
 
-    keyframes = _extract_keyframes(doc, clauses, review.date)
-    issues = _extract_issues(doc, clauses, keyframes)
+    keyframes = _extract_keyframes(doc, review.date)
+    issues = _extract_issues(clauses, keyframes)
 
     return Report(
             review_id = review.review_id,
