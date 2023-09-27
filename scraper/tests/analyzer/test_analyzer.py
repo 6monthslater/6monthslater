@@ -1,8 +1,9 @@
-from requester.amazon import AmazonRegion
-from parsing.amazon import Review
-import analyzer.analyzer as analyzer
 from datetime import datetime
 import time
+
+import analyzer.analyzer as analyzer
+from requester.amazon import AmazonRegion
+from parsing.amazon import Review
 
 def produce_sample_review(
     author_id: str | None = "",
@@ -57,9 +58,9 @@ def _test_keyframes(keyframe_list, *timestamps):
 def test_process_review() -> None:
     #Exact time expressions (exact date, holiday)
     report = analyzer._process_review(produce_sample_review(
-        text = "I bought this on 2023/09/10. It broke today. I will return it on Christmas 2023.", 
+        text = "I bought this on 2023/09/10. It broke today. I will return it on Christmas 2023.",
         date = int(datetime(2023, 9, 26).timestamp())))
-    _test_keyframes(report.reliability_keyframes, 0, 16, 106)  
+    _test_keyframes(report.reliability_keyframes, 0, 16, 106)
 
     #=================================================
     #Relative time expression (past, present, future) with days
@@ -68,7 +69,7 @@ def test_process_review() -> None:
     _test_keyframes(report.reliability_keyframes, 0, 3, 6)
 
     #TOFIX: the "this" in "bought this" confuses SUTime (gives a duration ISO date string with type DATE???)
-    #TOFIX: "In three days" is incorrectly parsed by SUTime as a duration 
+    #TOFIX: "In three days" is incorrectly parsed by SUTime as a duration
     report = analyzer._process_review(produce_sample_review(
         text = "Bought this three days ago. It arrived today. I will return it in three days."))
     #_test_keyframes(report.reliability_keyframes, 0, 3, 6)
@@ -80,7 +81,7 @@ def test_process_review() -> None:
 
     #TOFIX: ISO weeks notation parsing issue
     report = analyzer._process_review(produce_sample_review(
-        text = "Bought last week. It arrived today.", 
+        text = "Bought last week. It arrived today.",
         date = int(datetime(2023, 9, 26).timestamp())))
     #_test_keyframes(report.reliability_keyframes, 0, 7)
 
@@ -99,7 +100,7 @@ def test_process_review() -> None:
     report = analyzer._process_review(produce_sample_review(
         text = "It breaks every week. It's been like this for 6 months."))
     _test_keyframes(report.reliability_keyframes)
-    
+
     #Filtered: keyframes irrelevant to product ownership
     report = analyzer._process_review(produce_sample_review(
         text = "My dog ate my python homework 2 days ago."))
