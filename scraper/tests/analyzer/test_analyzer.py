@@ -117,6 +117,12 @@ def test_process_review() -> None:
         date = int(datetime(2023, 9, 26).timestamp())))
     _test_keyframes(report.reliability_keyframes, 0, 3)
 
+    #Misc: fix for sutime not returning correct token boundaries when symbols are involved
+    report = analyzer._process_review(produce_sample_review(
+        text = "Bought it on |September 24th at midnight"))
+    report = analyzer._process_review(produce_sample_review(
+        text = "Bought it on September 24th at midnight|"))
+
     #TOFIX: handling INTERSECT smartly
     report = analyzer._process_review(produce_sample_review(
         text = "Bought on the week of October 2nd 2019. Got it on the week of Christmas 2019"))

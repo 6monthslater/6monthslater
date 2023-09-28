@@ -120,7 +120,21 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
                     print(f"WARNING: Failed to parse expression '{result['value']}' from SUTime result; defaulting to review date.")
                 relative_date = datetime.utcfromtimestamp(review_date)
 
-            time_expression_span = review_text_doc.char_span(int(result['start']), int(result['end']))
+            if _debug:
+                print(f"Type {result['type']} | Value {result['value']} => Parsed {relative_date}")
+
+            #ensuring start and end offset correspond to document token boundaries
+            token_start = result['start'] #default if adjustment fails, may lead to None time_expression_span
+            prev_whitespace = 0
+            for t in review_text_doc:
+                if t.idx - prev_whitespace <= result['start'] < t.idx + len(t.text):
+                    token_start = t.idx
+                    break
+                prev_whitespace = len(t.whitespace_)
+
+            token_end = next(t.idx + len(t.text) for t in review_text_doc if t.idx <= result['end']-1 < t.idx + len(t.text_with_ws))
+
+            time_expression_span = review_text_doc.char_span(token_start, token_end)
             relevant_phrase = _extract_relevant_phrase(time_expression_span)
 
             #Filter them based on relevance to product ownership (90% should be a very reasonable threshold with few false negatives)
