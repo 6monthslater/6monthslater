@@ -28,6 +28,7 @@ def produce_sample_review(
 ) -> Review:
 
     print(f"Testing: Generating review w/ date {date}")
+    print(f"Testing: \"{text}\"")
     return Review(
         author_id=author_id,
         author_name=author_name,
@@ -51,7 +52,7 @@ def produce_sample_review(
     )
 
 def _test_keyframes(keyframe_list, *timestamps):
-    assert len(keyframe_list) == len(timestamps), "Number of keyframes does not match number of timestamps provided."
+    assert len(keyframe_list) == len(timestamps), f"Expected {len(timestamps)} keyframes but got {len(keyframe_list)}"
     for kf, ts in zip(keyframe_list, timestamps):
         assert kf.rel_timestamp == ts, f"Expected relative timestamp {ts} but got {kf.rel_timestamp}"
 
@@ -79,11 +80,15 @@ def test_process_review() -> None:
         text = "Bought three years ago. It broke 5 months ago. I returned it a week ago."))
     _test_keyframes(report.reliability_keyframes, 0, 942, 1088)
 
-    #TOFIX: ISO weeks notation parsing issue
     report = analyzer._process_review(produce_sample_review(
-        text = "Bought last week. It arrived today.",
+        text = "Bought last week. It arrived this week. It broke today"))
+    _test_keyframes(report.reliability_keyframes, 0, 7, 7 + datetime.now().weekday())
+
+    #TOFIX: how we handle years and "start"/"end"
+    report = analyzer._process_review(produce_sample_review(
+        text = "Bought in 2022. It arived at the start of this year. It broke at the end of last week.",
         date = int(datetime(2023, 9, 26).timestamp())))
-    #_test_keyframes(report.reliability_keyframes, 0, 7)
+    #_test_keyframes(report.reliability_keyframes, 0, 365)
 
     #=================================================
     #Present reference
@@ -105,3 +110,14 @@ def test_process_review() -> None:
     report = analyzer._process_review(produce_sample_review(
         text = "My dog ate my python homework 2 days ago."))
     _test_keyframes(report.reliability_keyframes)
+
+    #Misc: specifying a timezone
+    report = analyzer._process_review(produce_sample_review(
+        text = "Bought on September 24th at midnight CET. It arrived today.",  #aka 11pm UTC previous day
+        date = int(datetime(2023, 9, 26).timestamp())))
+    _test_keyframes(report.reliability_keyframes, 0, 3)
+
+    #TOFIX: handling INTERSECT smartly
+    report = analyzer._process_review(produce_sample_review(
+        text = "Bought on the week of October 2nd 2019. Got it on the week of Christmas 2019"))
+    #_test_keyframes(report.reliability_keyframes)

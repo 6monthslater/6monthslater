@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional, Any
 import os
 
-import dateparser
 import spacy
 from spacy.tokens import Doc, Token, Span
 from spacy.symbols import xcomp
@@ -110,16 +109,13 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
 
     for result in parse_results:
         if _debug:
-            print("---")
             print(f"Type {result['type']} | Value {result['value']}")
 
         # TODO: Support for other time expression categories, e.g. periodic
         if result['type'] in ['DATE', 'TIME'] and result['value'] not in ['PAST_REF', 'FUTURE_REF']:
-            relative_date = dateparser.parse(str(result['value']))
-            if _debug:
-                print(f"Type {result['type']} | Value {result['value']} ||| {relative_date}")
-
-            if relative_date is None:
+            try:
+                relative_date = datetime.fromisoformat(str(result['value'])).astimezone(timezone.utc)
+            except ValueError:
                 if result['value'] != 'PRESENT_REF':
                     print(f"WARNING: Failed to parse expression '{result['value']}' from SUTime result; defaulting to review date.")
                 relative_date = datetime.utcfromtimestamp(review_date)
@@ -137,6 +133,9 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
             else:
                 print(f"WARNING: Filtered expression '{relevant_phrase}' based on relevance to "
                     f"ownership experience (prob = {relevance_to_ownership_exp:.2f})")
+
+        if _debug:
+            print("---")
 
     #2. Find the earliest time expression and set that as our reference point (date of sale)
     ref_date = datetime.utcfromtimestamp(review_date).date()
