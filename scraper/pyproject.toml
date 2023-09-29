@@ -46,5 +46,5 @@ target-version = "py310"
 max-complexity = 10
 
 [[tool.mypy.overrides]]
-module = 'curl_cffi'
+module = ['curl_cffi', 'parameterized', 'textblob.classifiers', 'spacy.symbols', 'sutime', 'vaderSentiment.vaderSentiment']
 ignore_missing_imports = true
