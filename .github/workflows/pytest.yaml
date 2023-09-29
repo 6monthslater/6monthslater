@@ -17,10 +17,12 @@ jobs:
         with:
           python-version: "3.10"
       - name: "Install deps"
-        run: sudo apt-get update; sudo apt-get install libcurl4-openssl-dev libssl-dev
+        run: sudo apt-get update; sudo apt-get install libcurl4-openssl-dev libssl-dev maven;
       - run: pip install -r requirements.txt
         working-directory: ./scraper
       - run: python -m textblob.download_corpora
+        working-directory: ./scraper
+      - run: setup.sh
         working-directory: ./scraper
       - name: Run Tests
         working-directory: ./scraper
