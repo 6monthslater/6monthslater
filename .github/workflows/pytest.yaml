@@ -22,7 +22,7 @@ jobs:
         working-directory: ./scraper
       - run: python -m textblob.download_corpora
         working-directory: ./scraper
-      - run: setup.sh
+      - run: ./setup.sh
         working-directory: ./scraper
       - name: Run Tests
         working-directory: ./scraper
