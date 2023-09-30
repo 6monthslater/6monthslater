@@ -1,3 +1,5 @@
+#analyzer.py: Main script of the analyzer module. 
+#See README.md and docstrings/comments for more information.
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import List, Optional, Any

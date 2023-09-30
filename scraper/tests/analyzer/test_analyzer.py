@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import time
 
 from parameterized import parameterized
@@ -77,7 +77,7 @@ def produce_sample_review(
     ("relative_date_iso_week_notation", #ISO 8601 year-week notation support
         produce_sample_review(
             text = "Bought last week. It arrived this week. It broke today"),
-        [0, 7, 7 + datetime.now().weekday()]),
+        [0, 7, 7 + datetime.now(timezone.utc).weekday()]),
 
     #TOFIX: how we handle years and "start"/"end"
     #("relative_date_start_end",
