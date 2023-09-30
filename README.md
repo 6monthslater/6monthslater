@@ -90,7 +90,7 @@ Then you can start the daemons with `python crawler.py` and `python scraper.py`.
 
 These daemons will wait for messages in RabbitMQ, and execute accordingly.
 
-For more information on running and testing the analyzer, see its [README file](./scraper/analyzer/README.md)
+For more information on running and testing the analyzer, see its [README file](./scraper/analyzer/README.md).
 
 Automated tests are available for the parser and analyzer, and can be executed by running `pytest`.
 

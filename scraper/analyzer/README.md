@@ -11,15 +11,15 @@ The analyzer module is responsible with parsing scraped reviews for time-sensiti
 * **`vaderSentiment`**: NLP library used to estimate user sentiment for extracted product ownership keyframes.
 
 ### Module Files
-**`analyzer/`**
-**`├── jars`**: Contains dependencies used by the SUTime library.
-**`├── pom.xml`**: Maven configuration file used to download SUTime dependencies.
-**`├── __init__.py`**: Python package initializer.
-**`├── issues.py`**: Hardcoded list of common issues with criticality ratings
-**`├── analyzer.py`**: Main script of the analyzer module. See below for methods.
-**`├── train_relevance.json`**: Data used to train the classifier in charge of determining the relevance of temporal keyframes in a review.
-**`├── train_issue_detection.json`**: Data used to train the classifier in charge of detecting product issues in a review.
-**`├── train_issue_class.json`**: Data used to train the classifier in charge of classifying product issues in a review.
+**`analyzer/`**<br>
+**`├── jars`**: Contains dependencies used by the SUTime library.<br>
+**`├── pom.xml`**: Maven configuration file used to download SUTime dependencies.<br>
+**`├── __init__.py`**: Python package initializer.<br>
+**`├── issues.py`**: Hardcoded list of common issues with criticality ratings.<br>
+**`├── analyzer.py`**: Main script of the analyzer module. See below for methods.<br>
+**`├── train_relevance.json`**: Data used to train the classifier in charge of determining the relevance of temporal keyframes in a review.<br>
+**`├── train_issue_detection.json`**: Data used to train the classifier in charge of detecting product issues in a review.<br>
+**`├── train_issue_class.json`**: Data used to train the classifier in charge of classifying product issues in a review.<br>
 *Note that JSON files do not support comments.*
 
 ### Related Files
