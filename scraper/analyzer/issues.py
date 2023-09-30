@@ -1,3 +1,4 @@
+#issues.py: Hardcoded list of common issues with criticality ratings.
 criticalities = {
     "Unexpected System Shutdown": 0.9,
     "System Inoperable": 0.9,

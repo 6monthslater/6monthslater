@@ -64,5 +64,6 @@ Then you can start the daemons with `python crawler.py` and `python scraper.py`.
 
 These daemons will wait for messages in RabbitMQ, and execute accordingly.
 
-The analyzer is currently not a daemon and currently only analyzes sample reviews hardcoded in the file.
-The provided sample reviews (at the end of `analyzer.py`) test various capabilities of the analyzer; you can modify them, remove or add new ones by providing the review text and posting date in the same format. Then, you can run the tests with `python analyzer.py`.
+For more information on running and testing the analyzer, see its [README file](./scraper/analyzer/README.md)
+
+Automated tests are available for the parser and analyzer, and can be executed by running `pytest`.
