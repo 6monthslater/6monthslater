@@ -2,6 +2,7 @@
 #See README.md and docstrings/comments for more information.
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from dateutil.parser import isoparse
 from typing import List, Optional, Any
 import os
 
@@ -116,7 +117,7 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
         # TODO: Support for other time expression categories, e.g. periodic
         if result['type'] in ['DATE', 'TIME'] and result['value'] not in ['PAST_REF', 'FUTURE_REF']:
             try:
-                relative_date = datetime.fromisoformat(str(result['value'])).astimezone(timezone.utc)
+                relative_date = isoparse(str(result['value'])).astimezone(timezone.utc)
             except ValueError:
                 if result['value'] != 'PRESENT_REF':
                     print(f"WARNING: Failed to parse expression '{result['value']}' from SUTime result; defaulting to review date.")
