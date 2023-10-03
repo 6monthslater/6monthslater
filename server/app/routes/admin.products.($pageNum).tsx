@@ -2,7 +2,7 @@ import type { Product } from "@prisma/client";
 import type { ActionFunction, SerializeFrom } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import type { SubmitFunction } from "@remix-run/react";
-import { useLoaderData, useSubmit } from "@remix-run/react";
+import { Link, useLoaderData, useSubmit } from "@remix-run/react";
 import { Button, Card, Title } from "@tremor/react";
 import { analyzeProduct } from "~/queue-handling/review.server";
 import { db } from "~/utils/db.server";
@@ -139,6 +139,10 @@ function getProductBoxes(
             <b>Updated on</b>: {product.updatedAt}
           </div>
         </div>
+
+        <Link to={`/admin/product/${product.id}`}>
+          <Button className="mt-4 block">View Product Information</Button>
+        </Link>
 
         <Button
           type="submit"
