@@ -309,3 +309,31 @@ export async function analyzeProduct(product_id: string) {
 
   channel.sendToQueue("to_analyze", Buffer.from(JSON.stringify(reviews)));
 }
+
+export async function clearParseQueue() {
+  if (!connection) {
+    await connectionPromise;
+    if (!connection) throw new Error("Queue connection not set up");
+  }
+
+  const channel = await connection.createChannel();
+  await channel.assertQueue("parse", {
+    durable: true,
+  });
+
+  channel.purgeQueue("parse");
+}
+
+export async function clearToAnalyzeQueue() {
+  if (!connection) {
+    await connectionPromise;
+    if (!connection) throw new Error("Queue connection not set up");
+  }
+
+  const channel = await connection.createChannel();
+  await channel.assertQueue("to_analyze", {
+    durable: true,
+  });
+
+  channel.purgeQueue("to_analyze");
+}
