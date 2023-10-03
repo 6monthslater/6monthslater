@@ -1,8 +1,11 @@
 import type { FirebaseApp } from "firebase/app";
 import { initializeApp } from "firebase/app";
+import type { Auth } from "@firebase/auth";
+import { getAuth } from "@firebase/auth";
 
 declare global {
   var __firebase: FirebaseApp; //eslint-disable-line
+  var __auth: Auth; //eslint-disable-line
 }
 
 // The inclusion of the API key is intentional and is suggested by Firebase
@@ -20,4 +23,9 @@ if (!global.__firebase) {
   global.__firebase = initializeApp(firebaseConfig);
 }
 
+if (!global.__auth) {
+  global.__auth = getAuth(global.__firebase);
+}
+
 export const firebase = global.__firebase;
+export const auth = global.__auth;
