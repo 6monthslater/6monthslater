@@ -37,3 +37,13 @@ Once the product reviews have been scraped, it converts this data to JSON and se
 The analyzer service listens to the `to_analyze` queue and performs analysis on each review to determine if there are any product issues mentioned in the review.
 
 This service is further explained in [it's dedicated documentation page](analyzer/README.md).
+
+## Admin Operation
+
+The scraper can be manually controlled from the admin interface. The web server, scraper, analyzer, database and RabbitMQ must be running for this to work. Setup for this is describe in [the main readme](../README.md)
+
+To start a scrape of a specific product, go to the "Add to Queue" (`/admin/queue`) page. Enter the URL to the produce into the textbox and click "Add".
+
+To view the results of the scraping and analysis, visit the Admin products page (`/admin/products`). This page will list recently scraped products, along with the reviews that were scraped, as well as the reports that were processed. This page also allows you to clear analyzed reports for a specific product, and trigger analysis for all reviews of a product.
+
+![Admin Products Page](docs/images/admin-products.png)
