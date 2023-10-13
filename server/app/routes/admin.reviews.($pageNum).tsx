@@ -26,7 +26,7 @@ interface ReviewData {
 }
 
 export const loader = async ({ params }: { params: { pageNum: string } }) => {
-  const page = parseInt(params.pageNum, 10) || 0;
+  const page = parseInt(params.pageNum, 10) || 1;
   const pageSize = 10;
 
   return json<ReviewData[] | null>(
@@ -55,7 +55,7 @@ export const loader = async ({ params }: { params: { pageNum: string } }) => {
       orderBy: {
         createdAt: "desc",
       },
-      skip: page * pageSize,
+      skip: (page - 1) * pageSize,
       take: pageSize,
     })
   );

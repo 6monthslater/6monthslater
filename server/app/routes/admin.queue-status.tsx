@@ -1,14 +1,39 @@
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import type { ActionFunction } from "@remix-run/node";
+import { useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
 import type { DeltaType } from "@tremor/react";
-import { BadgeDelta, Card, Title } from "@tremor/react";
+import { BadgeDelta, Button, Card, Title } from "@tremor/react";
 import { useEffect, useRef } from "react";
 import type { QueueStatus } from "~/queue-handling/review.server";
-import { getStatusOfQueue } from "~/queue-handling/review.server";
+import {
+  clearParseQueue,
+  clearToAnalyzeQueue,
+  getStatusOfQueue,
+} from "~/queue-handling/review.server";
 
 interface LoaderData {
   parseQueue: QueueStatus;
   processQueue: QueueStatus;
 }
+
+export const action: ActionFunction = async ({ request }) => {
+  const { type } = Object.fromEntries(await request.formData());
+  if (typeof type !== "string" || type.length === 0) {
+    return null;
+  }
+
+  switch (type) {
+    case "clearParseQueue": {
+      await clearParseQueue();
+      break;
+    }
+    case "clearToAnalyzeQueue": {
+      await clearToAnalyzeQueue();
+      break;
+    }
+  }
+
+  return null;
+};
 
 export const loader = async (): Promise<LoaderData> => {
   const parseQueue = getStatusOfQueue("parse");
@@ -21,6 +46,7 @@ export const loader = async (): Promise<LoaderData> => {
 };
 
 export default function Index() {
+  const submit = useSubmit();
   const initialQueueData = useLoaderData<LoaderData>();
   const nextQueueData = useFetcher<typeof loader>();
   const allQueueDataRef = useRef([initialQueueData]);
@@ -67,6 +93,22 @@ export default function Index() {
               previousData?.parseQueue?.consumerCount,
               "scraper instance"
             )}
+
+            <Button
+              type="submit"
+              className="mt-4 block"
+              onClick={() => {
+                submit(
+                  { type: "clearParseQueue" },
+                  {
+                    preventScrollReset: true,
+                    method: "post",
+                  }
+                );
+              }}
+            >
+              Clear Queue
+            </Button>
           </Card>
         </div>
         <div className="col col-span-1">
@@ -84,6 +126,22 @@ export default function Index() {
               previousData?.processQueue?.consumerCount,
               "processing instance"
             )}
+
+            <Button
+              type="submit"
+              className="mt-4 block"
+              onClick={() => {
+                submit(
+                  { type: "clearToAnalyzeQueue" },
+                  {
+                    preventScrollReset: true,
+                    method: "post",
+                  }
+                );
+              }}
+            >
+              Clear Queue
+            </Button>
           </Card>
         </div>
       </div>
