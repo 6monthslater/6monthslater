@@ -8,4 +8,8 @@ defaults = {
 }
 
 def get_env(name: str) -> str | None:
-    return os.getenv(name)
+    result = os.getenv(name)
+    if result is None and name in defaults:
+        return defaults[name]
+    else:
+        return result
