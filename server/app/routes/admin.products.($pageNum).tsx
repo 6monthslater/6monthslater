@@ -93,19 +93,25 @@ export const loader = async ({ params }: { params: { pageNum: string } }) => {
       }),
     }))
   );
-  return json(products);
+
+  const numberOfProducts = await db.product.count();
+  return json({
+    products,
+    numberOfProducts
+  });
 };
 
 export default function Index() {
-  const products = useLoaderData<typeof loader>();
+  const productData = useLoaderData<typeof loader>();
   const submit = useSubmit();
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
       <h1 className="text-2xl font-bold">Admin: Analyze Products</h1>
+      <h2 className="text-1xl">Total number of products: {productData.numberOfProducts}</h2>
 
       <div className="flex flex-row flex-wrap">
-        {products && getProductBoxes(products, submit)}
+        {productData && getProductBoxes(productData.products, submit)}
       </div>
     </div>
   );
