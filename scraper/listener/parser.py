@@ -60,6 +60,9 @@ def start_parsing_listener(host: str, port: int) -> None:
     channel.queue_declare(queue='parsed_reviews', durable=True)
     channel.queue_declare(queue='to_analyze', durable=True)
 
+    # Otherwise consumers fetch all messages, starving other consumers
+    channel.basic_qos(prefetch_count=10)
+
     channel.basic_consume('parse', __on_parse_message)
     try:
         channel.start_consuming()

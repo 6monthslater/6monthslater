@@ -46,6 +46,9 @@ def start_analyzing_listener(host: str, port: int) -> None:
     channel.queue_declare(queue='to_analyze', durable=True)
     channel.queue_declare(queue='reports', durable=True)
 
+    # Otherwise consumers fetch all messages, starving other consumers
+    channel.basic_qos(prefetch_count=10)
+
     channel.basic_consume('to_analyze', __on_parse_message)
     try:
         channel.start_consuming()

@@ -62,6 +62,9 @@ def start_crawling_listener(host: str, port: int) -> None:
     queue_name = to_crawl.method.queue
     channel.queue_bind(exchange='to_crawl', queue=str(queue_name))
 
+    # Otherwise consumers fetch all messages, starving other consumers
+    channel.basic_qos(prefetch_count=10)
+
     channel.basic_consume(str(queue_name), __on_crawl_message, auto_ack=True)
     try:
         channel.start_consuming()
