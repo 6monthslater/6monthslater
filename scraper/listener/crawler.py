@@ -25,8 +25,9 @@ def __on_crawl_message(channel: pika.adapters.blocking_connection.BlockingChanne
         print(f"Received {crawl_info['url']} for crawling")
         current_crawl = crawl_info['url']
         
+        product_ids_so_far: set[str] = set()
         for i in range(max_pages):
-            crawl_for_reviews(crawl_info['url'], i, crawl_info['review_info'], lambda x: channel.basic_publish(
+            product_ids_so_far = crawl_for_reviews(crawl_info['url'], i, crawl_info['review_info'], product_ids_so_far, lambda x: channel.basic_publish(
                 exchange='',
                 routing_key='parse',
                 body=x,
