@@ -1,3 +1,5 @@
+import dateutil.parser as dp
+import traceback
 from typing import Any
 import pika
 import json
@@ -36,8 +38,8 @@ def __on_parse_message(channel: pika.adapters.blocking_connection.BlockingChanne
         )
 
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
-    except Exception as e:
-        print(e)
+    except Exception:
+        traceback.print_exc()
         return
     
 def start_analyzing_listener(host: str, port: int) -> None:
@@ -66,7 +68,7 @@ def __analyze_reviews(reviews: list[dict[str, Any]]) -> list[Report]:
         author_image_url=review["author_image_url"],
         title=review["title"],
         text=review["text"],
-        date=review["date"],
+        date=int(dp.parse(review["date"]).timestamp()),
         date_text=review["date_text"],
         review_id=review["review_id"],
         attributes=review["attributes"],
@@ -77,7 +79,7 @@ def __analyze_reviews(reviews: list[dict[str, Any]]) -> list[Report]:
         images=review["images"],
         country_reviewed_in=review["country_reviewed_in"],
         region=AmazonRegion(review["region"]),
-        product_name=review["product_name"],
-        manufacturer_name=review["manufacturer_name"],
-        manufacturer_id=review["manufacturer_id"]
+        product_name=review["product"]["name"],
+        manufacturer_name=review["product"]["manufacturer"]["name"],
+        manufacturer_id=review["product"]["manufacturer"]["id"]
     ) for review in reviews])
