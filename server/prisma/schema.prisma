@@ -97,6 +97,7 @@ model ReliabilityKeyframe {
 model Issue {
   id String @id @default(cuid())
   text String
+  classification String @default("")
   criticality Float?
   rel_timestamp Int?
   frequency String?
