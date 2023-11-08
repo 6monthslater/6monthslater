@@ -18,13 +18,13 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
               review: true,
               issues: {
                 include: {
-                  images: true
-                }
+                  images: true,
+                },
               },
             },
-          }
-        }
-      }
+          },
+        },
+      },
     },
   });
   return json({ product });
@@ -46,23 +46,25 @@ export default function Route() {
     <div className="mx-4 h-full grow content-center items-center space-y-4 py-4 text-center md:container md:mx-auto">
       <h1 className="text-xl font-semibold">{product?.name}</h1>
       <div className="mx-auto space-y-4 md:w-3/4 md:columns-md">
-        {topIssues.length > 0 &&
+        {topIssues.length > 0 && (
           <Card>
             <Title className="font-semibold">Top Issues</Title>
 
             {topIssues.map((issue, index) => (
-              <Link to={`#${issue.id}`} key={issue.text}
-                  className="py-1 block"
-                  onClick={() => {
-                    setSelectedProduct(issue.id);
-                  }}>
-                {index + 1}.{" "}
-                {issue.text}
+              <Link
+                to={`#${issue.id}`}
+                key={issue.text}
+                className="block py-1"
+                onClick={() => {
+                  setSelectedProduct(issue.id);
+                }}
+              >
+                {index + 1}. {issue.text}
               </Link>
             ))}
           </Card>
-        }
-          
+        )}
+
         <Card>
           <Title className="font-semibold">Reliability Score</Title>
           <DonutChart
@@ -80,85 +82,93 @@ export default function Route() {
         <h2 className="text-lg font-semibold">Recent Reports</h2>
       </div>
       <div className="spacing-y-4 mx-auto columns-sm">
-        {reports.map((report) => (
-          report.issues?.length > 0 && (
-            <Card key={report.id}
+        {reports.map(
+          (report) =>
+            report.issues?.length > 0 && (
+              <Card
+                key={report.id}
                 className="mb-4 break-inside-avoid-column"
                 id={report.id}
-                decoration={selectedProduct === report.id ? "left" : ""}>
-              <Title className="font-semibold">{report.review.title}</Title>
+                decoration={selectedProduct === report.id ? "left" : ""}
+              >
+                <Title className="font-semibold">{report.review.title}</Title>
                 <div>
                   <b>Issues</b>:{" "}
-                  {report.issues.map((issue) => (issue.text &&
-                    <div key={issue.id} className="border-4">
-                      <div>
-                        <b>Text</b>: {issue.text}
-                      </div>
-                      <div>
-                        <b>Classification</b>: {issue.classification}
-                      </div>
-                      <div>
-                        <b>Criticality</b>: {issue.criticality}
-                      </div>
-                      <div>
-                        <b>Relative Timestamp</b>: {issue.rel_timestamp}
-                      </div>
-                      <div>
-                        <b>Frequency</b>: {issue.frequency}
-                      </div>
-                      {issue.images?.length > 0 && (
-                        <div>
-                          <b>Images</b>:{" "}
-                          {issue.images.map((image) => (
-                            // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                            <img
-                              key={image.image_url}
-                              src={image.image_url}
-                              alt="Photo of product"
-                            />
-                          ))}
+                  {report.issues.map(
+                    (issue) =>
+                      issue.text && (
+                        <div key={issue.id} className="border-4">
+                          <div>
+                            <b>Text</b>: {issue.text}
+                          </div>
+                          <div>
+                            <b>Classification</b>: {issue.classification}
+                          </div>
+                          <div>
+                            <b>Criticality</b>: {issue.criticality}
+                          </div>
+                          <div>
+                            <b>Relative Timestamp</b>: {issue.rel_timestamp}
+                          </div>
+                          <div>
+                            <b>Frequency</b>: {issue.frequency}
+                          </div>
+                          {issue.images?.length > 0 && (
+                            <div>
+                              <b>Images</b>:{" "}
+                              {issue.images.map((image) => (
+                                // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                                <img
+                                  key={image.image_url}
+                                  src={image.image_url}
+                                  alt="Photo of product"
+                                />
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  ))}
+                      )
+                  )}
                 </div>
-              {report.review.is_top_positive_review ? (
+                {report.review.is_top_positive_review ? (
+                  <p>
+                    <b>Top Positive Review</b>
+                  </p>
+                ) : null}
+                {report.review.is_top_critical_review ? (
+                  <p>
+                    <b>Top Critical Review</b>
+                  </p>
+                ) : null}
                 <p>
-                  <b>Top Positive Review</b>
+                  <b>Date: </b>
+                  {report.review.date_text}
                 </p>
-              ) : null}
-              {report.review.is_top_critical_review ? (
                 <p>
-                  <b>Top Critical Review</b>
+                  <b>Verified Purchase: </b>
+                  {report.review.verified_purchase ? "Yes" : "No"}
                 </p>
-              ) : null}
-              <p>
-                <b>Date: </b>
-                {report.review.date_text}
-              </p>
-              <p>
-                <b>Verified Purchase: </b>
-                {report.review.verified_purchase ? "Yes" : "No"}
-              </p>
-              <p>
-                <b>"Found Helpful" Votes: </b>
-                {report.review.found_helpful_count}
-              </p>
-              <hr className="my-2" />
-            </Card>
-          )
-        ))}
+                <p>
+                  <b>"Found Helpful" Votes: </b>
+                  {report.review.found_helpful_count}
+                </p>
+                <hr className="my-2" />
+              </Card>
+            )
+        )}
       </div>
     </div>
   );
 }
 
-function getTopIssues(reports: Array<{
-  issues: Array<{
-    text: string;
-  }>;
-  id: string;
-}>): TopIssue[] {
+function getTopIssues(
+  reports: Array<{
+    issues: Array<{
+      text: string;
+    }>;
+    id: string;
+  }>
+): TopIssue[] {
   const issues: TopIssue[] = [];
   for (const report of reports) {
     for (const issue of report.issues) {
