@@ -146,7 +146,7 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
             if relevance_to_ownership_exp >= 0.9:
                 time_expressions.append((relative_date.date(), relevant_phrase, time_expression_span))
                 if _debug:
-                    print(time_expressions[-1])
+                    print(f"Time expression: {time_expressions[-1]}")
             else:
                 print(f"WARNING: Filtered expression '{relevant_phrase}' based on relevance to "
                     f"ownership experience (prob = {relevance_to_ownership_exp:.2f})")

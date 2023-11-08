@@ -1,3 +1,5 @@
+import dateutil.parser as dp
+import traceback
 from typing import Any
 import pika
 import json
@@ -5,6 +7,7 @@ from analyzer.analyzer import Report, process_reviews
 from parsing.amazon import Review
 from requester.amazon import AmazonRegion
 from utils import class_to_json
+from utils.env import get_env_int
 
 def __on_parse_message(channel: pika.adapters.blocking_connection.BlockingChannel,
         method_frame: pika.spec.Basic.Deliver, header_frame: pika.BasicProperties, body: bytes) -> None:
@@ -36,8 +39,8 @@ def __on_parse_message(channel: pika.adapters.blocking_connection.BlockingChanne
         )
 
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
-    except Exception as e:
-        print(e)
+    except Exception:
+        traceback.print_exc()
         return
     
 def start_analyzing_listener(host: str, port: int) -> None:
@@ -45,6 +48,9 @@ def start_analyzing_listener(host: str, port: int) -> None:
     channel = connection.channel()
     channel.queue_declare(queue='to_analyze', durable=True)
     channel.queue_declare(queue='reports', durable=True)
+
+    # Otherwise consumers fetch all messages, starving other consumers
+    channel.basic_qos(prefetch_count=get_env_int("QUEUE_PREFETCH_COUNT"))
 
     channel.basic_consume('to_analyze', __on_parse_message)
     try:
@@ -63,7 +69,7 @@ def __analyze_reviews(reviews: list[dict[str, Any]]) -> list[Report]:
         author_image_url=review["author_image_url"],
         title=review["title"],
         text=review["text"],
-        date=review["date"],
+        date=int(dp.parse(review["date"]).timestamp()),
         date_text=review["date_text"],
         review_id=review["review_id"],
         attributes=review["attributes"],
@@ -74,7 +80,7 @@ def __analyze_reviews(reviews: list[dict[str, Any]]) -> list[Report]:
         images=review["images"],
         country_reviewed_in=review["country_reviewed_in"],
         region=AmazonRegion(review["region"]),
-        product_name=review["product_name"],
-        manufacturer_name=review["manufacturer_name"],
-        manufacturer_id=review["manufacturer_id"]
+        product_name=review["product"]["name"],
+        manufacturer_name=review["product"]["manufacturer"]["name"],
+        manufacturer_id=review["product"]["manufacturer"]["id"]
     ) for review in reviews])
