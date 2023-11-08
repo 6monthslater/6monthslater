@@ -2,6 +2,7 @@ import pika
 from pika.exchange_type import ExchangeType
 import json
 from crawler.amazon import crawl_for_reviews
+from utils.env import get_env_int
 
 max_pages = 1000
 current_crawl = None
@@ -63,7 +64,7 @@ def start_crawling_listener(host: str, port: int) -> None:
     channel.queue_bind(exchange='to_crawl', queue=str(queue_name))
 
     # Otherwise consumers fetch all messages, starving other consumers
-    channel.basic_qos(prefetch_count=10)
+    channel.basic_qos(prefetch_count=get_env_int("QUEUE_PREFETCH_COUNT"))
 
     channel.basic_consume(str(queue_name), __on_crawl_message, auto_ack=True)
     try:
