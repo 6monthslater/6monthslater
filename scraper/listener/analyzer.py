@@ -7,6 +7,7 @@ from analyzer.analyzer import Report, process_reviews
 from parsing.amazon import Review
 from requester.amazon import AmazonRegion
 from utils import class_to_json
+from utils.env import get_env_int
 
 def __on_parse_message(channel: pika.adapters.blocking_connection.BlockingChannel,
         method_frame: pika.spec.Basic.Deliver, header_frame: pika.BasicProperties, body: bytes) -> None:
@@ -49,7 +50,7 @@ def start_analyzing_listener(host: str, port: int) -> None:
     channel.queue_declare(queue='reports', durable=True)
 
     # Otherwise consumers fetch all messages, starving other consumers
-    channel.basic_qos(prefetch_count=10)
+    channel.basic_qos(prefetch_count=get_env_int("QUEUE_PREFETCH_COUNT"))
 
     channel.basic_consume('to_analyze', __on_parse_message)
     try:
