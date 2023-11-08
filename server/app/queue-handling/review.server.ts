@@ -309,7 +309,7 @@ export async function analyzeProduct(product_id: string) {
     include: {
       product: {
         include: {
-          manufacturer: true
+          manufacturer: true,
         },
       },
       images: true,
