@@ -46,7 +46,7 @@
     "node": ">=14"
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": "eslint --cache --fix",
-    "*": "prettier --ignore-unknown --write"
+    "*.{js,ts,jsx,tsx}": "eslint --cache",
+    "*": "prettier --ignore-unknown --check"
   }
 }
