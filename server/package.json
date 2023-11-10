@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint app && npm run typecheck",
     "stylecheck": "prettier --check .",
-    "style": "prettier --write .",
+    "style": "prettier --write . && prisma format",
     "prepare": "cd .. && husky install server/.husky"
   },
   "dependencies": {
