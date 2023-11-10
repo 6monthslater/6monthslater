@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint app && npm run typecheck",
     "stylecheck": "prettier --check .",
-    "style": "prettier --write ."
+    "style": "prettier --write . && prisma format",
+    "prepare": "cd .. && husky install server/.husky"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.13",
@@ -33,6 +34,8 @@
     "@typescript-eslint/parser": "^5.49.0",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.2",
     "prettier": "^2.8.4",
     "prettier-plugin-tailwindcss": "^0.2.4",
     "prisma": "^4.11.0",
@@ -41,5 +44,9 @@
   },
   "engines": {
     "node": ">=14"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": "eslint --cache",
+    "*": "prettier --ignore-unknown --check"
   }
 }
