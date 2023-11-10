@@ -17,9 +17,7 @@ interface ReviewData {
   found_helpful_count: number;
   is_top_positive_review: boolean;
   is_top_critical_review: boolean;
-  images: Array<{
-    image_url: string;
-  }>;
+  images: Array<{ image_url: string }>;
   country_reviewed_in: string;
   region: string;
   createdAt: Date;
