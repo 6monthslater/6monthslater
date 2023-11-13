@@ -5,6 +5,7 @@ import json
 import parsing.amazon as amazon
 from requester.amazon import AmazonRegion
 from utils import class_to_json
+from utils.env import get_env_int
 
 class ReviewSource(str, Enum):
     AMAZON = "amazon",
@@ -59,6 +60,9 @@ def start_parsing_listener(host: str, port: int) -> None:
     channel.queue_declare(queue='parse', durable=True)
     channel.queue_declare(queue='parsed_reviews', durable=True)
     channel.queue_declare(queue='to_analyze', durable=True)
+
+    # Otherwise consumers fetch all messages, starving other consumers
+    channel.basic_qos(prefetch_count=get_env_int("QUEUE_PREFETCH_COUNT"))
 
     channel.basic_consume('parse', __on_parse_message)
     try:

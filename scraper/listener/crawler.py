@@ -2,6 +2,7 @@ import pika
 from pika.exchange_type import ExchangeType
 import json
 from crawler.amazon import crawl_for_reviews
+from utils.env import get_env_int
 
 max_pages = 1000
 current_crawl = None
@@ -25,8 +26,9 @@ def __on_crawl_message(channel: pika.adapters.blocking_connection.BlockingChanne
         print(f"Received {crawl_info['url']} for crawling")
         current_crawl = crawl_info['url']
         
+        product_ids_so_far: set[str] = set()
         for i in range(max_pages):
-            crawl_for_reviews(crawl_info['url'], i, crawl_info['review_info'], lambda x: channel.basic_publish(
+            product_ids_so_far = crawl_for_reviews(crawl_info['url'], i, crawl_info['review_info'], product_ids_so_far, lambda x: channel.basic_publish(
                 exchange='',
                 routing_key='parse',
                 body=x,
@@ -60,6 +62,9 @@ def start_crawling_listener(host: str, port: int) -> None:
     to_crawl = channel.queue_declare(queue='', exclusive=True)
     queue_name = to_crawl.method.queue
     channel.queue_bind(exchange='to_crawl', queue=str(queue_name))
+
+    # Otherwise consumers fetch all messages, starving other consumers
+    channel.basic_qos(prefetch_count=get_env_int("QUEUE_PREFETCH_COUNT"))
 
     channel.basic_consume(str(queue_name), __on_crawl_message, auto_ack=True)
     try:

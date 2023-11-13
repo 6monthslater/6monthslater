@@ -305,6 +305,14 @@ export async function analyzeProduct(product_id: string) {
     where: {
       product_id,
     },
+    include: {
+      product: {
+        include: {
+          manufacturer: true,
+        },
+      },
+      images: true,
+    },
   });
 
   channel.sendToQueue("to_analyze", Buffer.from(JSON.stringify(reviews)));
