@@ -50,7 +50,7 @@ To view the results of the scraping and analysis, visit the Admin products page 
 
 # Generating training data
 
-The analyzer can also generate training data using the LLAMA large langauge model and real-world reviews. This generates a JSON file that can be used in `analyzer/train_issue_detection.json`, but the data must be human reviewed as it is not fully accurate.
+The analyzer can also generate training data using the LLAMA large language model and real-world reviews. This generates a JSON file that can be used in `analyzer/train_issue_detection.json`, but the data must be human reviewed as it is not fully accurate.
 
 Training the analyzer using the large language model allows us to use the power of the large language model without the speed and resource consumption issues of the large language models. Our analyzer is very quick, and is up to 60 times faster than using LLAMA directly.
 
