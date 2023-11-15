@@ -39,6 +39,10 @@ cd server
 npm install
 ```
 
+Check to see if `./server/.husky` exists with the expected contents. 
+
+If it's missing, you must also run `npm run prepare` in `./server/` to enable the pre-commit hooks.
+
 Then you can start the server with `npm run dev` or `npm run start` in production.
 
 ### Scraper
