@@ -3,7 +3,7 @@ import NavLink from "~/components/navlink";
 
 const Navbar = () => {
   return (
-    <nav className=" to-90% flex flex-wrap items-center justify-between bg-gradient-to-r from-cyan-700 to-cyan-500 p-4 text-slate-200">
+    <nav className="flex flex-wrap items-center justify-between bg-gradient-to-r from-cyan-700 to-cyan-500 to-90% p-4 text-slate-200">
       <div className="mr-6 flex flex-shrink-0 items-center">
         <span className="text-xl font-semibold tracking-tight">
           <Link to="/">6 Months Later</Link>
