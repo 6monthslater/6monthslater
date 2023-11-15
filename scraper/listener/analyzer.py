@@ -16,7 +16,9 @@ import threading
 import os
 
 initial_prompt = """
-List each functional issue with the following product described in the review below. If a repair was needed, that is a problem. Ignore comparisons to competitors or previous versions. Respond in JSON with an array of issues with the time_since_event (in words, or "unknown"), time_since_event_in_days (-1 if unknown), text (full sentences that are an exact quote), issue_short_name (one or two word summary) and is_product_failure.
+List each functional issue with the following product described in the review below. If a repair was needed, that is a problem. Ignore comparisons to\
+competitors or previous versions. Respond in JSON with an array of issues with the time_since_event (in words, or "unknown"), time_since_event_in_days \
+(-1 if unknown), text (full sentences that are an exact quote), issue_short_name (one or two word summary) and is_product_failure.
 Example: [{"text": "Belt broke last month so I ordered new ones.", "issue_short_name": "Broken belt"}]
 ---
 """
