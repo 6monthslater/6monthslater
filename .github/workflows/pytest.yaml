@@ -24,6 +24,8 @@ jobs:
         working-directory: ./scraper
       - run: chmod +x setup.sh; ./setup.sh
         working-directory: ./scraper
+        env:
+          DOWNLOAD_TRAINING: "0"
       - name: Run Tests
         working-directory: ./scraper
         timeout-minutes: 5

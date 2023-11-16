@@ -162,3 +162,7 @@ cython_debug/
 
 # SUTime jars
 jars
+
+# for training
+models
+results
