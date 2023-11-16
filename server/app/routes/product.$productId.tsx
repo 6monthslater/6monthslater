@@ -4,6 +4,11 @@ import { db } from "~/utils/db.server";
 import { Card, DonutChart, Title } from "@tremor/react";
 import { useState } from "react";
 
+interface TopIssue {
+  text: string;
+  id: string;
+}
+
 export const loader = async ({ params }: { params: { productId: string } }) => {
   const product = await db.product.findFirst({
     where: {
@@ -30,9 +35,31 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
   return json({ product });
 };
 
-interface TopIssue {
-  text: string;
-  id: string;
+function getTopIssues(
+  reports: Array<{
+    issues: Array<{
+      text: string;
+    }>;
+    id: string;
+  }>
+): TopIssue[] {
+  const issues: TopIssue[] = [];
+  for (const report of reports) {
+    for (const issue of report.issues) {
+      if (issue.text) {
+        issues.push({
+          text: issue.text,
+          id: report.id,
+        });
+      }
+    }
+
+    if (issues.length >= 5) {
+      break;
+    }
+  }
+
+  return issues;
 }
 
 export default function Route() {
@@ -161,31 +188,4 @@ export default function Route() {
       </div>
     </div>
   );
-}
-
-function getTopIssues(
-  reports: Array<{
-    issues: Array<{
-      text: string;
-    }>;
-    id: string;
-  }>
-): TopIssue[] {
-  const issues: TopIssue[] = [];
-  for (const report of reports) {
-    for (const issue of report.issues) {
-      if (issue.text) {
-        issues.push({
-          text: issue.text,
-          id: report.id,
-        });
-      }
-    }
-
-    if (issues.length >= 5) {
-      break;
-    }
-  }
-
-  return issues;
 }
