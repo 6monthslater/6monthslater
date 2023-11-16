@@ -151,7 +151,7 @@ def __analyze_reviews_using_llm(reviews: list[dict[str, Any]]) -> list[Report]:
 
         reports.append(Report(
             review_id = review["review_id"],
-            report_weight = 1, # TODO: Report weighing
+            report_weight = 1,
             reliability_keyframes = [],
             issues = [Issue(
                 text=result["text"],
