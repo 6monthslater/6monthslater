@@ -97,7 +97,10 @@ export default function Route() {
                   {report.issues.map(
                     (issue) =>
                       issue.text && (
-                        <div key={issue.id} className="border-4">
+                        <div
+                          key={issue.id}
+                          className="my-3 rounded border-2 border-slate-100 bg-slate-50 p-2"
+                        >
                           <div>
                             <b>Text</b>: {issue.text}
                           </div>
@@ -117,11 +120,10 @@ export default function Route() {
                             <div>
                               <b>Images</b>:{" "}
                               {issue.images.map((image) => (
-                                // eslint-disable-next-line jsx-a11y/img-redundant-alt
                                 <img
                                   key={image.image_url}
                                   src={image.image_url}
-                                  alt="Photo of product"
+                                  alt="Product"
                                 />
                               ))}
                             </div>
