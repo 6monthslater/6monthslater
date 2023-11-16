@@ -187,6 +187,7 @@ export async function startListeningForReviews() {
               issues: {
                 create: report.issues.map((issue) => ({
                   text: issue.text,
+                  classification: issue.classification,
                   criticality: issue.criticality,
                   rel_timestamp: issue.rel_timestamp,
                   frequency: issue.frequency,

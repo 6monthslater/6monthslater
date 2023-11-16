@@ -95,14 +95,15 @@ model ReliabilityKeyframe {
 }
 
 model Issue {
-  id            String       @id @default(cuid())
-  text          String
-  criticality   Float?
-  rel_timestamp Int?
-  frequency     String?
-  images        IssueImage[]
-  report        Report       @relation(fields: [report_id], references: [id])
-  report_id     String
+  id             String       @id @default(cuid())
+  text           String
+  classification String       @default("")
+  criticality    Float?
+  rel_timestamp  Int?
+  frequency      String?
+  images         IssueImage[]
+  report         Report       @relation(fields: [report_id], references: [id])
+  report_id      String
 }
 
 model IssueImage {
