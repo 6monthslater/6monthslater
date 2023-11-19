@@ -47,16 +47,30 @@ export const loader = async ({ request }): Promise<Suggestion[]> => {
   const productName = searchParams.get("productName");
   if (!productName) return [];
 
+  // :* used to search prefixes
+  const searchTerm = productName
+    .toLowerCase()
+    .trim()
+    .split(" ")
+    .map((s) => `${s}:*`)
+    .join(" & ");
+
   const data = await db.product.findMany({
     select: {
       name: true,
       id: true,
     },
+    where: {
+      name: {
+        search: searchTerm,
+        mode: "insensitive",
+      },
+    },
     orderBy: {
       _relevance: {
         fields: ["name"],
-        search: productName,
-        sort: "asc",
+        search: searchTerm,
+        sort: "desc",
       },
     },
     take: suggestionNumber,
