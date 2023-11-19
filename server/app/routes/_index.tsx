@@ -22,11 +22,21 @@ export async function action({ request }: ActionArgs) {
   if (!productName) {
     return json({ errors: ["No Product Name provided"] }, { status: 400 });
   }
+
+  const searchTerm = createSearchTerm(productName.toString());
+
   const data = await db.product.findFirst({
     where: {
       name: {
-        search: productName.toString(),
+        search: searchTerm,
         mode: "insensitive",
+      },
+    },
+    orderBy: {
+      _relevance: {
+        fields: ["name"],
+        search: searchTerm,
+        sort: "desc",
       },
     },
     select: {
@@ -47,13 +57,7 @@ export const loader = async ({ request }): Promise<Suggestion[]> => {
   const productName = searchParams.get("productName");
   if (!productName) return [];
 
-  // :* used to search prefixes
-  const searchTerm = productName
-    .toLowerCase()
-    .trim()
-    .split(" ")
-    .map((s) => `${s}:*`)
-    .join(" & ");
+  const searchTerm = createSearchTerm(productName);
 
   const data = await db.product.findMany({
     select: {
@@ -82,6 +86,18 @@ export const loader = async ({ request }): Promise<Suggestion[]> => {
     id: product.id,
   }));
 };
+
+function createSearchTerm(productName: string) {
+  return (
+    productName
+      .toLowerCase()
+      .trim()
+      .split(" ")
+      // :* used to search prefixes
+      .map((s) => `${s}:*`)
+      .join(" & ")
+  );
+}
 
 export default function Index() {
   const [searchProdName, setSearchProdName] = useState("");
