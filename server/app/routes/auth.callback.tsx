@@ -1,30 +1,16 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { createServerClient, parse, serialize } from "@supabase/ssr";
+import { createServerClient } from "~/utils/supabase.server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const code = params.code;
-  const cookies = parse(request.headers.get("Cookie") ?? "");
-  const headers = new Headers();
+
+  let headers: Headers = new Headers();
+  let supabase: SupabaseClient | null = null;
 
   if (code) {
-    const supabase = createServerClient(
-      process.env.SUPABASE_URL ?? "",
-      process.env.SUPABASE_ANON_KEY ?? "",
-      {
-        cookies: {
-          get(key) {
-            return cookies[key];
-          },
-          set(key, value, options) {
-            headers.append("Set-Cookie", serialize(key, value, options));
-          },
-          remove(key, options) {
-            headers.append("Set-Cookie", serialize(key, "", options));
-          },
-        },
-      }
-    );
+    ({ supabase, headers } = createServerClient(request));
     await supabase.auth.exchangeCodeForSession(code);
   } else {
     console.log("AUTH: No code!");
