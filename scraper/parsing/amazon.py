@@ -31,6 +31,7 @@ class Review:
     country_reviewed_in: str
     region: AmazonRegion
     product_name: str | None
+    product_image_url: str | None
     manufacturer_name: str | None
     manufacturer_id: str | None
 
@@ -131,6 +132,10 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     product_name_elem = page.select_one("[data-hook=\"product-link\"]")
     product_name = product_name_elem.text.strip() if product_name_elem else None
 
+    product_image_url_elem = page.select_one("img[data-hook=\"cr-product-image\"]")
+    product_image_high_res = product_image_url_elem.attrs["data-a-hires"] if product_image_url_elem else None
+    product_image_url = product_image_url_elem.attrs["src"] if product_image_url_elem and not product_image_high_res else product_image_high_res
+
     manufacturer_name_elem = page.select_one(".product-by-line a")
     manufacturer_name = manufacturer_name_elem.text.strip() if manufacturer_name_elem else None
     manufacturer_attrs = manufacturer_name_elem.attrs if manufacturer_name_elem else None
@@ -155,6 +160,7 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
         country_reviewed_in=country,
         region=region,
         product_name=product_name,
+        product_image_url=product_image_url,
         manufacturer_name=manufacturer_name,
         manufacturer_id=manufacturer_id,
     )
