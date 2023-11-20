@@ -1,12 +1,17 @@
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
-import { Card, DonutChart, Title } from "@tremor/react";
+import { AreaChart, Card, Title } from "@tremor/react";
 import { useState } from "react";
 
 interface TopIssue {
   text: string;
   id: string;
+}
+
+interface IssueGraphData {
+  date: string;
+  "Issue Amount": number;
 }
 
 export const loader = async ({ params }: { params: { productId: string } }) => {
@@ -62,10 +67,82 @@ function getTopIssues(
   return issues;
 }
 
+function getRelativeTimestampDate(
+  report: {
+    review: {
+      date_text: string;
+    };
+  },
+  issue: {
+    text: string;
+    rel_timestamp: number | null;
+  }
+): Date {
+  if (!issue.rel_timestamp) return new Date(report.review.date_text);
+
+  if (issue.rel_timestamp > 1600000000) {
+    // Treat as unix
+    return new Date(issue.rel_timestamp * 1000);
+  } else {
+    // Treat as days since review was created
+    const reviewDate = new Date(report.review.date_text);
+    reviewDate.setDate(reviewDate.getDate() + issue.rel_timestamp);
+
+    return reviewDate;
+  }
+}
+
+function getIssueGraphData(
+  reports: Array<{
+    issues: Array<{
+      text: string;
+      rel_timestamp: number | null;
+    }>;
+    review: {
+      date_text: string;
+    };
+  }>
+): IssueGraphData[] {
+  const issueGraphData: IssueGraphData[] = [];
+  const months: number[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const month = new Date().getMonth() - i;
+    months.push(month);
+
+    issueGraphData.push({
+      date: new Date(new Date().setMonth(month)).toLocaleString("default", {
+        month: "long",
+        year: "numeric",
+      }),
+      "Issue Amount": 0,
+    });
+  }
+
+  for (const report of reports) {
+    for (const issue of report.issues) {
+      if (issue.text) {
+        const date = getRelativeTimestampDate(report, issue);
+        const month = date.getMonth();
+
+        // Increment appropriate month
+        for (let i = 0; i < months.length; i++) {
+          if (month === months[i]) {
+            issueGraphData[i]["Issue Amount"]++;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  return issueGraphData;
+}
+
 export default function Route() {
   const { product } = useLoaderData<typeof loader>();
   const reports = product?.reviews.flatMap((review) => review.reports) ?? [];
   const topIssues = getTopIssues(reports);
+  const issueGraphData = getIssueGraphData(reports);
 
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
@@ -93,15 +170,14 @@ export default function Route() {
         )}
 
         <Card>
-          <Title className="font-semibold">Reliability Score</Title>
-          <DonutChart
-            data={[
-              { name: "Score", value: 8.5 },
-              { name: "Remainder", value: 1.5 },
-            ]}
-            label="8.5/10"
-            showLabel
-            colors={["cyan", "slate"]}
+          <Title className="font-semibold">Report History</Title>
+          <AreaChart
+            className="mt-4 h-72"
+            data={issueGraphData}
+            index="date"
+            categories={["Issue Amount"]}
+            colors={["cyan"]}
+            valueFormatter={(n) => `${n.toLocaleString()} issues`}
           />
         </Card>
       </div>
@@ -120,7 +196,6 @@ export default function Route() {
               >
                 <Title className="font-semibold">{report.review.title}</Title>
                 <div>
-                  <b>Issues</b>:{" "}
                   {report.issues.map(
                     (issue) =>
                       issue.text && (
@@ -129,20 +204,35 @@ export default function Route() {
                           className="my-3 rounded border-2 border-slate-100 bg-slate-50 p-2"
                         >
                           <div>
-                            <b>Text</b>: {issue.text}
+                            <b>Report</b>: {issue.text}
                           </div>
+                          {issue.classification &&
+                            issue.classification !== "UNKNOWN_ISSUE" && (
+                              <div>
+                                <b>Classification</b>: {issue.classification}
+                              </div>
+                            )}
+                          {issue.criticality && (
+                            <div>
+                              <b>Criticality</b>: {issue.criticality}
+                            </div>
+                          )}
                           <div>
-                            <b>Classification</b>: {issue.classification}
+                            <b>Date</b>:{" "}
+                            {getRelativeTimestampDate(
+                              report,
+                              issue
+                            ).toLocaleString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
                           </div>
-                          <div>
-                            <b>Criticality</b>: {issue.criticality}
-                          </div>
-                          <div>
-                            <b>Relative Timestamp</b>: {issue.rel_timestamp}
-                          </div>
-                          <div>
-                            <b>Frequency</b>: {issue.frequency}
-                          </div>
+                          {issue.frequency && (
+                            <div>
+                              <b>Frequency</b>: {issue.frequency}
+                            </div>
+                          )}
                           {issue.images?.length > 0 && (
                             <div>
                               <b>Images</b>:{" "}
