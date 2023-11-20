@@ -126,6 +126,9 @@ function getReviewBoxes(reviews: SerializeFrom<typeof loader>) {
                             <b>Text</b>: {issue.text}
                           </div>
                           <div>
+                            <b>Classification</b>: {issue.classification}
+                          </div>
+                          <div>
                             <b>Criticality</b>: {issue.criticality}
                           </div>
                           <div>

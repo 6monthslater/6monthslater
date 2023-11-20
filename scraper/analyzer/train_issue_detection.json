@@ -1,70 +1,2646 @@
 [
-    {"text": "It randomly stopped working", "label": "is_issue"},
-    {"text": "The cable wouldn't work unless I pressed on it", "label": "is_issue"},
-    {"text": "The screen flickers intermittently", "label": "is_issue"},
-    {"text": "The battery drains too quickly", "label": "is_issue"},
-    {"text": "It takes forever to boot up", "label": "is_issue"},
-    {"text": "The Wi-Fi signal keeps dropping", "label": "is_issue"},
-    {"text": "It gets really hot while using", "label": "is_issue"},
-    {"text": "The fan is too loud", "label": "is_issue"},
-    {"text": "Keys on the keyboard are unresponsive", "label": "is_issue"},
-    {"text": "The touchpad is not very accurate", "label": "is_issue"},
-    {"text": "The audio is crackling", "label": "is_issue"},
-    {"text": "The USB port doesn't recognize devices", "label": "is_issue"},
-    {"text": "The graphics card keeps crashing during games", "label": "is_issue"},
-    {"text": "I can't update the firmware", "label": "is_issue"},
-    {"text": "The power button doesn't work", "label": "is_issue"},
-    {"text": "The charging port is loose", "label": "is_issue"},
-    {"text": "The device doesn't hold a charge", "label": "is_issue"},
-    {"text": "The Bluetooth connection is not stable", "label": "is_issue"},
-    {"text": "The device freezes occasionally", "label": "is_issue"},
-    {"text": "The webcam quality is very poor", "label": "is_issue"},
-    {"text": "The hinge is too stiff", "label": "is_issue"},
-    {"text": "The device is too heavy", "label": "is_issue"},
-    {"text": "The screen is difficult to see in sunlight", "label": "is_issue"},
-    {"text": "The colors on the display look washed out", "label": "is_issue"},
-    {"text": "The speaker volume is too low", "label": "is_issue"},
-    {"text": "The device reboots randomly", "label": "is_issue"},
-    {"text": "The printer doesn't recognize the ink cartridges", "label": "is_issue"},
-    {"text": "The device doesn't wake up from sleep mode", "label": "is_issue"},
-    {"text": "The hard drive is making a clicking noise", "label": "is_issue"},
-    {"text": "The monitor doesn't turn on", "label": "is_issue"},
-    {"text": "It randomly stopped working", "label": "is_issue"},
-    {"text": "The device just shut down and won't turn back on", "label": "is_issue"},
-    {"text": "Suddenly, the computer turned off and won't start", "label": "is_issue"},
-    {"text": "It stopped working in the middle of a task", "label": "is_issue"},
-    {"text": "It doesn't work anymore, just quit on me", "label": "is_issue"},
-    {"text": "The cable wouldn't work unless I pressed on it", "label": "is_issue"},
-    {"text": "I need to wiggle the cable to get a connection", "label": "is_issue"},
-    {"text": "The connection only works at specific angles", "label": "is_issue"},
-    {"text": "The cable needs to be in a certain position to work", "label": "is_issue"},
-    {"text": "It doesn't work unless I hold the cable in place", "label": "is_issue"},
-    {"text": "The Wi-Fi signal keeps dropping", "label": "is_issue"},
-    {"text": "It loses Wi-Fi connectivity randomly", "label": "is_issue"},
-    {"text": "Wi-Fi stops working intermittently", "label": "is_issue"},
-    {"text": "The Wi-Fi connection is unstable and keeps disconnecting", "label": "is_issue"},
-    {"text": "The device freezes occasionally", "label": "is_issue"},
-    {"text": "It stops responding randomly", "label": "is_issue"},
-    {"text": "Sometimes the device just freezes and I have to restart", "label": "is_issue"},
-    {"text": "It hangs frequently and needs a reboot", "label": "is_issue"},
-    {"text": "The device becomes unresponsive at times", "label": "is_issue"},
-    {"text": "it broke", "label": "is_issue"},
-    {"text": "it broke", "label": "is_issue"},
-    {"text": "it broke", "label": "is_issue"},
-    {"text": "It arrived on Mar 1st", "label": "not_issue"},
-    {"text": "It arrived on March 1st, 2020", "label": "not_issue"},
-    {"text": "Thus 3 months ago I bought it", "label": "not_issue"},
-    {"text": "I've been using it daily since", "label": "not_issue"},
-    {"text": "I got it as a gift", "label": "not_issue"},
-    {"text": "Purchased this item in January 2022, and it's been fantastic so far", "label": "not_issue"},
-    {"text": "It's really good", "label": "not_issue"},
-    {"text": "I love it", "label": "not_issue"},
-    {"text": "Highly recommended", "label": "not_issue"},
-    {"text": "it's never given me any problems", "label": "not_issue"},
-    {"text": "Bought it two years ago", "label": "not_issue"},
-    {"text": "My family went camping last week", "label": "not_issue"},
-    {"text": "it's been working great ever since", "label": "not_issue"},
-    {"text": "it's still going strong", "label": "not_issue"},
-    {"text": "I've had this item for 6 months now", "label": "not_issue"},
-    {"text": "Bought it two years ago", "label": "not_issue"}
+  {
+    "text": "It randomly stopped working",
+    "label": "is_issue"
+  },
+  {
+    "text": "The cable wouldn't work unless I pressed on it",
+    "label": "is_issue"
+  },
+  {
+    "text": "The screen flickers intermittently",
+    "label": "is_issue"
+  },
+  {
+    "text": "The battery drains too quickly",
+    "label": "is_issue"
+  },
+  {
+    "text": "It takes forever to boot up",
+    "label": "is_issue"
+  },
+  {
+    "text": "The Wi-Fi signal keeps dropping",
+    "label": "is_issue"
+  },
+  {
+    "text": "It gets really hot while using",
+    "label": "is_issue"
+  },
+  {
+    "text": "The fan is too loud",
+    "label": "is_issue"
+  },
+  {
+    "text": "Keys on the keyboard are unresponsive",
+    "label": "is_issue"
+  },
+  {
+    "text": "The touchpad is not very accurate",
+    "label": "is_issue"
+  },
+  {
+    "text": "The audio is crackling",
+    "label": "is_issue"
+  },
+  {
+    "text": "The USB port doesn't recognize devices",
+    "label": "is_issue"
+  },
+  {
+    "text": "The graphics card keeps crashing during games",
+    "label": "is_issue"
+  },
+  {
+    "text": "I can't update the firmware",
+    "label": "is_issue"
+  },
+  {
+    "text": "The power button doesn't work",
+    "label": "is_issue"
+  },
+  {
+    "text": "The charging port is loose",
+    "label": "is_issue"
+  },
+  {
+    "text": "The device doesn't hold a charge",
+    "label": "is_issue"
+  },
+  {
+    "text": "The Bluetooth connection is not stable",
+    "label": "is_issue"
+  },
+  {
+    "text": "The device freezes occasionally",
+    "label": "is_issue"
+  },
+  {
+    "text": "The webcam quality is very poor",
+    "label": "is_issue"
+  },
+  {
+    "text": "The hinge is too stiff",
+    "label": "is_issue"
+  },
+  {
+    "text": "The device is too heavy",
+    "label": "is_issue"
+  },
+  {
+    "text": "The screen is difficult to see in sunlight",
+    "label": "is_issue"
+  },
+  {
+    "text": "The colors on the display look washed out",
+    "label": "is_issue"
+  },
+  {
+    "text": "The speaker volume is too low",
+    "label": "is_issue"
+  },
+  {
+    "text": "The device reboots randomly",
+    "label": "is_issue"
+  },
+  {
+    "text": "The printer doesn't recognize the ink cartridges",
+    "label": "is_issue"
+  },
+  {
+    "text": "The device doesn't wake up from sleep mode",
+    "label": "is_issue"
+  },
+  {
+    "text": "The hard drive is making a clicking noise",
+    "label": "is_issue"
+  },
+  {
+    "text": "The monitor doesn't turn on",
+    "label": "is_issue"
+  },
+  {
+    "text": "It randomly stopped working",
+    "label": "is_issue"
+  },
+  {
+    "text": "The device just shut down and won't turn back on",
+    "label": "is_issue"
+  },
+  {
+    "text": "Suddenly, the computer turned off and won't start",
+    "label": "is_issue"
+  },
+  {
+    "text": "It stopped working in the middle of a task",
+    "label": "is_issue"
+  },
+  {
+    "text": "It doesn't work anymore, just quit on me",
+    "label": "is_issue"
+  },
+  {
+    "text": "The cable wouldn't work unless I pressed on it",
+    "label": "is_issue"
+  },
+  {
+    "text": "I need to wiggle the cable to get a connection",
+    "label": "is_issue"
+  },
+  {
+    "text": "The connection only works at specific angles",
+    "label": "is_issue"
+  },
+  {
+    "text": "The cable needs to be in a certain position to work",
+    "label": "is_issue"
+  },
+  {
+    "text": "It doesn't work unless I hold the cable in place",
+    "label": "is_issue"
+  },
+  {
+    "text": "The Wi-Fi signal keeps dropping",
+    "label": "is_issue"
+  },
+  {
+    "text": "It loses Wi-Fi connectivity randomly",
+    "label": "is_issue"
+  },
+  {
+    "text": "Wi-Fi stops working intermittently",
+    "label": "is_issue"
+  },
+  {
+    "text": "The Wi-Fi connection is unstable and keeps disconnecting",
+    "label": "is_issue"
+  },
+  {
+    "text": "The device freezes occasionally",
+    "label": "is_issue"
+  },
+  {
+    "text": "It stops responding randomly",
+    "label": "is_issue"
+  },
+  {
+    "text": "Sometimes the device just freezes and I have to restart",
+    "label": "is_issue"
+  },
+  {
+    "text": "It hangs frequently and needs a reboot",
+    "label": "is_issue"
+  },
+  {
+    "text": "The device becomes unresponsive at times",
+    "label": "is_issue"
+  },
+  {
+    "text": "it broke",
+    "label": "is_issue"
+  },
+  {
+    "text": "it broke",
+    "label": "is_issue"
+  },
+  {
+    "text": "it broke",
+    "label": "is_issue"
+  },
+  {
+    "text": "It arrived on Mar 1st",
+    "label": "not_issue"
+  },
+  {
+    "text": "It arrived on March 1st, 2020",
+    "label": "not_issue"
+  },
+  {
+    "text": "Thus 3 months ago I bought it",
+    "label": "not_issue"
+  },
+  {
+    "text": "I've been using it daily since",
+    "label": "not_issue"
+  },
+  {
+    "text": "I got it as a gift",
+    "label": "not_issue"
+  },
+  {
+    "text": "Purchased this item in January 2022, and it's been fantastic so far",
+    "label": "not_issue"
+  },
+  {
+    "text": "It's really good",
+    "label": "not_issue"
+  },
+  {
+    "text": "I love it",
+    "label": "not_issue"
+  },
+  {
+    "text": "Highly recommended",
+    "label": "not_issue"
+  },
+  {
+    "text": "it's never given me any problems",
+    "label": "not_issue"
+  },
+  {
+    "text": "Bought it two years ago",
+    "label": "not_issue"
+  },
+  {
+    "text": "My family went camping last week",
+    "label": "not_issue"
+  },
+  {
+    "text": "it's been working great ever since",
+    "label": "not_issue"
+  },
+  {
+    "text": "it's still going strong",
+    "label": "not_issue"
+  },
+  {
+    "text": "I've had this item for 6 months now",
+    "label": "not_issue"
+  },
+  {
+    "text": "Bought it two years ago",
+    "label": "not_issue"
+  },
+  {
+    "text": "Lightweight feel",
+    "label": "not_issue"
+  },
+  {
+    "text": "Love that the DPI button is on the bottom",
+    "label": "not_issue"
+  },
+  {
+    "text": "I had other gaming mouse with DPI next to the right click button",
+    "label": "not_issue"
+  },
+  {
+    "text": "loved the polling rate options",
+    "label": "not_issue"
+  },
+  {
+    "text": "It feels a bit cheaper",
+    "label": "not_issue"
+  },
+  {
+    "text": "I guess",
+    "label": "not_issue"
+  },
+  {
+    "text": "you would say",
+    "label": "not_issue"
+  },
+  {
+    "text": "compared to the V2.Performance",
+    "label": "not_issue"
+  },
+  {
+    "text": "The only minor quibble I have with the mouse is that the scroll wheel is a bit mushy and vague between steps",
+    "label": "is_issue"
+  },
+  {
+    "text": "The charging cable is not braided",
+    "label": "not_issue"
+  },
+  {
+    "text": "It doesn't have a dedicated profile button",
+    "label": "not_issue"
+  },
+  {
+    "text": "I've dropped my review from 5 stars down to 3. I purchased this mouse in January 2019 and in late October 2019 I started experiencing poor registration of left clicks.",
+    "label": "is_issue"
+  },
+  {
+    "text": "I was asked to go through a number of troubleshooting steps, none of which had any effect before I was given an RMA to send the mouse in for repair/replacement",
+    "label": "is_issue"
+  },
+  {
+    "text": "The switches that actuate the right and left mouse buttons are very fragile",
+    "label": "not_issue"
+  },
+  {
+    "text": "It's almost flatter feeling than the other gaming mouse",
+    "label": "not_issue"
+  },
+  {
+    "text": "It's a smallish/average mouse",
+    "label": "not_issue"
+  },
+  {
+    "text": "It's kind of flat, so if you have big hands like me, palm-gripping this thing means it's not in contact with the table/mousepad/whatever",
+    "label": "not_issue"
+  },
+  {
+    "text": "Grip - As mentioned above, it's a smallish/average mouse. It's kind of flat, so if you have big hands like me, palm-gripping this thing means it's not in contact with the table/mousepad/whatever",
+    "label": "not_issue"
+  },
+  {
+    "text": "Weight - When fully loaded, the mouse is just as heavy as any other mouse you have on your desk (assuming you're not using something that's purposefully lightened)",
+    "label": "not_issue"
+  },
+  {
+    "text": "I do not like the weights/screws underneath -- for me, when the weights in IN, the screws don't go totally flat against the bottom -- they protrude a bit.",
+    "label": "is_issue"
+  },
+  {
+    "text": "For my hands(8.5\"/4.5\"), it's too small. I have to claw it and that gets tiresome after a few hours.",
+    "label": "not_issue"
+  },
+  {
+    "text": "something else I'm probably forgetting",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse comes gloss white.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse has no additional RGB lighting.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery life is limited to 120 hours.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The media could not be loaded.",
+    "label": "is_issue"
+  },
+  {
+    "text": "There is an incessant rattling of what sounds like a cheap piece of plastic when I shake the mouse, however.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The 'sniper' button is not as easy to reach as it should be",
+    "label": "not_issue"
+  },
+  {
+    "text": "resolution settings are a bit too sensitive",
+    "label": "not_issue"
+  },
+  {
+    "text": "The media could not be loaded.",
+    "label": "is_issue"
+  },
+  {
+    "text": "I wanted to share my thoughts.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The metal was easily damaged, which means that the screws would break easily when put in place.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Left button is flaky",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse has issues with click power and doesn't last as long as it should.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse does not last as long as it should.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Lighting is muted.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The optical sensor has been refined to a ridiculous degree as well. 18,000 dpi, adjustable on the fly.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I have had this mouse for about a year and a half.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The right mouse button is super sensitive.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Left click starts double clicking",
+    "label": "is_issue"
+  },
+  {
+    "text": "No USB Dongle",
+    "label": "is_issue"
+  },
+  {
+    "text": "Battery life was only 120 hours.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Buttons not programmable on the mouse itself.",
+    "label": "is_issue"
+  },
+  {
+    "text": "iCue software doesn't save multiple profiles and makes game or software crash.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Design is not ergonomic for certain sizes of hands.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The laser sensor emits a little tone when you move the mouse. Which is really stupid when you're using it to edit dialogue.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I normally don't review things, but this thing has annoyed me enough to do so.",
+    "label": "is_issue"
+  },
+  {
+    "text": "the mouse design and outside construction more than make up for the trouble I would have in a single switch repair.",
+    "label": "not_issue"
+  },
+  {
+    "text": "If my experience (only 2 mice) is the average experience, your mice will perform inadequately in under a year and you will either need to send them in, or fix them yourselves.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Contacts got dirty in left button after 6 months of use, so now I can't clean it.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The internals are fragile and difficult to repair",
+    "label": "is_issue"
+  },
+  {
+    "text": "The left click button is overly sensitive.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Click buttons are too sensitive for left button and are disruptive when accidentally registering double-clicks.",
+    "label": "is_issue"
+  },
+  {
+    "text": "It requires literal line of sight to the dongle, or it will be a very bad and aggravating time as the mouse skips and stutters its way across your screen or a button click doesn't register at the most inopportune moment.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The materials are good quality",
+    "label": "not_issue"
+  },
+  {
+    "text": "I believe this is like a slightly better version of the M65 Pro",
+    "label": "not_issue"
+  },
+  {
+    "text": "I've only had one issue with the mouse",
+    "label": "not_issue"
+  },
+  {
+    "text": "iCUE software is relatively simple to use",
+    "label": "not_issue"
+  },
+  {
+    "text": "I've read that returns are very easy and tech support is good",
+    "label": "not_issue"
+  },
+  {
+    "text": "I'm giving it 5 stars because I think the mouse does exactly what it's supposed to.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I can't reach it comfortably with my thumb, anymore.",
+    "label": "not_issue"
+  },
+  {
+    "text": "They changed the size and placement of the sniper button from the previous M65 version.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It feels like they changed the weight of the mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I've been using this model for years and years, replacing it with the same model when it would die.",
+    "label": "not_issue"
+  },
+  {
+    "text": "missing part",
+    "label": "is_issue"
+  },
+  {
+    "text": "I've had trouble adjusting to doing things with my left hand since my stroke.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The scroll wheel is smooth but you can feel (barely) the horizontal ridges (for grip) so if your sensitive to touch then you may not like that part whereas others need a non-slippery wheel.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Left and right clicks on the middle scroll wheel is very sensitive compared to the old.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Sticky bottom",
+    "label": "is_issue"
+  },
+  {
+    "text": "I went to Logitech Web and saw the product had a juice of only 70%, which is low.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery life is limited to 6 months",
+    "label": "not_issue"
+  },
+  {
+    "text": "This mouse can be expensive",
+    "label": "not_issue"
+  },
+  {
+    "text": "I returned a $50 wireless mouse as this one was much better.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Other than that, it's perfect budget wireless mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I might buy a spare for such a good price.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I ordered two by mistake and paid for them.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Battery life was limited",
+    "label": "is_issue"
+  },
+  {
+    "text": "Great mouse",
+    "label": "is_issue"
+  },
+  {
+    "text": "Button on mouse wouldn't hold any settings or customizations when using Bluetooth",
+    "label": "not_issue"
+  },
+  {
+    "text": "Not sure why there's hate",
+    "label": "not_issue"
+  },
+  {
+    "text": "Broke after 2 months",
+    "label": "is_issue"
+  },
+  {
+    "text": "Rubberized grip is removed",
+    "label": "not_issue"
+  },
+  {
+    "text": "The product has an issue with the weight of the device.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It is quite basic",
+    "label": "not_issue"
+  },
+  {
+    "text": "has 170 hours of battery life",
+    "label": "is_issue"
+  },
+  {
+    "text": "Since I have all the Razer related software already on my laptop",
+    "label": "not_issue"
+  },
+  {
+    "text": "This one was completely PnP, without a stitch of effort needed on my part.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Someone has stolen the product",
+    "label": "is_issue"
+  },
+  {
+    "text": "The teen boy I got this for was over the moon.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The buttons aren't as clicky and loud as a normal mouse",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery died and won't hold a charge",
+    "label": "not_issue"
+  },
+  {
+    "text": "It took too long to recharge",
+    "label": "not_issue"
+  },
+  {
+    "text": "It has a lot of features but doesn\u2019t work well",
+    "label": "not_issue"
+  },
+  {
+    "text": "Mouse has died",
+    "label": "is_issue"
+  },
+  {
+    "text": "The sound is louder when you click the button, so it's not ideal for people who prefer quieter sounds.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Product came and was good quality and worked well but my eight year old granddaughter couldn\u2019t quite use it because of her small hands. We returned it, and got a smaller one that looks like a hamster, and she was much happier.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I have to keep reconnecting it",
+    "label": "not_issue"
+  },
+  {
+    "text": "I dropped it once and it stopped working. (Maybe you'll never drop it though)",
+    "label": "is_issue"
+  },
+  {
+    "text": "The device does not work properly.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The buttons feel unresponsive most of the time.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Color changing design is cool",
+    "label": "not_issue"
+  },
+  {
+    "text": "Love the feel of the mouse and it fits my hand perfectly.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The click is satisfying and quiet",
+    "label": "not_issue"
+  },
+  {
+    "text": "Surprising battery life (lasted 4-5 days), nice for gaming at night when wife is sleeping.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Recommended purchasing ",
+    "label": "not_issue"
+  },
+  {
+    "text": "The on/off switch is a little touchy.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The battery saver puts it to sleep quickly, sometimes when only inactive for 5 minutes.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse turns off within two minutes of not using",
+    "label": "not_issue"
+  },
+  {
+    "text": "The middle scroll button stopped working",
+    "label": "is_issue"
+  },
+  {
+    "text": "The product is comfortable to use",
+    "label": "not_issue"
+  },
+  {
+    "text": "The charging lasts a long time",
+    "label": "not_issue"
+  },
+  {
+    "text": "The product is compact and easy to carry",
+    "label": "not_issue"
+  },
+  {
+    "text": "This mouse is a bit slow to respond",
+    "label": "not_issue"
+  },
+  {
+    "text": "The USB-C adapter needs the traditional USB plugged into it as well",
+    "label": "not_issue"
+  },
+  {
+    "text": "Quit working",
+    "label": "is_issue"
+  },
+  {
+    "text": "It's silent",
+    "label": "not_issue"
+  },
+  {
+    "text": "It defo works but the mouse is kinda laggy at times.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Not suitable for use by people with big palms.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery died.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Works well with MacBook Pro",
+    "label": "not_issue"
+  },
+  {
+    "text": "Bluetooth dongle broke",
+    "label": "not_issue"
+  },
+  {
+    "text": "Does not include required hardware",
+    "label": "is_issue"
+  },
+  {
+    "text": "Adapter does not fit into computer's USB port",
+    "label": "is_issue"
+  },
+  {
+    "text": "Battery life degraded to the point where it can't be recharged.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse stopped working.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Jumping on and off my screen",
+    "label": "is_issue"
+  },
+  {
+    "text": "Left control button is unresponsive",
+    "label": "is_issue"
+  },
+  {
+    "text": "Would only work with Bluetooth.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse would go to sleep very quickly and not wake back up with a wiggle.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Would not connect via wireless.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The side button not programable without a third party program.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It was difficult to put the batteries in.",
+    "label": "not_issue"
+  },
+  {
+    "text": "There is a delay or lag time from when I move the mouse to when the mouse gets to the destination on where I want the mouse to be,",
+    "label": "is_issue"
+  },
+  {
+    "text": "the mouse will skip from one side of the screen to the other.",
+    "label": "is_issue"
+  },
+  {
+    "text": "CUSTOMER SUPPORT 5/5!",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery Life",
+    "label": "is_issue"
+  },
+  {
+    "text": "After about a day of using this mouse, it started to make an extremely loud squeaking noise on the mouse wheel.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The battery life is laughable short even on eco mode",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse is very clearly targeted at a gaming market but it is far too inaccurate and die for this purpose.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Polling rate is by. default 125",
+    "label": "is_issue"
+  },
+  {
+    "text": "When squeezing against the left side of the mouse it will trigger the forward button on the side of the mouse.",
+    "label": "is_issue"
+  },
+  {
+    "text": "LED Lights aren't working.",
+    "label": "is_issue"
+  },
+  {
+    "text": "When moving the mouse will just get \"stuck\" at a few points on screen and sometimes have very delayed inputs which is very frustrating.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The battery only lasts for about 10-15 minutes (if you keep your laptop on for an extended period of time),",
+    "label": "not_issue"
+  },
+  {
+    "text": "The right mouse button has stopped working.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The tracking is unreliable on precise movements.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The buttons and scroll wheel feel good.",
+    "label": "not_issue"
+  },
+  {
+    "text": "If you use this for fast pace shooters, bump up the polling rate from 120Hz to 240Hz.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The highest DPI setting on the wireless mouse is still lower than the wired one I use at home",
+    "label": "not_issue"
+  },
+  {
+    "text": "The DPI button was just behind the scroll wheel",
+    "label": "not_issue"
+  },
+  {
+    "text": "Stopping/stuttering",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse is broken",
+    "label": "is_issue"
+  },
+  {
+    "text": "it seems the underlying quality is really lacking.",
+    "label": "not_issue"
+  },
+  {
+    "text": "After a couple months, despite repeated battery changes and attempts to relocate the wireless USB receiver plug in every possible arrangement or configuration, it's just completely unreliable -- scrolling doesn't work, mouse movement is unreliable.",
+    "label": "is_issue"
+  },
+  {
+    "text": "It was cheap",
+    "label": "not_issue"
+  },
+  {
+    "text": "Stuttering",
+    "label": "not_issue"
+  },
+  {
+    "text": "Both have been great.",
+    "label": "not_issue"
+  },
+  {
+    "text": "the mouse is amazing value",
+    "label": "not_issue"
+  },
+  {
+    "text": "i actually like it better than my logitech performance MX.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The software does not work as it shows the mouse is not found, but you don't need it anyway.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Prefer the look of this one, with the feel of the M691.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Wish this one had 2 buttons (up, down) for changing dpi setting instead of having to cycle through all of them.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery life was ok.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery may be difficult to install",
+    "label": "is_issue"
+  },
+  {
+    "text": "This one feels great. Zero pain.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The part that sticks out where your pinky finger rests keeps your hand from touching the surface",
+    "label": "not_issue"
+  },
+  {
+    "text": "The buttons are well placed and have the right amount of resistance. The part that sticks out where your pinky finger rests keeps your hand from touching the surface, which no other vertical noise that I have tried has as a feature.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I also have bigger than average hands, and the large version fits perfectly! I\u2019ve never had one that fit before like this.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The transmitter dongle plugged into the back of my desktop and worked great. ",
+    "label": "not_issue"
+  },
+  {
+    "text": " The Evoluent mouse goes haywire if the transmitter dongle is more than 6 inches away from it. ",
+    "label": "not_issue"
+  },
+  {
+    "text": " The Evoluent includes a USB extension cord in the package. ",
+    "label": "not_issue"
+  },
+  {
+    "text": " The J-Tech mouse is rechargeable.  ",
+    "label": "not_issue"
+  },
+  {
+    "text": " The Evoluent mouse is not rechargeable.  ",
+    "label": "is_issue"
+  },
+  {
+    "text": " The Evoluent's proprietary software has a poor UI.  ",
+    "label": "is_issue"
+  },
+  {
+    "text": " The J-Tech mouse is selectable in DPI. ",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery failing.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Left click button double clicking.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse is not precise enough to do what you need to do.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Left click seems to get stuck and stops working intermittently (in which case I tend to start using the middle click as my left click).",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse precision is not great. ",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse sensitivity is also not very finely tunable. The software that comes with it doesn't allow for fine adjustments. Using the native windows mouse control panel doesnt help much.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse tends to use up the battery really fast, they generally only last 3 months.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The usb receiver signal with the mouse is easily interfered. An issue I have never had with another other mice before.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Programmable actions",
+    "label": "not_issue"
+  },
+  {
+    "text": "Third button",
+    "label": "not_issue"
+  },
+  {
+    "text": "DPI button has LEDs that illuminate inside the thumb hold to show you which sensitivity you have set",
+    "label": "not_issue"
+  },
+  {
+    "text": "Scroll wheel is awful. It feels like it is intentionally light and loose, the indentations are too soft and not satisfying or precise. Not good for drafting work.",
+    "label": "is_issue"
+  },
+  {
+    "text": "-Very little curvature to the finger buttons, your digits are held fairly straight when they want to curl (though the indentations are okay if your finger pads land on them)",
+    "label": "not_issue"
+  },
+  {
+    "text": "-The finger buttons have a decent click, but they are a little loud and annoying.",
+    "label": "not_issue"
+  },
+  {
+    "text": "-The Evoluent design wants your hand and digits essentially straight with your thumb up high in the thumb hold cutout.",
+    "label": "not_issue"
+  },
+  {
+    "text": "-Metallic finish is an oil annoyance from your hand",
+    "label": "not_issue"
+  },
+  {
+    "text": "-I followed the directions from Evoluent to measure my hand which according the literature is 'medium'. But ordered the small anyway feeling like a medium was wrong.",
+    "label": "not_issue"
+  },
+  {
+    "text": "-And lastly, my largest complaint.. the Evoluent design wants your hand and digits essentially straight with your thumb up high in the thumb hold cutout. They say \"handshake\" position, but we humans do not handshake straight, our hands are relaxed downward at the wrist with fingers that curl in around the other person's hand.",
+    "label": "is_issue"
+  },
+  {
+    "text": "-My largest complaint.. the Evoluent design wants your hand and digits essentially straight with your thumb up high in the thumb hold cutout. They say \"handshake\" position, but we humans do not handshake straight, our hands are relaxed downward at the wrist with fingers that curl in around the other person's hand.",
+    "label": "is_issue"
+  },
+  {
+    "text": "SENSOR is atrocious",
+    "label": "is_issue"
+  },
+  {
+    "text": "The wireless performance this mouse experiences is insane.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The product does not provide enough range for the user's needs",
+    "label": "is_issue"
+  },
+  {
+    "text": "Belt broke last month so I ordered new ones.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Not sure if this can be fixed after some mouse driver tuning.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The packaging is bad, actually don't see any protection of the product, the paper box is already broken when delivered.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The polling rate is only 125 Hz.",
+    "label": "not_issue"
+  },
+  {
+    "text": "There's no way to turn off the DPI indicator lights, at least on the wired version.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It would've been really nice if the product description had mentioned the following things:1. The software must be kept running in background to use the programmable buttons. There's no way to save the remappings directly to the mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "2. The DPI levels seem be 800/1600/2400/3200 based on testing with a DPI Analyzer.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Belt broke last month so I ordered new ones.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The scroll wheel is too clicky and fast, not smooth.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The scroll wheel will sometimes stop in a \"half spun\" position where up to a minute later it will tick into a groove without you touching it and registering an input.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I ordered the wired model but received the wireless model.",
+    "label": "is_issue"
+  },
+  {
+    "text": "It took me maybe 5 minutes to get used to the Evoluent mouse,",
+    "label": "not_issue"
+  },
+  {
+    "text": "My hand feels comfortable for hours. I have three Evoluent mice.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse works fine without the software. The corded original left button started to fail after about 5 years of use -- not bad as that outlasted my last Corsair gaming mouse by 3 1/2 years, so I ordered this one. I do not notice a significant difference between it and the original.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I stopped using the wireless because I prefer corded. The software is not very good -- not \"Corsair bad\", but it could use improvements from a systems programmer to fix the latency problems.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The shiny plastic surface that covers most of the mouse",
+    "label": "is_issue"
+  },
+  {
+    "text": "Sticky or otherwise uncomfortable",
+    "label": "is_issue"
+  },
+  {
+    "text": "The shiny plastic surface that covers most of the mouse is the deal breaker",
+    "label": "is_issue"
+  },
+  {
+    "text": "Left side \"thumb buttons\"",
+    "label": "not_issue"
+  },
+  {
+    "text": "Only works with right-hand.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Doesn't have a silicone grip surrounding the palm rest area",
+    "label": "not_issue"
+  },
+  {
+    "text": "Tracking is poor",
+    "label": "not_issue"
+  },
+  {
+    "text": "Drag scroll feature didn't work in Firefox",
+    "label": "is_issue"
+  },
+  {
+    "text": "My computer has started locking up.",
+    "label": "not_issue"
+  },
+  {
+    "text": "There was a distinct \u2018pinching\u2019 movement",
+    "label": "not_issue"
+  },
+  {
+    "text": "Lack of Bluetooth connectivity",
+    "label": "is_issue"
+  },
+  {
+    "text": "Mac driver",
+    "label": "not_issue"
+  },
+  {
+    "text": "The weight of the mouse is excessive for an ergonomic design. The wrist pain experienced by the reviewer could have been alleviated with a lighter mouse or the addition of an elbow rest.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse's tracking is not great and slippery materials are uncomfortable.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Material is nasty to hold onto, my skin sticks to it, and it's cheap and sticky",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery stopped working",
+    "label": "not_issue"
+  },
+  {
+    "text": "Could not fit on small hands.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Does not work for long",
+    "label": "not_issue"
+  },
+  {
+    "text": "Programmable buttons but unable to use them.",
+    "label": "is_issue"
+  },
+  {
+    "text": "It's going to take some getting used to after using my old one.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I love this mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "15 days",
+    "label": "not_issue"
+  },
+  {
+    "text": "the scroll and click are so quiet",
+    "label": "is_issue"
+  },
+  {
+    "text": "it feels a lot smaller than my previous ones. I either had to bend my index and middle fingers or the tips of those fingers hang off the mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I needed a quick replacement for the Logitech M275 that was plagued with button issues, and I didn't even realize this was a silent-click mouse until I opened the box.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The button resistance is even less than the clicking models.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The clicking is extremely quiet",
+    "label": "not_issue"
+  },
+  {
+    "text": "but the first thing I had to do was tape up the battery door",
+    "label": "not_issue"
+  },
+  {
+    "text": "because it is loose enough to rattle when picking up and putting down the mouse, or sliding it too swiftly",
+    "label": "not_issue"
+  },
+  {
+    "text": "The L/H click button became intermittent.",
+    "label": "is_issue"
+  },
+  {
+    "text": "can barely hear a thing when you click",
+    "label": "is_issue"
+  },
+  {
+    "text": "this Logitech M330 is only about 75% of the size of my Logitech M720 that I use on another computer.",
+    "label": "not_issue"
+  },
+  {
+    "text": "after a few months",
+    "label": "not_issue"
+  },
+  {
+    "text": "The response time from click to screen appears to be as fast as a wired connection based on my normal eyes.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The size of the mouse was smaller than a standard workplace mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Media could not be loaded",
+    "label": "not_issue"
+  },
+  {
+    "text": "No buttons",
+    "label": "not_issue"
+  },
+  {
+    "text": "The design that aids with grip tends to help it collect filth.",
+    "label": "not_issue"
+  },
+  {
+    "text": "This product did not come with a battery",
+    "label": "not_issue"
+  },
+  {
+    "text": "Needs thumb button.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery compartment is easy to miss.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I noticed it started to become less responsive.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I've heard Boardzy complain about the the L mouse click being too stiff.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The scroll wheel is just perfect in how notchy it is.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I like the shape of this mouse, but it will depend on your hand size.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The coating is... odd.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It lacks some features that are present in other mice, such as more buttons, an optical sensor, or extra programmability.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It's a bit of a gimmick that it uses ROG SpeedNova instead of having a dedicated optical sensor.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I don't find this to be particularly responsive as compared to other mice.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The software has a lot of extra gimmicks that I don't really need.",
+    "label": "not_issue"
+  },
+  {
+    "text": "This product does not have any functional issues.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The blue color does not match the rest of your PC setup.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I have one complaint with this mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Frequently turns off and back on",
+    "label": "is_issue"
+  },
+  {
+    "text": "The side buttons require you to extend your thumb just to reach them.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I love this keyboard",
+    "label": "not_issue"
+  },
+  {
+    "text": "The letters don't show up well on the gray keyboard,",
+    "label": "not_issue"
+  },
+  {
+    "text": "Wireless keyboard",
+    "label": "not_issue"
+  },
+  {
+    "text": "Wireless Keyboard and Mouse Combo has been a game-changer for my productivity.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse is rather small.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse is exceptionally light which leads to odd tracking behavior at times.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse wheel no longer tracks accurately after just over 4 months of use.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The keyboard has no dedicated on/off switch.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The letters printed on the keys are in the upper left corner of each key, they aren't centered on the key.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The WIN key said \"WIN\" instead of having the little Windows symbol.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The keyboard lags badly",
+    "label": "is_issue"
+  },
+  {
+    "text": "The keyboard started double entering letters, skipping letters, lagging altogether",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse jumps all around the place randomly or doesn't show up at all until I unplug the receiver and turn everything off and back on",
+    "label": "is_issue"
+  },
+  {
+    "text": "No functional issues listed in review",
+    "label": "not_issue"
+  },
+  {
+    "text": "Caps lock and number lock shut off randomly.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Not able to use as a work keyboard.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It doesn\u2019t like the CTRL C/V for copy and paste.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Seems to have a delay when typing.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Broke after 1 1/2 years",
+    "label": "is_issue"
+  },
+  {
+    "text": "Number pad quit working",
+    "label": "is_issue"
+  },
+  {
+    "text": "Not working properly",
+    "label": "is_issue"
+  },
+  {
+    "text": "Missing letters when typing.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Left control key stopped working.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The keyboard and mouse .... messed up my computer ... after buying this item ... I had to go back to mt old keyboard and mouse and order another Logi Tech item that never fails to operate in different hardware such as Dell or Lenova ...Sorry to say ... Don't by this item .... It is a waste of money",
+    "label": "is_issue"
+  },
+  {
+    "text": "The keys have a hard texture and are far apart.",
+    "label": "is_issue"
+  },
+  {
+    "text": "It's on the smaller size, but still very solid.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Accidental clicks",
+    "label": "not_issue"
+  },
+  {
+    "text": "Tracking/Jumping/Delay",
+    "label": "is_issue"
+  },
+  {
+    "text": "Scroll wheel",
+    "label": "not_issue"
+  },
+  {
+    "text": "It takes like 5 whole seconds to wake up which doesn't seem like much but when it happens constantly",
+    "label": "not_issue"
+  },
+  {
+    "text": "The scroll button click to change scroll speed is loud",
+    "label": "is_issue"
+  },
+  {
+    "text": "The belt broke last month so I ordered new ones.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The Scroll Wheel is not balanced with the heavier side being \u201cup\u201d causing it to drive you up or down a page when stopped",
+    "label": "is_issue"
+  },
+  {
+    "text": "The Anywhere 2 has no storage",
+    "label": "not_issue"
+  },
+  {
+    "text": "The tiny dongle on the mouse is not removable from the mouse body, so it might get lost.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I was hoping for an internal rechargeable battery so I could replace the battery when it dies.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Cannot replace batteries.",
+    "label": "is_issue"
+  },
+  {
+    "text": "No compartment for the receiver.",
+    "label": "not_issue"
+  },
+  {
+    "text": "No pouch included.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Low-quality design that is too light and uncomfortable to handle properly. It also has a very small ergonomic design and is easily lost. ",
+    "label": "is_issue"
+  },
+  {
+    "text": "Wheels were hard to click on",
+    "label": "not_issue"
+  },
+  {
+    "text": "This was my only complaint about the product",
+    "label": "is_issue"
+  },
+  {
+    "text": "The thumb drive for the USB port is very small making it difficult to pull out",
+    "label": "is_issue"
+  },
+  {
+    "text": "Picks up weird movements sometimes",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery life is limited",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse may not be suitable for gaming as it has a different design than most game mice.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Sometimes there is difficulty getting the bluetooth to connect",
+    "label": "not_issue"
+  },
+  {
+    "text": "I am on a computer all day with my job and this is exactly what I needed.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I do not game on my work laptop, so not sure and could not rate it for that.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Not too small for everyday use.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Hyper-Fast Scrolling",
+    "label": "not_issue"
+  },
+  {
+    "text": "Glossy finish replaced with a matte one",
+    "label": "not_issue"
+  },
+  {
+    "text": "Bluetooth sleep setting that will drive you nuts",
+    "label": "is_issue"
+  },
+  {
+    "text": "Lags when first booting up",
+    "label": "is_issue"
+  },
+  {
+    "text": "The battery lasts for about two days",
+    "label": "not_issue"
+  },
+  {
+    "text": "This will not work with Ubuntu or Linux",
+    "label": "not_issue"
+  },
+  {
+    "text": "The Logitech software is buggy and inconsistent, especially if you are on macOS Catalina. You are unable to view the battery level at all which, when this product is reaching end of life or you're a mobile worker, can be very inconvenient",
+    "label": "not_issue"
+  },
+  {
+    "text": "The product review has no information about the functional issues of this product.",
+    "label": "not_issue"
+  },
+  {
+    "text": "When I started using it, I knew immediately something was wrong.",
+    "label": "is_issue"
+  },
+  {
+    "text": "I had to return this when I realized that this mouse doesn't have a built-in storage compartment for the USB dongle.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Belt broke last month so I ordered new ones.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The middle button is tiny and set back behind the scroll wheel",
+    "label": "not_issue"
+  },
+  {
+    "text": "Scrolling is intermittent",
+    "label": "is_issue"
+  },
+  {
+    "text": "The instructions for setting up Bluetooth are incorrect",
+    "label": "is_issue"
+  },
+  {
+    "text": "I show my age by the very fact that I continue to use laptops instead of those tiny mobile phone screens and tiny software keyboards.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It works better than well, now has rechargeable batteries, fits nicely into a computer carrying case and works on any non-liquid surface.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It will last for many years, like most Logitech products.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Better than Apple's Magic Mouse",
+    "label": "not_issue"
+  },
+  {
+    "text": "Rechargable batteries",
+    "label": "not_issue"
+  },
+  {
+    "text": "No functional issue listed.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The right and left mouse buttons are starting to do.",
+    "label": "is_issue"
+  },
+  {
+    "text": "I'm writing this review after a year and a half of ownership.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Uses USB dongle instead of Bluetooth.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Scroll wheel slips while scrolling.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Left and right mouse buttons are not programmable",
+    "label": "is_issue"
+  },
+  {
+    "text": "Battery life is non-existent.",
+    "label": "not_issue"
+  },
+  {
+    "text": "If you love this mouse and it all of suddenly stops working, don't panic yet.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The software is written so bad that the mouse will sometimes lose it's LOD settings (Lift Off Distance). ",
+    "label": "is_issue"
+  },
+  {
+    "text": "What that means is themouse no longer works on dark or grainy surfaces as normal.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The solution I discovered is to take the mouse off the pad, put it on your pants leg or a white surface, and you get tracking again.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Weird huh?",
+    "label": "not_issue"
+  },
+  {
+    "text": "Then load the software again and it should be able to connect to the mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "From there, click on the factory reset from the Alienware command center.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Then your back in business.",
+    "label": "not_issue"
+  },
+  {
+    "text": "After that, I set the mouse the way I wanted as far as power and light profile settings, then removed all the Dell software from my computer.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Back in business.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The Alienware driver to run it is a bit wonky but not horrible.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Ive owned this mouse for 4 months now and I always let this mouse completely die before charging it and take it off he charge when done. Now my mouse wont hold a charge over 4%.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Left mouse click did not work",
+    "label": "is_issue"
+  },
+  {
+    "text": "This is the ultimate of both worlds; wired and wireless.",
+    "label": "not_issue"
+  },
+  {
+    "text": "If you're looking for a mouse that can act as both a wired and wireless mouse then this is the mouse for you!",
+    "label": "not_issue"
+  },
+  {
+    "text": "Poor Battery Life.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery lasts a week or more of continuous use",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery life is the only major drawback",
+    "label": "not_issue"
+  },
+  {
+    "text": "It advertises up to 350 hours of battery life.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Using it with the included charger is fine, and not a big deal at all.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Oddly it uses what I consider an outdated Micro USB vs the newer USB-C.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It also connects to my Alienware control center, so you can change the color of the lights of the mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Overall a solid mouse, the price point is a tad high but I have a feeling it will last me longer than my LG which I had about 4 years.",
+    "label": "not_issue"
+  },
+  {
+    "text": "UPDATE: This mouse now has intermittent double-clicking issues where my intended single clicks turn into double clicks (very, VERY annoying)",
+    "label": "is_issue"
+  },
+  {
+    "text": "and stray click issues where things are clicked that I didn't even click at all. Clearly something wrong with the contact",
+    "label": "is_issue"
+  },
+  {
+    "text": "Clearly something wrong with the contact",
+    "label": "not_issue"
+  },
+  {
+    "text": "Fin on base makes mouse not useful for large hands",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery life was poor",
+    "label": "is_issue"
+  },
+  {
+    "text": "USB dongle missing from product",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse does not work on Mac M1 hardware with Ventura 13.4.1.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Logitech has been making this mouse since 2013 and it still does not support M1 compatibility.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Button just up from the wheel on these releases the indexed resistance on the wheel",
+    "label": "not_issue"
+  },
+  {
+    "text": "The forward/back buttons aren't as nice either.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I opened it with scissors like I've been doing my entire life.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The scroll wheel sound is obnoxious",
+    "label": "not_issue"
+  },
+  {
+    "text": "I opened the clam shell by cutting",
+    "label": "is_issue"
+  },
+  {
+    "text": "My cut went right through the cord.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The wheel did not move smoothly",
+    "label": "not_issue"
+  },
+  {
+    "text": "The program \"LogiOptions\" crashes any time you want to change anything.",
+    "label": "not_issue"
+  },
+  {
+    "text": "There are more reviews here that mention this problem.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Cable damaged",
+    "label": "is_issue"
+  },
+  {
+    "text": "My $120 fancy Logitech mouse failed so I bough a CHEAP Logitech.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Is super fast, scrolls smooth and has plenty of features.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Is super fast, scrolls smooth and has plenty of features.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It is as smooth and accurate as the fancy $120 old mouse but cost me only $22.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The two buttons on the left side (typically FORWARD and BACK) are set about a centimeter further back.",
+    "label": "not_issue"
+  },
+  {
+    "text": "This wired mouse works great",
+    "label": "not_issue"
+  },
+  {
+    "text": "Cut through the top of the packaging",
+    "label": "is_issue"
+  },
+  {
+    "text": "No longer receives data from my computer",
+    "label": "is_issue"
+  },
+  {
+    "text": "Button is 'sticky' working intermittently",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse was skipping, therefore the product fails.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Amazon's large shipping box could not hold the mouse and it was secure.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The only grip I've been having lately on this mouse is the wheel losing the ability to scroll even after plugging/unplugging.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The wheel does not stop scrolling",
+    "label": "is_issue"
+  },
+  {
+    "text": "There is a button in the middle of the mouse that grinds against your finger.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Belt broke last month so I ordered new ones.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The middle button is too hard to use.",
+    "label": "not_issue"
+  },
+  {
+    "text": "This product makes a lot of noise.",
+    "label": "is_issue"
+  },
+  {
+    "text": "While the look and feel is the same, functionality definitely is not the same.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The tracking feels sloppy.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The product is a mouse",
+    "label": "not_issue"
+  },
+  {
+    "text": "The new design has made the middle mouse button very inconsistent",
+    "label": "is_issue"
+  },
+  {
+    "text": "I use a lot of Civil Design applications such as Civil 3D, MicroStation, and OpenRoads.  In all of these applications the middle button is used a lot, in Civil 3D it is my main use for panning through drawing files and the double click for zooming to the extents of the file.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Does not work",
+    "label": "is_issue"
+  },
+  {
+    "text": "the scroll wheel doesn't",
+    "label": "not_issue"
+  },
+  {
+    "text": "The noise",
+    "label": "not_issue"
+  },
+  {
+    "text": "Product had one or more usb ports that stopped functioning. I assume these ports are wired, so they may have been damaged by physical interference.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Loud clicks",
+    "label": "not_issue"
+  },
+  {
+    "text": "Clicks are loud",
+    "label": "is_issue"
+  },
+  {
+    "text": "Mouse jumps around on PS/2 port.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Not ergonomic.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Cordless mouse dropped out.",
+    "label": "not_issue"
+  },
+  {
+    "text": "scroll wheel can be jumpy",
+    "label": "not_issue"
+  },
+  {
+    "text": "When plugged in the mouse did not work.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Not 5.9 feet long. Claimed length does not match actual length.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Mouse did not work.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The hand lighting was not working",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse was very cheap and the build quality was decent",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse is unique and has some good features but is a budget purchase",
+    "label": "not_issue"
+  },
+  {
+    "text": "The program running the mouse is easy to use and has more features than other mice",
+    "label": "not_issue"
+  },
+  {
+    "text": "The metal feet are very durable",
+    "label": "not_issue"
+  },
+  {
+    "text": "The middle mouse button has a line that feels odd",
+    "label": "not_issue"
+  },
+  {
+    "text": "There is a lot of difficulty using the software (no instructions).",
+    "label": "not_issue"
+  },
+  {
+    "text": "The highest click in one second was 37!",
+    "label": "not_issue"
+  },
+  {
+    "text": "A little heavy.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The left side of the mouse button needs lots of force to be clicked.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Bad ergonomics.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The right side of the mouse button needs less force to be clicked.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The right side of the mouse button is slightly better than the left.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Used",
+    "label": "is_issue"
+  },
+  {
+    "text": "This product has a weight of 16.9 grams",
+    "label": "not_issue"
+  },
+  {
+    "text": "Optical buttons are very important for me, because I work with GUI design and when I click with mouse, it should actually generate a click.",
+    "label": "is_issue"
+  },
+  {
+    "text": "I didn't like how it looks on Amazon, but actual looks with yellow-green-red-purple LED is very cool.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Not enough space on the mouse pad.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Mouse detection broke randomly \ud83d\udc4e",
+    "label": "is_issue"
+  },
+  {
+    "text": "Muri\u00f3",
+    "label": "is_issue"
+  },
+  {
+    "text": "A veces no responde",
+    "label": "not_issue"
+  },
+  {
+    "text": "Not necessary to install the drive for me, I just plug in USB and it works.",
+    "label": "not_issue"
+  },
+  {
+    "text": "(A70x) It's a good mouse but the texture wore off in like a week and now the mouse can't drag click so if you have sweaty hands get the Roccat Kone Pro or Model O wired don't waste your $60",
+    "label": "is_issue"
+  },
+  {
+    "text": "Cannot remove programmable macro",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse overall is very good",
+    "label": "not_issue"
+  },
+  {
+    "text": "works well for drag clicking",
+    "label": "not_issue"
+  },
+  {
+    "text": "it has a good laser",
+    "label": "not_issue"
+  },
+  {
+    "text": "It is very heavy",
+    "label": "is_issue"
+  },
+  {
+    "text": "I would have to disagree. It does not state that it doesn't have double-click issues.",
+    "label": "is_issue"
+  },
+  {
+    "text": "When computer is off or closed",
+    "label": "is_issue"
+  },
+  {
+    "text": "Wow, I am in love with this thing.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Micro-USB",
+    "label": "is_issue"
+  },
+  {
+    "text": "I accidentally dropped it on tile flooring and it broke",
+    "label": "is_issue"
+  },
+  {
+    "text": "Fragile",
+    "label": "is_issue"
+  },
+  {
+    "text": "Broke quickly when dropped on the floor",
+    "label": "is_issue"
+  },
+  {
+    "text": "Scroll wheel works in the opposite direction of every other mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse is rechargeable via a USB, but it isn't a USB Type C connector, it is a USB Micro B (aka old-Android-style). ",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse is fine for the price.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Has traditional usb and usb c dongles.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The only issue is that it\u2019s draining the life from my 2020 MacBook Air.",
+    "label": "not_issue"
+  },
+  {
+    "text": "If I leave the dongle in, the laptop dies in hours",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery lasts long",
+    "label": "not_issue"
+  },
+  {
+    "text": "Works with PC and Mac",
+    "label": "not_issue"
+  },
+  {
+    "text": "Does not consistently reconnect with laptop after either device goes to sleep.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Stopped working",
+    "label": "is_issue"
+  },
+  {
+    "text": "I have a case which fits any charger, but not this wide dongle.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery life was not sufficient.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery runs out quickly with no warning.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery doesn't last long enough.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Not compatible with MacBook Pro.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Only lasts a few weeks between charges",
+    "label": "is_issue"
+  },
+  {
+    "text": "Works great in office.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Lost wide on/off switch.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Corroded batteries or worn-out battery contacts.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Mouse died at 21 days.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Belt broke last month so I ordered new ones.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The middle click changes the scrolling between ratcheting and infinite, and doesn't actually function like a traditional middle click does",
+    "label": "is_issue"
+  },
+  {
+    "text": "Very good",
+    "label": "not_issue"
+  },
+  {
+    "text": "good luck with Logitech products",
+    "label": "not_issue"
+  },
+  {
+    "text": "this one is no different",
+    "label": "not_issue"
+  },
+  {
+    "text": "bought this for a new MacBook that has all USB-C ports",
+    "label": "not_issue"
+  },
+  {
+    "text": "pares quickly and easily via Bluetooth",
+    "label": "not_issue"
+  },
+  {
+    "text": "its cursor positioning is accurate",
+    "label": "not_issue"
+  },
+  {
+    "text": "the scrolling is great",
+    "label": "not_issue"
+  },
+  {
+    "text": "If you need a mouse for a computer with no USB-A ports, this is definitely worth considering.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The product is missing a component",
+    "label": "is_issue"
+  },
+  {
+    "text": "Left and right buttons are too sensitive",
+    "label": "not_issue"
+  },
+  {
+    "text": "The packaging showed a super small USB adapter.. but my mouse did not come with one.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Belt broke last month so I ordered new ones.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Very very very short battery life.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The button for device switching is on the BOTTOM of the mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I am an Apple user and thought I needed to buy the fancy mouse from them but decided to give this one a try just to see if I could get away with something more affordable.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I was pleasantly surprised at the quality and feel of the mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It worked great and has a USB-C receiver which was perfect for my Macbook Pro.",
+    "label": "not_issue"
+  },
+  {
+    "text": "I highly recommend giving this one a try before buying something more expensive.",
+    "label": "not_issue"
+  },
+  {
+    "text": "N/A",
+    "label": "not_issue"
+  },
+  {
+    "text": "recharge",
+    "label": "is_issue"
+  },
+  {
+    "text": "The product doesn't work",
+    "label": "is_issue"
+  },
+  {
+    "text": "disconnecting from sleep mode",
+    "label": "is_issue"
+  },
+  {
+    "text": "Device was dead for 4 weeks before I had to recharge it.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Battery life is an issue",
+    "label": "not_issue"
+  },
+  {
+    "text": "Product has a cable (mouse)",
+    "label": "not_issue"
+  },
+  {
+    "text": "It is far to thin to fit a hand well",
+    "label": "not_issue"
+  },
+  {
+    "text": "can lead to discomfort over long use periods",
+    "label": "not_issue"
+  },
+  {
+    "text": "Might lose charge frequently.",
+    "label": "not_issue"
+  },
+  {
+    "text": "May need to use a pen nib to switch between the C-type and USB ports.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery died",
+    "label": "is_issue"
+  },
+  {
+    "text": "I needed a new mouse for a new Apple laptop Air.",
+    "label": "not_issue"
+  },
+  {
+    "text": "This mouse has worked out pretty well, though the rechargeable battery in it lasts a shorter time than I\u2019d like.",
+    "label": "not_issue"
+  },
+  {
+    "text": "In full disclosure I suck at turning it off, relying on it\u2019s \u201csleep mode\u201d to extend the battery life which it doesn\u2019t do well.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Functionally it works great\u2026just remember to turn it off when you\u2019re done.",
+    "label": "not_issue"
+  },
+  {
+    "text": "This is a great review that suggests the product is functional. The reviewer uses alliteration to describe how smooth the product feels.",
+    "label": "not_issue"
+  },
+  {
+    "text": "This mouse works perfectly",
+    "label": "not_issue"
+  },
+  {
+    "text": "Product not described",
+    "label": "not_issue"
+  },
+  {
+    "text": "not sensitive to movement",
+    "label": "is_issue"
+  },
+  {
+    "text": "battery runs out of charge quickly and dies with no warning",
+    "label": "is_issue"
+  },
+  {
+    "text": "Buttons got messy",
+    "label": "not_issue"
+  },
+  {
+    "text": "Belt broke last month so I ordered new ones.",
+    "label": "is_issue"
+  },
+  {
+    "text": "USB 3.0",
+    "label": "is_issue"
+  },
+  {
+    "text": "A user mentioned that the product feels good to hold and to use.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Click izquierdo",
+    "label": "is_issue"
+  },
+  {
+    "text": "Se sienten muy pl\u00e1sticos y el mouse se siente pesado.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The media could not be loaded.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Scroll wheel makes squeaky sound when scroll fast or quickly.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Windows software needed to customize mouse.  No Mac software.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The software had to be manually installed",
+    "label": "is_issue"
+  },
+  {
+    "text": "does not support razer chroma",
+    "label": "not_issue"
+  },
+  {
+    "text": "The scroll wheel now changes DPI instead of switching between left/right click.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Redragon RGB software is lacking",
+    "label": "not_issue"
+  },
+  {
+    "text": "First, the middle button randomly stopped working and was completely inoperable for periods of time.",
+    "label": "is_issue"
+  },
+  {
+    "text": "It started by not working at all unless pressed in a certain way, and then it moved to randomly clicking or being completely inoperable for periods of time.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The light settings are fine - one color or effect affects the entire mouse (e.g., you cannot set the mouse wheel to be yellow, while the emblem and side lines are red).  You need the software to select the color for each effect, and then you can use button #8 on top of the mouse to select which effect you wish to use (from full on to full off, rainbow, breathing, wave, etc).",
+    "label": "not_issue"
+  },
+  {
+    "text": "All in all, I think this is a fine mouse, and for the money it's top.  I only gave 'ease of use' four stars because of the lack of instruction on how to set up the LED stuff.",
+    "label": "not_issue"
+  },
+  {
+    "text": "My original mouse broke after only 7 months.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The issue with that is that everytime I start my computer I have to use my tracpad to update the firmware, which is a pain.",
+    "label": "not_issue"
+  },
+  {
+    "text": "If you don't have the firmware issue you'll love this mouse.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The media could not be loaded.",
+    "label": "not_issue"
+  },
+  {
+    "text": "No functional issue mentioned",
+    "label": "not_issue"
+  },
+  {
+    "text": "The product arrived later than expected so there was a delay in the review.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The software took a little figuring out so there was a delay in the review.",
+    "label": "is_issue"
+  },
+  {
+    "text": "The middle mouse button seems to not work consistently anymore.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The buttons stopped working after two weeks, but were fixed by pulling them back down",
+    "label": "not_issue"
+  },
+  {
+    "text": "The middle buttons don't work correctly.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The wire is stiff",
+    "label": "not_issue"
+  },
+  {
+    "text": "Was only available as a .rar file (not a normal zip).",
+    "label": "not_issue"
+  },
+  {
+    "text": "Scroll wheel on mine went belly-up just after 60 days of use so I cannot return it.",
+    "label": "is_issue"
+  },
+  {
+    "text": "It suddenly stopped working",
+    "label": "is_issue"
+  },
+  {
+    "text": "the left click started to go bad",
+    "label": "is_issue"
+  },
+  {
+    "text": "The mouse stopped working.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Battery compartment not user-serviceable",
+    "label": "is_issue"
+  },
+  {
+    "text": "Nail file too small to fit",
+    "label": "not_issue"
+  },
+  {
+    "text": "Bottom light didn't turn on",
+    "label": "is_issue"
+  },
+  {
+    "text": "Doesn't work when placed on whitish surface",
+    "label": "not_issue"
+  },
+  {
+    "text": "Need mouse pad to use the mouse directly on desk.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Battery is included.",
+    "label": "not_issue"
+  },
+  {
+    "text": "It's working well",
+    "label": "not_issue"
+  },
+  {
+    "text": "The sound of this is terrible.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Scroll wheel wore out.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Battery door not removable.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The mouse wheel is stiff.",
+    "label": "is_issue"
+  },
+  {
+    "text": "Click is loud",
+    "label": "is_issue"
+  },
+  {
+    "text": "It's okay.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Mouse is a little small for large handed users.",
+    "label": "not_issue"
+  },
+  {
+    "text": "Left side of mouse no longer functions",
+    "label": "is_issue"
+  },
+  {
+    "text": "The color setting is not consistent",
+    "label": "not_issue"
+  },
+  {
+    "text": "Not the best mouse for gaming but the mouse looks good n feels good although u can't customize the dpi.",
+    "label": "not_issue"
+  },
+  {
+    "text": "The product did not work as expected.",
+    "label": "is_issue"
+  },
+  {
+    "text": "until they start making better ones",
+    "label": "not_issue"
+  },
+  {
+    "text": "when you remove the bottom screws",
+    "label": "not_issue"
+  },
+  {
+    "text": "Don't let",
+    "label": "not_issue"
+  },
+  {
+    "text": "My palm never or at least very rarely gets sweaty thanks to the holes",
+    "label": "not_issue"
+  },
+  {
+    "text": "spamming through dialogue in RPG games and visual novels",
+    "label": "not_issue"
+  },
+  {
+    "text": "Unfortunately there are key functions that straight up do not work",
+    "label": "is_issue"
+  },
+  {
+    "text": "Used it forever",
+    "label": "not_issue"
+  },
+  {
+    "text": "Can't go wrong here",
+    "label": "not_issue"
+  },
+  {
+    "text": "Unfortunately in your mouse1 and mouse2 buttons if you press lower on the button where the honeycomb/webbing/holes are it can't take the stress and will break over time",
+    "label": "is_issue"
+  },
+  {
+    "text": "will update this review in the event changes",
+    "label": "not_issue"
+  },
+  {
+    "text": "Each of the 10 keys can be rebound to perform a myriad of tasks such as button presses, num keys, function keys, macros, script launching, or media options",
+    "label": "not_issue"
+  },
+  {
+    "text": "so that it changes",
+    "label": "not_issue"
+  },
+  {
+    "text": "it changes while I move the mouse around.",
+    "label": "not_issue"
+  },
+  {
+    "text": "you only need it once (unless you want to make changes, ugh)Onto the mouse itself",
+    "label": "not_issue"
+  },
+  {
+    "text": "to go back to the drawing board amigos",
+    "label": "not_issue"
+  },
+  {
+    "text": "so when the app runs, the hardware settings go away and vise versa",
+    "label": "not_issue"
+  },
+  {
+    "text": "yes it always changes",
+    "label": "not_issue"
+  },
+  {
+    "text": "before I send mine back",
+    "label": "not_issue"
+  },
+  {
+    "text": "First, wireless, so I could move around",
+    "label": "not_issue"
+  },
+  {
+    "text": "I don't want to take it apart because I'm lazy and I don't want to RMA because I'm lazy",
+    "label": "is_issue"
+  },
+  {
+    "text": "Now entering month 4",
+    "label": "not_issue"
+  },
+  {
+    "text": "I normally play at (Plat 1 / Diamond",
+    "label": "not_issue"
+  },
+  {
+    "text": "until they actually correct the hardware",
+    "label": "not_issue"
+  },
+  {
+    "text": "First off let",
+    "label": "not_issue"
+  },
+  {
+    "text": "we'll get",
+    "label": "not_issue"
+  },
+  {
+    "text": "we will refund the chargeback to your card",
+    "label": "not_issue"
+  },
+  {
+    "text": "so unless they take it in another way it's not going to happen",
+    "label": "not_issue"
+  }
 ]
