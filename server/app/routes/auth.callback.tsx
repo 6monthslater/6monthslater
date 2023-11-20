@@ -2,9 +2,8 @@ import type { LoaderFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { createServerClient, parse, serialize } from "@supabase/ssr";
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const url = new URL(request.url);
-  const code = url.searchParams.get("code");
+export const loader: LoaderFunction = async ({ request, params }) => {
+  const code = params.code;
   const cookies = parse(request.headers.get("Cookie") ?? "");
   const headers = new Headers();
 
