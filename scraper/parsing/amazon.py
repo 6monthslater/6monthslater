@@ -92,7 +92,7 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     if not date_text:
         raise ParsingError("Failed to parse date text")
     date_obj = parser.parse(date_text)
-    date = int(date_obj.utcnow().timestamp()) if date_obj else None
+    date = int(date_obj.timestamp()) if date_obj else None
     if not date:
         raise ParsingError("Failed to parse date")
 
