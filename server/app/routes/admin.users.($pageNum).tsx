@@ -1,5 +1,5 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import {
   useFetcher,
   useLoaderData,
@@ -32,8 +32,19 @@ import {
 } from "~/components/ui/dialog";
 import { Label } from "~/components/shadcn-ui/label";
 import { Input } from "~/components/shadcn-ui/input";
+import {
+  ADMIN_ROLE_NAME,
+  isAdmin,
+  createServerClient,
+  FORBIDDEN_ROUTE,
+} from "~/utils/supabase.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const { supabase, headers } = createServerClient(request);
+  if (!(await isAdmin(supabase))) {
+    return redirect(FORBIDDEN_ROUTE, { headers });
+  }
+
   const url = new URL(request.url);
   const search = new URLSearchParams(url.search);
 
@@ -60,7 +71,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const count = await db.user.count();
   const pageCount = Math.ceil(count / pageSize);
 
-  return json({ users, pageCount });
+  return json({ users, pageCount }, { headers });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -257,9 +268,9 @@ export default function Users() {
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem
                 disabled={fetcher.state === "submitting"}
-                checked={user.roles.includes("Admin")}
+                checked={user.roles.includes(ADMIN_ROLE_NAME)}
                 onCheckedChange={(checked) => {
-                  handleRoleUpdate(user.id, "Admin", checked);
+                  handleRoleUpdate(user.id, ADMIN_ROLE_NAME, checked);
                 }}
               >
                 Admin
