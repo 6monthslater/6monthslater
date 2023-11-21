@@ -63,5 +63,8 @@
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": "eslint --cache",
     "*": "prettier --ignore-unknown --check"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
