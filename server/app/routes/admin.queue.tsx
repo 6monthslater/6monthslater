@@ -7,7 +7,7 @@ import {
   ReviewSource,
   sendProductToQueue,
 } from "~/queue-handling/review.server";
-import Button from "~/components/button";
+import Button from "~/components/tremor-ui/button";
 
 interface ActionData {
   data?: string;

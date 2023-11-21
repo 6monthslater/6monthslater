@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import NavLink from "~/components/navlink";
+import NavLink from "~/components/remix-ui/navlink";
 
 interface NavbarProps {
   isLoggedIn: boolean;

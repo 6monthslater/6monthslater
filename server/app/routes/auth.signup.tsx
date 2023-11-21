@@ -2,9 +2,9 @@ import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { createServerClient } from "~/utils/supabase.server";
 import { Form, useActionData, useNavigation } from "@remix-run/react";
-import { Input } from "~/components/ui/input";
-import Button from "~/components/button";
-import { Label } from "~/components/ui/label";
+import { Input } from "~/components/shadcn-ui/input";
+import Button from "~/components/tremor-ui/button";
+import { Label } from "~/components/shadcn-ui/label";
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
