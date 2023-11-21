@@ -57,6 +57,7 @@ export default function App() {
     createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
   );
   const serverAccessToken = session?.access_token;
+  const isLoggedIn = !!session;
 
   useEffect(() => {
     const {
@@ -83,7 +84,7 @@ export default function App() {
         <Links />
       </head>
       <body className="flex min-h-screen flex-col space-y-4">
-        <Navbar />
+        <Navbar isLoggedIn={isLoggedIn} />
         <Outlet context={{ supabase }} />
         <ScrollRestoration />
         <Scripts />

@@ -1,7 +1,11 @@
 import { Link } from "@remix-run/react";
 import NavLink from "~/components/navlink";
 
-const Navbar = () => {
+interface NavbarProps {
+  isLoggedIn: boolean;
+}
+
+const Navbar = ({ isLoggedIn }: NavbarProps) => {
   return (
     <nav className="flex flex-wrap items-center justify-between bg-gradient-to-r from-cyan-700 to-cyan-500 to-90% p-4 text-slate-200">
       <div className="mr-6 flex flex-shrink-0 items-center">
@@ -18,6 +22,15 @@ const Navbar = () => {
           <NavLink to="/admin/queue-status">Queue Status</NavLink>
           <NavLink to="/admin/crawler">Product Crawler</NavLink>
           <NavLink to="/admin/reviews">View Reviews</NavLink>
+          {isLoggedIn ? (
+            <NavLink className="float-right" to="/auth/logout">
+              Log Out
+            </NavLink>
+          ) : (
+            <NavLink className="float-right" to="/auth/login">
+              Login
+            </NavLink>
+          )}
         </div>
       </div>
     </nav>
