@@ -21,6 +21,7 @@
     "@remix-run/serve": "^1.19.3",
     "@supabase/ssr": "^0.0.10",
     "@supabase/supabase-js": "^2.38.4",
+    "@tanstack/react-table": "^8.10.7",
     "@tremor/react": "^2.0.2",
     "@types/amqplib": "^0.10.1",
     "amqplib": "^0.10.3",
