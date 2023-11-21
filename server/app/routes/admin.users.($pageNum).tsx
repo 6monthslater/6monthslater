@@ -95,6 +95,13 @@ export const action: ActionFunction = async ({ request }) => {
       );
     }
 
+    if (role !== ADMIN_ROLE_NAME) {
+      return json(
+        { error: `Users page backend error: Invalid Role '${role}'` },
+        { status: 400 }
+      );
+    }
+
     // Get current list of roles
     const user = await db.user.upsert({
       where: {
