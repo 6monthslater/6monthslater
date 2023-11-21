@@ -71,7 +71,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const count = await db.user.count();
   const pageCount = Math.ceil(count / pageSize);
 
-  return json({ users, pageCount }, { headers });
+  return json({ users, pageCount, ADMIN_ROLE_NAME }, { headers });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -155,7 +155,7 @@ export default function Users() {
   const navigation = useNavigation();
 
   // Table Data
-  const { users, pageCount } = useLoaderData<typeof loader>();
+  const { users, pageCount, ADMIN_ROLE_NAME } = useLoaderData<typeof loader>();
 
   // Action Handlers
   const fetcher = useFetcher();
