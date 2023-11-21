@@ -29,7 +29,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "~/components/ui/dialog";
+} from "~/components/shadcn-ui/dialog";
 import { Label } from "~/components/shadcn-ui/label";
 import { Input } from "~/components/shadcn-ui/input";
 import {
