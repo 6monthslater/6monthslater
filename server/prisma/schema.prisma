@@ -32,6 +32,7 @@ model ManufacturerStoreId {
 model Product {
   id              String       @id @default(cuid())
   name            String       @unique
+  image_url       String?
   manufacturer_id String
   manufacturer    Manufacturer @relation(fields: [manufacturer_id], references: [id])
   createdAt       DateTime     @default(now())
