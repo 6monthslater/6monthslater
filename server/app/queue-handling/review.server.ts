@@ -140,6 +140,7 @@ export async function startListeningForReviews() {
                 connectOrCreate: {
                   create: {
                     name: review.product_name,
+                    image_url: review.product_image_url,
                     manufacturer: manufacurerCreateObject,
                   },
                   where: {
@@ -302,19 +303,26 @@ export async function analyzeProduct(product_id: string) {
   }
 
   const channel = await connection.createChannel();
-  const reviews = await db.review.findMany({
-    where: {
-      product_id,
-    },
-    include: {
-      product: {
-        include: {
-          manufacturer: true,
-        },
+  const reviews = (
+    await db.review.findMany({
+      where: {
+        product_id,
       },
-      images: true,
-    },
-  });
+      include: {
+        product: {
+          include: {
+            manufacturer: true,
+          },
+        },
+        images: true,
+      },
+    })
+  ).map((review) => ({
+    ...review,
+    product_name: review.product.name,
+    manufacturer_name: review.product.manufacturer.name,
+    manufacturer_id: review.product.manufacturer.id,
+  }));
 
   channel.sendToQueue("to_analyze", Buffer.from(JSON.stringify(reviews)));
 }
