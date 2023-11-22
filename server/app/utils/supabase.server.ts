@@ -13,6 +13,14 @@ export const createServerClient = (request: Request) => {
   const cookies = parse(request.headers.get("Cookie") ?? "");
   const headers = new Headers();
 
+  if (!process.env.SUPABASE_URL) {
+    throw new Error("SUPABASE_URL is not defined in the .env file!");
+  }
+
+  if (!process.env.SUPABASE_ANON_KEY) {
+    throw new Error("SUPABASE_ANON_KEY is not defined in the .env file!");
+  }
+
   const supabase = createSupabaseServerClient(
     process.env.SUPABASE_URL ?? "",
     process.env.SUPABASE_ANON_KEY ?? "",
