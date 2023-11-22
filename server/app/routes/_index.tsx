@@ -115,7 +115,6 @@ export default function Index() {
       searchSuggestionFetcher.data
     ) {
       setCurrentSuggestions(searchSuggestionFetcher.data);
-      console.log(searchSuggestionFetcher.data);
     }
   }, [searchSuggestionFetcher]);
 
