@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { TextInput } from "@tremor/react";
 import { TbSearch } from "react-icons/tb";
-import Button from "~/components/button";
+import Button from "~/components/tremor-ui/button";
 import type { ActionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";

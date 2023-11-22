@@ -1,19 +1,19 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
 import type { DeltaType } from "@tremor/react";
 import { BadgeDelta, Button, Card, Title } from "@tremor/react";
 import { useEffect, useRef } from "react";
-import type { QueueStatus } from "~/queue-handling/review.server";
 import {
   clearParseQueue,
   clearToAnalyzeQueue,
   getStatusOfQueue,
 } from "~/queue-handling/review.server";
-
-interface LoaderData {
-  parseQueue: QueueStatus;
-  processQueue: QueueStatus;
-}
+import { json, redirect } from "@remix-run/node";
+import {
+  isAdmin,
+  createServerClient,
+  FORBIDDEN_ROUTE,
+} from "~/utils/supabase.server";
 
 export const action: ActionFunction = async ({ request }) => {
   const { type } = Object.fromEntries(await request.formData());
@@ -35,19 +35,27 @@ export const action: ActionFunction = async ({ request }) => {
   return null;
 };
 
-export const loader = async (): Promise<LoaderData> => {
+export const loader: LoaderFunction = async ({ request }) => {
+  const { supabase, headers } = createServerClient(request);
+  if (!(await isAdmin(supabase))) {
+    return redirect(FORBIDDEN_ROUTE, { headers });
+  }
+
   const parseQueue = getStatusOfQueue("parse");
   const processQueue = getStatusOfQueue("to_analyze");
 
-  return {
-    parseQueue: await parseQueue,
-    processQueue: await processQueue,
-  };
+  return json(
+    {
+      parseQueue: await parseQueue,
+      processQueue: await processQueue,
+    },
+    { headers }
+  );
 };
 
 export default function Index() {
   const submit = useSubmit();
-  const initialQueueData = useLoaderData<LoaderData>();
+  const initialQueueData = useLoaderData<typeof loader>();
   const nextQueueData = useFetcher<typeof loader>();
   const allQueueDataRef = useRef([initialQueueData]);
   const interval = useRef<NodeJS.Timeout>();
