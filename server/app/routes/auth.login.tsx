@@ -1,7 +1,12 @@
 import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { createServerClient } from "~/utils/supabase.server";
-import { Form, useActionData, useNavigation } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useNavigation,
+  useSubmit,
+} from "@remix-run/react";
 import { Input } from "~/components/shadcn-ui/input";
 import Button from "~/components/tremor-ui/button";
 import { Label } from "~/components/shadcn-ui/label";
@@ -62,6 +67,7 @@ export const action: ActionFunction = async ({ request }) => {
 export const Login = () => {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
+  const submit = useSubmit();
   const isSubmitting =
     navigation.state === "submitting" || navigation.state === "loading";
 
@@ -70,7 +76,22 @@ export const Login = () => {
       <h1 className="text-2xl font-bold">Login</h1>
 
       <div className="mx-auto content-center items-center space-x-3 md:flex md:w-1/3">
-        <Form method="post" className="w-full space-y-3">
+        <Form
+          method="post"
+          className="w-full space-y-3"
+          onKeyUp={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              event.stopPropagation();
+              const formData = new FormData(event.currentTarget);
+              formData.set("_action", "login");
+              submit(formData, {
+                method: "post",
+                encType: "multipart/form-data",
+              });
+            }
+          }}
+        >
           <Label htmlFor="email">Email</Label>
           <Input
             type="email"
