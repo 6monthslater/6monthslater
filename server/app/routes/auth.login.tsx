@@ -3,19 +3,19 @@ import { json, redirect } from "@remix-run/node";
 import { createServerClient } from "~/utils/supabase.server";
 import {
   Form,
+  Link,
   useActionData,
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
 import { Input } from "~/components/shadcn-ui/input";
-import Button from "~/components/tremor-ui/button";
+import { Button, buttonVariants } from "~/components/shadcn-ui/button";
 import { Label } from "~/components/shadcn-ui/label";
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
-  const action = String(formData.get("_action"));
   const { supabase, headers } = createServerClient(request);
 
   const errors: {
@@ -26,10 +26,6 @@ export const action: ActionFunction = async ({ request }) => {
   const emailRegex = new RegExp(
     /^[a-z0-9]+(?!.*(?:\+{2,}|-{2,}|\.{2,}))(?:[.+-]?[a-z0-9])*@[\w-]+\.+[\w-]{2,4}$/
   );
-
-  if (action === "signUp") {
-    return redirect("/auth/signup");
-  }
 
   if (!emailRegex.test(email)) {
     errors.email = "Invalid email address";
@@ -131,19 +127,17 @@ export const Login = () => {
             {"\u00A0"}
           </p>
           <div className="space-x-3">
-            <Button
-              type="submit"
-              name="_action"
-              value="signUp"
-              variant="secondary"
+            <Link
+              to="/auth/signup"
+              className={buttonVariants({ variant: "outline" })}
             >
               Sign Up
-            </Button>
+            </Link>
             <Button
               type="submit"
               name="_action"
               value="login"
-              variant="primary"
+              variant="secondary"
               disabled={isSubmitting}
             >
               Login
