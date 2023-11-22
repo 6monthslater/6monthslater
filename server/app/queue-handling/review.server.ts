@@ -140,6 +140,7 @@ export async function startListeningForReviews() {
                 connectOrCreate: {
                   create: {
                     name: review.product_name,
+                    image_url: review.product_image_url,
                     manufacturer: manufacurerCreateObject,
                   },
                   where: {

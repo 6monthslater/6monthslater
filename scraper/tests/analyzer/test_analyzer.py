@@ -25,6 +25,7 @@ def produce_sample_review(
     country_reviewed_in: str = "Canada",
     region: AmazonRegion = AmazonRegion.CA,
     product_name: str | None = None,
+    product_image_url: str | None = None,
     manufacturer_name: str | None = None,
     manufacturer_id: str | None = None
 ) -> Review:
@@ -46,6 +47,7 @@ def produce_sample_review(
         country_reviewed_in=country_reviewed_in,
         region=region,
         product_name=product_name,
+        product_image_url=product_image_url,
         manufacturer_name=manufacturer_name,
         manufacturer_id=manufacturer_id
     )
