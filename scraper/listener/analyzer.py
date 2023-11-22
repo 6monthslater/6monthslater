@@ -102,7 +102,7 @@ def __analyze_reviews(reviews: list[dict[str, Any]]) -> list[Report]:
             author_image_url=review["author_image_url"],
             title=review["title"],
             text=review["text"],
-            date=int(dp.parse(review["date"]).timestamp()),
+            date=review["date"] if isinstance(review["date"], int) else int(dp.parse(review["date"]).timestamp()),
             date_text=review["date_text"],
             review_id=review["review_id"],
             attributes=review["attributes"],
@@ -113,9 +113,9 @@ def __analyze_reviews(reviews: list[dict[str, Any]]) -> list[Report]:
             images=review["images"],
             country_reviewed_in=review["country_reviewed_in"],
             region=AmazonRegion(review["region"]),
-            product_name=review["product"]["name"],
-            manufacturer_name=review["product"]["manufacturer"]["name"],
-            manufacturer_id=review["product"]["manufacturer"]["id"]
+            product_name=review["product_name"],
+            manufacturer_name=review["manufacturer_name"],
+            manufacturer_id=review["manufacturer_id"]
         ) for review in reviews])
 
 def __analyze_reviews_using_llm(reviews: list[dict[str, Any]]) -> list[Report]:
