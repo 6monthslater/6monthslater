@@ -1,0 +1,43 @@
+name: Docker image builds
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  server:
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      name: "server"
+      username: "6monthslater"
+      folder: "server"
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  scraper:
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      name: "scraper"
+      username: "6monthslater"
+      target: "scraper"
+      folder: "scraper"
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  analyzer:
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      name: "analyzer"
+      username: "6monthslater"
+      target: "analyzer"
+      folder: "scraper"
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  crawler:
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      name: "crawler"
+      username: "6monthslater"
+      target: "crawler"
+      folder: "scraper"
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
