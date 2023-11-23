@@ -8,9 +8,9 @@ import {
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
-import { Input } from "~/components/shadcn-ui/input";
-import { Button, buttonVariants } from "~/components/shadcn-ui/button";
-import { Label } from "~/components/shadcn-ui/label";
+import { Input } from "~/components/ui/input";
+import { Button, buttonVariants } from "~/components/ui/button";
+import { Label } from "~/components/ui/label";
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();

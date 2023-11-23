@@ -1,6 +1,6 @@
 import { NavLink as RemixNavLink } from "@remix-run/react";
 import type { RemixNavLinkProps } from "@remix-run/react/dist/components";
-import { buttonVariants } from "~/components/shadcn-ui/button";
+import { buttonVariants } from "~/components/ui/button";
 
 export const NavLink = (props: RemixNavLinkProps) => {
   return (

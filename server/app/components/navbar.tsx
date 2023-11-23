@@ -1,12 +1,12 @@
 import { Link, useLocation, NavLink as RemixNavLink } from "@remix-run/react";
-import { NavLink } from "~/components/shadcn-ui/navlink";
+import { NavLink } from "~/components/ui/navlink";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/shadcn-ui/dropdown-menu";
-import { Button } from "~/components/shadcn-ui/button";
+} from "~/components/ui/dropdown-menu";
+import { Button } from "~/components/ui/button";
 import type { RemixNavLinkProps } from "@remix-run/react/dist/components";
 import type { ReactNode } from "react";
 

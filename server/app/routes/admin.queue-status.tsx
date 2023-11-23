@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
 import type { DeltaType } from "@tremor/react";
 import { BadgeDelta, Card, Title } from "@tremor/react";
-import { Button } from "~/components/shadcn-ui/button";
+import { Button } from "~/components/ui/button";
 import { useEffect, useRef } from "react";
 import {
   clearParseQueue,
