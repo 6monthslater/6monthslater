@@ -1,4 +1,8 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import {
@@ -13,11 +17,18 @@ import {
   createServerClient,
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
+import { WEBSITE_TITLE } from "~/root";
+
+const PAGE_TITLE = "Control Product Crawler";
 
 interface ActionData {
   data?: string;
   formError?: string;
 }
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const { supabase, headers } = createServerClient(request);
@@ -69,7 +80,7 @@ export default function Index() {
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
-      <h1 className="text-2xl font-bold">Admin: Control Product Crawler</h1>
+      <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
 
       <Form method="post">
         <div className="mx-auto px-6 md:w-1/2">

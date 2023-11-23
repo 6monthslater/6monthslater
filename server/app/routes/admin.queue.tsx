@@ -1,4 +1,8 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import type { Product } from "~/queue-handling/review.server";
@@ -14,6 +18,13 @@ import {
   createServerClient,
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
+import { WEBSITE_TITLE } from "~/root";
+
+const PAGE_TITLE = "Add Product to Scraper Queue";
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const { supabase, headers } = createServerClient(request);
@@ -74,9 +85,7 @@ export default function Index() {
 
   return (
     <div className="space-y-4 text-center">
-      <h1 className="text-2xl font-bold">
-        Admin: Add Product to Scraper Queue
-      </h1>
+      <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
 
       <Form method="post">
         <div className="mx-auto px-6 md:w-3/4 lg:w-3/5">

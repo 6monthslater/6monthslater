@@ -1,8 +1,10 @@
+import type { MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { AreaChart, Card, Title } from "@tremor/react";
 import { useState } from "react";
+import { WEBSITE_TITLE } from "~/root";
 
 interface TopIssue {
   text: string;
@@ -38,6 +40,10 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
     },
   });
   return json({ product });
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return { title: `Product: ${data.product?.name} - ${WEBSITE_TITLE}` };
 };
 
 function getTopIssues(

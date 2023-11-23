@@ -1,4 +1,4 @@
-import type { SerializeFrom } from "@remix-run/node";
+import type { SerializeFrom, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
@@ -9,6 +9,7 @@ import {
   FORBIDDEN_ROUTE,
   isAdmin,
 } from "~/utils/supabase.server";
+import { WEBSITE_TITLE } from "~/root";
 
 interface ReviewData {
   id: string;
@@ -27,6 +28,12 @@ interface ReviewData {
   region: string;
   createdAt: Date;
 }
+
+const PAGE_TITLE = "View Recently Scraped Reviews";
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const loader = async ({
   request,
@@ -81,9 +88,7 @@ export default function Route() {
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
-      <h1 className="text-center text-2xl font-bold">
-        Admin: View Recently Scraped Reviews
-      </h1>
+      <h1 className="text-center text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
       <div className="flex flex-row flex-wrap">
         {reviews && getReviewBoxes(reviews)}
       </div>

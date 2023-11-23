@@ -1,5 +1,9 @@
 import type { Product } from "@prisma/client";
-import type { ActionFunction, SerializeFrom } from "@remix-run/node";
+import type {
+  ActionFunction,
+  SerializeFrom,
+  MetaFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import type { SubmitFunction } from "@remix-run/react";
 import { Link, useLoaderData, useSubmit } from "@remix-run/react";
@@ -12,11 +16,18 @@ import {
   createServerClient,
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
+import { WEBSITE_TITLE } from "~/root";
+
+const PAGE_TITLE = "Manage Scraped Products";
 
 interface ProductData extends Product {
   reportCount: number;
   reviewCount: number;
 }
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const action: ActionFunction = async ({ request }) => {
   const { type, productId } = Object.fromEntries(await request.formData());
@@ -127,7 +138,7 @@ export default function Index() {
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
-      <h1 className="text-2xl font-bold">Admin: Manage Scraped Products</h1>
+      <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
       <h2 className="text-1xl">
         Total number of products: {productData.numberOfProducts}
       </h2>

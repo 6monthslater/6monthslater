@@ -25,13 +25,15 @@ import { useEffect, useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { createServerClient, isAdmin } from "~/utils/supabase.server";
 
+export const WEBSITE_TITLE = "6 Months Later";
+
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "6 Months Later",
+  title: WEBSITE_TITLE,
   viewport: "width=device-width,initial-scale=1",
 });
 
