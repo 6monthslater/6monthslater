@@ -5,7 +5,7 @@ const Footer = () => {
         6 Months Later is licensed under AGPLv3, available on{" "}
         <a
           className="text-blue-500 underline"
-          href="https://www.github.com/6monthslater/6monthslater"
+          href="https://github.com/6monthslater/6monthslater/blob/main/LICENSE.md"
           rel="noopener"
         >
           GitHub
