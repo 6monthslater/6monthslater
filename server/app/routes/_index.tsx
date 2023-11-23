@@ -196,7 +196,7 @@ export default function Index() {
             )}
           </Combobox>
 
-          <Button className="mb-3" type="submit">
+          <Button className="my-3" type="submit">
             <TbSearch className="mr-2 h-4 w-4" /> Search
           </Button>
         </Form>
