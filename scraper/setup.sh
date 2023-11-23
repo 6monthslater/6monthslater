@@ -5,6 +5,9 @@ mvn dependency:copy-dependencies -DoutputDirectory=./jars
 
 if [ "$DOWNLOAD_TRAINING" != "0" ]
 then
-    cd ../models
+    cd ..
+    mkdir -p models
+    cd models
+
     wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q5_K_S.gguf
 fi
