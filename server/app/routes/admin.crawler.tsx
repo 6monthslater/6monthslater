@@ -7,6 +7,7 @@ import {
   sendCrawlerCommand,
 } from "~/queue-handling/review.server";
 import { Button } from "~/components/shadcn-ui-mod/button";
+import { Textarea } from "~/components/ui/textarea";
 import {
   isAdmin,
   createServerClient,
@@ -71,13 +72,13 @@ export default function Index() {
       <h1 className="text-2xl font-bold">Admin: Control the Product Crawler</h1>
 
       <Form method="post">
-        <div>
+        <div className="mx-auto px-6 md:w-1/2">
           <label>
-            <textarea
+            <Textarea
               name="url"
               rows={1}
               cols={100}
-              className="resize-y rounded-md border-2"
+              className="resize-y border-2"
             />
           </label>
         </div>

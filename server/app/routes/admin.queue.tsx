@@ -7,6 +7,7 @@ import {
   ReviewSource,
   sendProductToQueue,
 } from "~/queue-handling/review.server";
+import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/shadcn-ui-mod/button";
 import {
   isAdmin,
@@ -76,14 +77,14 @@ export default function Index() {
       <h1 className="text-2xl font-bold">Admin: Add Review to Queue</h1>
 
       <Form method="post">
-        <div>
+        <div className="mx-auto px-6 md:w-3/4 lg:w-3/5">
           <label>
-            <textarea
+            <Textarea
               defaultValue={actionData?.data}
               name="data"
               rows={20}
               cols={100}
-              className="resize-y rounded-md border-2"
+              className="resize-y border-2"
             />
           </label>
         </div>
