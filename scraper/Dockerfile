@@ -11,7 +11,7 @@ FROM base as crawler
 CMD python crawler.py
 
 FROM base as analyzer
-RUN apt update && apt-get install default-jdk -y
+RUN apt update && apt-get install default-jdk maven -y
 RUN python -m textblob.download_corpora
 RUN ./setup.sh
 CMD python analyzer.py

@@ -45,6 +45,10 @@ If it's missing, you must also run `npm run prepare` in `./server/` to enable th
 
 Then you can start the server with `npm run dev` or `npm run start` in production.
 
+#### First run
+
+For a first run, you must create the database schema. This can be done by running `npx prisma migrate dev` in the `server` folder.
+
 ### Creating a local admin account
 
 The web server is access controlled. You will need to grant yourself admin privileges when setting up a 
@@ -95,3 +99,11 @@ For more information on running and testing the analyzer, see its [README file](
 Automated tests are available for the parser and analyzer, and can be executed by running `pytest`.
 
 Further information about how the scraper works can be found in [it's dedicated documentation](./scraper/README.md).
+
+## Deployment
+
+Deployment is done through the docker compose file. You must first install docker, then setup the environment variable configurations.
+
+To setup the configuration files, rename each `.env.example` file in the `docker` folder to `.env` and fill in the values. The credentials in `docker/database.env` must match the credentials in the `DATABASE_URL` in `docker/server.env`.
+
+Then you can run `docker-compose up` to start the application.
