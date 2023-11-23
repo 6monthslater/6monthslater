@@ -59,11 +59,8 @@ export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const search = new URLSearchParams(url.search);
 
-  const pageStr = search.get("page") ?? "1";
-  const pageSizeStr = search.get("pageSize") ?? "10";
-
-  const page = parseInt(pageStr, 10);
-  const pageSize = parseInt(pageSizeStr, 10);
+  const page = parseInt(search.get("page") ?? "1", 10);
+  const pageSize = parseInt(search.get("pageSize") ?? "10", 10);
 
   const users = await db.user.findMany({
     select: {
