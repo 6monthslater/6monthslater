@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { createServerClient } from "~/utils/supabase.server";
 import { Form, useActionData, useNavigation } from "@remix-run/react";
 import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/shadcn-ui-mod/button";
 import { Label } from "~/components/ui/label";
 
 export const action: ActionFunction = async ({ request }) => {

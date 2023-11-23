@@ -4,7 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import type { SubmitFunction } from "@remix-run/react";
 import { Link, useLoaderData, useSubmit } from "@remix-run/react";
 import { Card, Title } from "@tremor/react";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/shadcn-ui-mod/button";
 import { analyzeProduct } from "~/queue-handling/review.server";
 import { db } from "~/utils/db.server";
 import {

@@ -9,7 +9,7 @@ import {
 import { db } from "~/utils/db.server";
 import type { User } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
-import DataTable from "~/components/ui/data-table";
+import DataTable from "~/components/shadcn-ui-mod/data-table";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/shadcn-ui-mod/button";
 import { TbDots, TbPlus } from "react-icons/tb";
 import { getCoreRowModel } from "@tanstack/react-table";
 import {

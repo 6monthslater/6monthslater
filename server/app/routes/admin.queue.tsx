@@ -7,7 +7,7 @@ import {
   ReviewSource,
   sendProductToQueue,
 } from "~/queue-handling/review.server";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/shadcn-ui-mod/button";
 import {
   isAdmin,
   createServerClient,

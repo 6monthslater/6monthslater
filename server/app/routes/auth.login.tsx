@@ -9,7 +9,7 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { Input } from "~/components/ui/input";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/shadcn-ui-mod/button";
 import { Label } from "~/components/ui/label";
 
 export const action: ActionFunction = async ({ request }) => {
