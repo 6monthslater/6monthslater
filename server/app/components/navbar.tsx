@@ -69,8 +69,14 @@ const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
                 <DropdownNavLink to={"/admin/crawler"}>
                   Product Crawler
                 </DropdownNavLink>
+                <DropdownNavLink to={"/admin/products"}>
+                  View Products
+                </DropdownNavLink>
                 <DropdownNavLink to={"/admin/reviews"}>
                   View Reviews
+                </DropdownNavLink>
+                <DropdownNavLink to={"/admin/users"}>
+                  User Management
                 </DropdownNavLink>
               </DropdownMenuContent>
             </DropdownMenu>
