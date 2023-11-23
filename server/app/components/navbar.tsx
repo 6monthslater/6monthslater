@@ -61,19 +61,19 @@ const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownNavLink to={"/admin/queue"}>
-                  Add to Queue
+                  Add Product to Scraper Queue
                 </DropdownNavLink>
                 <DropdownNavLink to={"/admin/queue-status"}>
                   Queue Status
                 </DropdownNavLink>
                 <DropdownNavLink to={"/admin/crawler"}>
-                  Product Crawler
+                  Manage Product Crawler
                 </DropdownNavLink>
                 <DropdownNavLink to={"/admin/products"}>
-                  View Products
+                  View Scraped Products
                 </DropdownNavLink>
                 <DropdownNavLink to={"/admin/reviews"}>
-                  View Reviews
+                  View Scraped Reviews
                 </DropdownNavLink>
                 <DropdownNavLink to={"/admin/users"}>
                   User Management
