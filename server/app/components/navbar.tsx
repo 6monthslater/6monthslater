@@ -12,6 +12,7 @@ import type { ReactNode } from "react";
 
 interface NavbarProps {
   isLoggedIn: boolean;
+  isAdmin: boolean;
 }
 
 interface DropdownNavLinkProps extends RemixNavLinkProps {
@@ -28,7 +29,7 @@ const DropdownNavLink = (props: DropdownNavLinkProps) => {
   );
 };
 
-const Navbar = ({ isLoggedIn }: NavbarProps) => {
+const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
   const location = useLocation();
   const adminPath = new RegExp(/\/admin\/.*/);
   const isAdminPage = adminPath.test(location.pathname);
@@ -45,31 +46,35 @@ const Navbar = ({ isLoggedIn }: NavbarProps) => {
           <NavLink to="/" end>
             Home
           </NavLink>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="xs"
-                className={isAdminPage ? "active bg-gray-50 bg-opacity-25" : ""}
-              >
-                Admin Utilities
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownNavLink to={"/admin/queue"}>
-                Add to Queue
-              </DropdownNavLink>
-              <DropdownNavLink to={"/admin/queue-status"}>
-                Queue Status
-              </DropdownNavLink>
-              <DropdownNavLink to={"/admin/crawler"}>
-                Product Crawler
-              </DropdownNavLink>
-              <DropdownNavLink to={"/admin/reviews"}>
-                View Reviews
-              </DropdownNavLink>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <span hidden={!isLoggedIn || !isAdmin}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  className={
+                    isAdminPage ? "active bg-gray-50 bg-opacity-25" : ""
+                  }
+                >
+                  Admin Utilities
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownNavLink to={"/admin/queue"}>
+                  Add to Queue
+                </DropdownNavLink>
+                <DropdownNavLink to={"/admin/queue-status"}>
+                  Queue Status
+                </DropdownNavLink>
+                <DropdownNavLink to={"/admin/crawler"}>
+                  Product Crawler
+                </DropdownNavLink>
+                <DropdownNavLink to={"/admin/reviews"}>
+                  View Reviews
+                </DropdownNavLink>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </span>
 
           {isLoggedIn ? (
             <NavLink className="float-right" to="/auth/logout">

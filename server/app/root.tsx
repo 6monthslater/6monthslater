@@ -23,7 +23,7 @@ import Footer from "~/components/footer";
 import { json } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
-import { createServerClient } from "~/utils/supabase.server";
+import { createServerClient, isAdmin } from "~/utils/supabase.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -47,11 +47,13 @@ export const loader: LoaderFunction = async ({ request }) => {
     data: { session },
   } = await supabase.auth.getSession();
 
-  return json({ env, session }, { headers });
+  const admin = await isAdmin(supabase);
+
+  return json({ env, session, isAdmin: admin }, { headers });
 };
 
 export default function App() {
-  const { env, session } = useLoaderData<typeof loader>();
+  const { env, session, isAdmin } = useLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const [supabase] = useState(() =>
     createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
@@ -84,7 +86,7 @@ export default function App() {
         <Links />
       </head>
       <body className="flex min-h-screen flex-col space-y-4">
-        <Navbar isLoggedIn={isLoggedIn} />
+        <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
         <Outlet context={{ supabase }} />
         <ScrollRestoration />
         <Scripts />
