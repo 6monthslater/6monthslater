@@ -45,6 +45,28 @@ If it's missing, you must also run `npm run prepare` in `./server/` to enable th
 
 Then you can start the server with `npm run dev` or `npm run start` in production.
 
+### Creating a local admin account
+
+The web server is access controlled. You will need to grant yourself admin privileges when setting up a 
+local copy of the repository.
+
+1. Start the web server (detailed above).
+2. Sign up for an account (Login --> Sign Up)
+3. Verify your email through the link sent to you.
+4. Go to the Supabase Authentication dashboard belonging to your instance of the project.
+5. Copy the User UID associated with your account.
+6. Use that UUID as the value for `ADMIN_UUID` in `.env`.
+7. In a terminal, run the following:
+
+```bash
+cd server
+npx prisma db seed
+```
+
+You should now be an Admin. Test this by navigating to the [User Management Page](http://localhost:3000/admin/users).
+
+Future admins can be added (and removed) directly from that page.
+
 ### Scraper
 
 The scraper is a Python application and is divided into three parts.

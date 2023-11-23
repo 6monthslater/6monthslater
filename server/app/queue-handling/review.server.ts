@@ -30,11 +30,16 @@ async function setupConnection(): Promise<boolean> {
   if (!global.__queue) {
     const port = process.env.QUEUE_PORT || 5672;
 
-    console.log(`Connecting to queue at ${port}`);
+    const url = `amqp://${process.env.QUEUE_HOST}:${port}`;
+    console.log(`Connecting to queue at ${url}`);
 
-    global.__queue = await amqp.connect(
-      `amqp://${process.env.QUEUE_HOST}:${port}`
-    );
+    try {
+      global.__queue = await amqp.connect(url);
+    } catch (e) {
+      console.error(
+        `Failed to connect to queue at ${url}. Make sure queue is running: ${e}`
+      );
+    }
 
     result = true;
   }
@@ -140,6 +145,7 @@ export async function startListeningForReviews() {
                 connectOrCreate: {
                   create: {
                     name: review.product_name,
+                    image_url: review.product_image_url,
                     manufacturer: manufacurerCreateObject,
                   },
                   where: {
@@ -302,19 +308,26 @@ export async function analyzeProduct(product_id: string) {
   }
 
   const channel = await connection.createChannel();
-  const reviews = await db.review.findMany({
-    where: {
-      product_id,
-    },
-    include: {
-      product: {
-        include: {
-          manufacturer: true,
-        },
+  const reviews = (
+    await db.review.findMany({
+      where: {
+        product_id,
       },
-      images: true,
-    },
-  });
+      include: {
+        product: {
+          include: {
+            manufacturer: true,
+          },
+        },
+        images: true,
+      },
+    })
+  ).map((review) => ({
+    ...review,
+    product_name: review.product.name,
+    manufacturer_name: review.product.manufacturer.name,
+    manufacturer_id: review.product.manufacturer.id,
+  }));
 
   channel.sendToQueue("to_analyze", Buffer.from(JSON.stringify(reviews)));
 }
