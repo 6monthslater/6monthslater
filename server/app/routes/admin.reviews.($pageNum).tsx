@@ -1,6 +1,14 @@
-import type { SerializeFrom, MetaFunction } from "@remix-run/node";
+import type {
+  SerializeFrom,
+  MetaFunction,
+  LoaderFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import {
+  useLoaderData,
+  useNavigation,
+  useSearchParams,
+} from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import type { Prisma } from "@prisma/client";
 import { Card, Title, Text } from "@tremor/react";
@@ -10,6 +18,8 @@ import {
   isAdmin,
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
+import { parsePagination } from "~/utils/pagination.server";
+import PaginationBar from "~/components/pagination-bar";
 
 interface ReviewData {
   id: string;
@@ -35,56 +45,81 @@ export const meta: MetaFunction = () => {
   return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
 };
 
-export const loader = async ({
-  request,
-  params,
-}: {
-  request: Request;
-  params: { pageNum: string };
-}) => {
+export const loader: LoaderFunction = async ({ request }) => {
   const { supabase, headers } = createServerClient(request);
   if (!(await isAdmin(supabase))) {
     return redirect(FORBIDDEN_ROUTE, { headers });
   }
 
-  const page = parseInt(params.pageNum, 10) || 1;
-  const pageSize = 10;
+  const { page, pageSize } = parsePagination(request);
 
-  return json<ReviewData[] | null>(
-    await db.review.findMany({
-      select: {
-        id: true,
-        author_name: true,
-        author_image_url: true,
-        title: true,
-        text: true,
-        date: true,
-        attributes: true,
-        verified_purchase: true,
-        found_helpful_count: true,
-        is_top_positive_review: true,
-        is_top_critical_review: true,
-        images: {
-          select: {
-            image_url: true,
-          },
+  const reviews = await db.review.findMany({
+    select: {
+      id: true,
+      author_name: true,
+      author_image_url: true,
+      title: true,
+      text: true,
+      date: true,
+      attributes: true,
+      verified_purchase: true,
+      found_helpful_count: true,
+      is_top_positive_review: true,
+      is_top_critical_review: true,
+      images: {
+        select: {
+          image_url: true,
         },
-        country_reviewed_in: true,
-        region: true,
-        createdAt: true,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    }),
-    { headers }
-  );
+      country_reviewed_in: true,
+      region: true,
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+
+  const count = await db.review.count();
+  const pageCount = Math.ceil(count / pageSize);
+
+  return json({ reviews, pageCount }, { headers });
 };
 
 export default function Route() {
-  const reviews = useLoaderData<typeof loader>();
+  const { reviews, pageCount } = useLoaderData<typeof loader>();
+
+  // Pagination
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageStr = searchParams.get("page") ?? "1";
+  const pageSizeStr = searchParams.get("pageSize") ?? "10";
+  const page = parseInt(pageStr, 10);
+  const pageSize = parseInt(pageSizeStr, 10);
+  const navigation = useNavigation();
+
+  const canNextPage = pageCount - page > 0;
+  const canPrevPage = pageCount - page < pageCount - 1;
+
+  const handlePageChange = (next: boolean) => {
+    let newPage: number;
+    if (next) {
+      if (!canNextPage) {
+        return;
+      }
+      newPage = page + 1;
+    } else {
+      if (!canPrevPage) {
+        return;
+      }
+      newPage = page - 1;
+    }
+    const newParams = new URLSearchParams();
+    newParams.set("page", newPage.toString());
+    newParams.set("pageSize", pageSize.toString());
+    setSearchParams(newParams);
+  };
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
@@ -92,6 +127,14 @@ export default function Route() {
       <div className="flex flex-row flex-wrap">
         {reviews && getReviewBoxes(reviews)}
       </div>
+      <PaginationBar
+        pageStr={pageStr}
+        pageCount={pageCount}
+        handlePageChange={handlePageChange}
+        canPrevPage={canPrevPage}
+        canNextPage={canNextPage}
+        navigation={navigation}
+      />
     </div>
   );
 }
