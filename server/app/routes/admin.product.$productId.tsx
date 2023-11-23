@@ -76,7 +76,7 @@ function getReviewBoxes(reviews: SerializeFrom<typeof loader>) {
             <b>Scraped on</b>: {review.createdAt}
           </div>
           <div>
-            <b>Rewiewed on</b>: {review.date}
+            <b>Reviewed on</b>: {review.date}
           </div>
           <div>
             <b>Country</b>: {review.country_reviewed_in}
