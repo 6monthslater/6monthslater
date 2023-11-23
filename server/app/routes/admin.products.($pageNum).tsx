@@ -1,11 +1,16 @@
 import type { Product } from "@prisma/client";
 import type { ActionFunction, SerializeFrom } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import type { SubmitFunction } from "@remix-run/react";
 import { Link, useLoaderData, useSubmit } from "@remix-run/react";
 import { Button, Card, Title } from "@tremor/react";
 import { analyzeProduct } from "~/queue-handling/review.server";
 import { db } from "~/utils/db.server";
+import {
+  isAdmin,
+  createServerClient,
+  FORBIDDEN_ROUTE,
+} from "~/utils/supabase.server";
 
 interface ProductData extends Product {
   reportCount: number;
@@ -63,7 +68,18 @@ export const action: ActionFunction = async ({ request }) => {
   return null;
 };
 
-export const loader = async ({ params }: { params: { pageNum: string } }) => {
+export const loader = async ({
+  request,
+  params,
+}: {
+  request: Request;
+  params: { pageNum: string };
+}) => {
+  const { supabase, headers } = createServerClient(request);
+  if (!(await isAdmin(supabase))) {
+    return redirect(FORBIDDEN_ROUTE, { headers });
+  }
+
   const page = parseInt(params.pageNum, 10) || 1;
   const pageSize = 100;
 
@@ -95,10 +111,13 @@ export const loader = async ({ params }: { params: { pageNum: string } }) => {
   );
 
   const numberOfProducts = await db.product.count();
-  return json({
-    products,
-    numberOfProducts,
-  });
+  return json(
+    {
+      products,
+      numberOfProducts,
+    },
+    { headers }
+  );
 };
 
 export default function Index() {

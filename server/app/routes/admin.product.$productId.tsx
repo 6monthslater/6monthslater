@@ -1,10 +1,26 @@
 import type { SerializeFrom } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Card, Title } from "@tremor/react";
 import { db } from "~/utils/db.server";
+import {
+  isAdmin,
+  createServerClient,
+  FORBIDDEN_ROUTE,
+} from "~/utils/supabase.server";
 
-export const loader = async ({ params }: { params: { productId: string } }) => {
+export const loader = async ({
+  request,
+  params,
+}: {
+  request: Request;
+  params: { productId: string };
+}) => {
+  const { supabase, headers } = createServerClient(request);
+  if (!(await isAdmin(supabase))) {
+    return redirect(FORBIDDEN_ROUTE, { headers });
+  }
+
   const reviews = await db.review.findMany({
     where: {
       product_id: params.productId,
@@ -24,7 +40,7 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
     },
   });
 
-  return json(reviews);
+  return json(reviews, { headers });
 };
 
 export default function Index() {

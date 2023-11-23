@@ -1,9 +1,14 @@
 import type { SerializeFrom } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import type { Prisma } from "@prisma/client";
 import { Card, Title, Text } from "@tremor/react";
+import {
+  createServerClient,
+  FORBIDDEN_ROUTE,
+  isAdmin,
+} from "~/utils/supabase.server";
 
 interface ReviewData {
   id: string;
@@ -23,7 +28,18 @@ interface ReviewData {
   createdAt: Date;
 }
 
-export const loader = async ({ params }: { params: { pageNum: string } }) => {
+export const loader = async ({
+  request,
+  params,
+}: {
+  request: Request;
+  params: { pageNum: string };
+}) => {
+  const { supabase, headers } = createServerClient(request);
+  if (!(await isAdmin(supabase))) {
+    return redirect(FORBIDDEN_ROUTE, { headers });
+  }
+
   const page = parseInt(params.pageNum, 10) || 1;
   const pageSize = 10;
 
@@ -55,7 +71,8 @@ export const loader = async ({ params }: { params: { pageNum: string } }) => {
       },
       skip: (page - 1) * pageSize,
       take: pageSize,
-    })
+    }),
+    { headers }
   );
 };
 
