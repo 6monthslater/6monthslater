@@ -3,3 +3,4 @@ server.env
 scraper.env
 analyzer.env
 crawler.env
+caddy.env

@@ -63,6 +63,20 @@ services:
         condition: service_healthy
       database:
         condition: service_started
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - server
+    env_file:
+      - ./docker/caddy.env
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
   
 volumes:
   database-data:
+  caddy-data:

@@ -1,0 +1,3 @@
+6monthslater.ajay.app {
+    reverse_proxy server:3000
+}

@@ -26,7 +26,7 @@ Folder Structure:
 
 Postgres is used by the web server to store data and RabbitMQ is used by all services to communicate with eachother.
 
-These can be started with docker using `docker-compose up`
+These can be started with docker using `docker-compose up -d database queue`.
 
 ### Web Server
 
