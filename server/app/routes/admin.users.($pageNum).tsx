@@ -43,6 +43,7 @@ import {
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
+import { parsePagination } from "~/utils/pagination.server";
 
 const PAGE_TITLE = "User Management";
 
@@ -56,11 +57,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect(FORBIDDEN_ROUTE, { headers });
   }
 
-  const url = new URL(request.url);
-  const search = new URLSearchParams(url.search);
-
-  const page = parseInt(search.get("page") ?? "1", 10);
-  const pageSize = parseInt(search.get("pageSize") ?? "10", 10);
+  const { page, pageSize } = parsePagination(request);
 
   const users = await db.user.findMany({
     select: {
