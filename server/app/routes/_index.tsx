@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { TbSearch } from "react-icons/tb";
-import Button from "~/components/button";
+import Button from "~/components/tremor-ui/button";
 import type { ActionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useFetcher, useNavigate } from "@remix-run/react";
+import { Form, useFetcher, useNavigate, useSubmit } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { getProductImageUrl } from "~/utils/amazon";
 import { Combobox, Transition } from "@headlessui/react";
@@ -107,6 +108,7 @@ export default function Index() {
   );
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
+  const submit = useSubmit();
 
   useEffect(() => {
     if (
@@ -114,7 +116,6 @@ export default function Index() {
       searchSuggestionFetcher.data
     ) {
       setCurrentSuggestions(searchSuggestionFetcher.data);
-      console.log(searchSuggestionFetcher.data);
     }
   }, [searchSuggestionFetcher]);
 
@@ -127,6 +128,7 @@ export default function Index() {
           <Combobox
             as="div"
             className="text-tremor-default relative w-full min-w-[10rem]"
+            value={searchProdName}
           >
             <Combobox.Button className="tremor-TextInput-root relative mb-3 flex w-full w-full min-w-[10rem] items-center rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200">
               <Combobox.Input
@@ -139,7 +141,7 @@ export default function Index() {
                     event.preventDefault();
                     event.stopPropagation();
 
-                    formRef.current?.submit();
+                    submit(formRef.current);
                   }
                 }}
                 onChange={(event) => {

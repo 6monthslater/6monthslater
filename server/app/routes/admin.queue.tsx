@@ -1,5 +1,5 @@
-import type { ActionFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import type { Product } from "~/queue-handling/review.server";
 import {
@@ -7,7 +7,26 @@ import {
   ReviewSource,
   sendProductToQueue,
 } from "~/queue-handling/review.server";
-import Button from "~/components/button";
+import Button from "~/components/tremor-ui/button";
+import {
+  isAdmin,
+  createServerClient,
+  FORBIDDEN_ROUTE,
+} from "~/utils/supabase.server";
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const { supabase, headers } = createServerClient(request);
+  if (!(await isAdmin(supabase))) {
+    return redirect(FORBIDDEN_ROUTE, { headers });
+  }
+
+  return json(
+    { ok: true },
+    {
+      headers,
+    }
+  );
+};
 
 interface ActionData {
   data?: string;

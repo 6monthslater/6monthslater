@@ -30,11 +30,16 @@ async function setupConnection(): Promise<boolean> {
   if (!global.__queue) {
     const port = process.env.QUEUE_PORT || 5672;
 
-    console.log(`Connecting to queue at ${port}`);
+    const url = `amqp://${process.env.QUEUE_HOST}:${port}`;
+    console.log(`Connecting to queue at ${url}`);
 
-    global.__queue = await amqp.connect(
-      `amqp://${process.env.QUEUE_HOST}:${port}`
-    );
+    try {
+      global.__queue = await amqp.connect(url);
+    } catch (e) {
+      console.error(
+        `Failed to connect to queue at ${url}. Make sure queue is running: ${e}`
+      );
+    }
 
     result = true;
   }
