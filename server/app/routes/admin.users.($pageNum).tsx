@@ -44,6 +44,7 @@ import {
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
 import { parsePagination } from "~/utils/pagination.server";
+import PaginationBar from "~/components/pagination-bar";
 
 const PAGE_TITLE = "User Management";
 
@@ -304,27 +305,14 @@ export default function Users() {
           getCoreRowModel={getCoreRowModel()}
         />
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <span>
-          Page {pageStr} of {pageCount}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(false)}
-          disabled={!canPrevPage || navigation.state === "loading"}
-        >
-          {navigation.state === "loading" ? "Loading..." : "Previous"}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(true)}
-          disabled={!canNextPage || navigation.state === "loading"}
-        >
-          {navigation.state === "loading" ? "Loading..." : "Next"}
-        </Button>
-      </div>
+      <PaginationBar
+        pageStr={pageStr}
+        pageCount={pageCount}
+        handlePageChange={handlePageChange}
+        canPrevPage={canPrevPage}
+        canNextPage={canNextPage}
+        navigation={navigation}
+      />
     </div>
   );
 }
