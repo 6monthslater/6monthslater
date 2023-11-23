@@ -88,7 +88,7 @@ export default function Index() {
 
       <div className="grid grid-cols-2 space-x-4">
         <div className="col col-span-1">
-          <Card>
+          <Card className="space-y-4">
             <Title>Product Scraping Queue</Title>
 
             {getBadge(
@@ -105,7 +105,7 @@ export default function Index() {
 
             <Button
               type="submit"
-              className="mt-4 block"
+              className="block"
               size="sm"
               onClick={() => {
                 submit(
@@ -122,7 +122,7 @@ export default function Index() {
           </Card>
         </div>
         <div className="col col-span-1">
-          <Card>
+          <Card className="space-y-4">
             <Title>Review Processing Queue</Title>
 
             {getBadge(
@@ -139,7 +139,7 @@ export default function Index() {
 
             <Button
               type="submit"
-              className="mt-4 block"
+              className="block"
               size="sm"
               onClick={() => {
                 submit(
