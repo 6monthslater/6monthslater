@@ -129,7 +129,7 @@ export const Login = () => {
           <div className="space-x-3">
             <Link
               to="/auth/signup"
-              className={buttonVariants({ variant: "outline" })}
+              className={buttonVariants({ variant: "secondary" })}
             >
               Sign Up
             </Link>
@@ -137,7 +137,6 @@ export const Login = () => {
               type="submit"
               name="_action"
               value="login"
-              variant="secondary"
               disabled={isSubmitting}
             >
               Login

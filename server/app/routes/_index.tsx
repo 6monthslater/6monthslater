@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { TbSearch } from "react-icons/tb";
-import Button from "~/components/tremor-ui/button";
+import { Button } from "~/components/shadcn-ui/button";
 import type { ActionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useFetcher, useNavigate, useSubmit } from "@remix-run/react";
@@ -191,8 +191,8 @@ export default function Index() {
             )}
           </Combobox>
 
-          <Button className="mb-3" icon={TbSearch} type="submit">
-            Search
+          <Button className="mb-3" type="submit">
+            <TbSearch className="mr-2 h-4 w-4" /> Search
           </Button>
         </Form>
       </div>

@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { createServerClient } from "~/utils/supabase.server";
 import { Form, useActionData, useNavigation } from "@remix-run/react";
 import { Input } from "~/components/shadcn-ui/input";
-import Button from "~/components/tremor-ui/button";
+import { Button } from "~/components/shadcn-ui/button";
 import { Label } from "~/components/shadcn-ui/label";
 
 export const action: ActionFunction = async ({ request }) => {
@@ -109,7 +109,6 @@ export const Signup = () => {
               type="submit"
               name="_action"
               value="signUp"
-              variant="primary"
               disabled={isSubmitting}
             >
               Sign Up

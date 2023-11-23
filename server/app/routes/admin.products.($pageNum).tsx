@@ -3,7 +3,8 @@ import type { ActionFunction, SerializeFrom } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import type { SubmitFunction } from "@remix-run/react";
 import { Link, useLoaderData, useSubmit } from "@remix-run/react";
-import { Button, Card, Title } from "@tremor/react";
+import { Card, Title } from "@tremor/react";
+import { Button } from "~/components/shadcn-ui/button";
 import { analyzeProduct } from "~/queue-handling/review.server";
 import { db } from "~/utils/db.server";
 import {
@@ -168,12 +169,15 @@ function getProductBoxes(
         </div>
 
         <Link to={`/admin/product/${product.id}`}>
-          <Button className="mt-4 block">View Product Information</Button>
+          <Button className="mt-4 block" size="sm">
+            View Product Information
+          </Button>
         </Link>
 
         <Button
           type="submit"
           className="mt-4 block"
+          size="sm"
           onClick={() => {
             if (confirm("Are you sure you would like to clear all reports?")) {
               submit(
@@ -192,6 +196,7 @@ function getProductBoxes(
         <Button
           type="submit"
           className="mt-4 block"
+          size="sm"
           onClick={() => {
             submit(
               { type: "analyzeReviews", productId: product.id },

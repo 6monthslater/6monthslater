@@ -6,7 +6,7 @@ import {
   ReviewSource,
   sendCrawlerCommand,
 } from "~/queue-handling/review.server";
-import Button from "~/components/tremor-ui/button";
+import { Button } from "~/components/shadcn-ui/button";
 import {
   isAdmin,
   createServerClient,
@@ -84,13 +84,25 @@ export default function Index() {
         {actionData?.formError && (
           <div className="text-red-500">{actionData.formError}</div>
         )}
-        <Button type="submit" className="mt-4" name="command" value="set">
+        <Button
+          type="submit"
+          className="mt-4"
+          name="command"
+          value="set"
+          size="sm"
+        >
           Set crawler category
         </Button>
       </Form>
 
       <Form method="post">
-        <Button type="submit" className="" name="command" value="cancel">
+        <Button
+          type="submit"
+          className=""
+          name="command"
+          value="cancel"
+          size="sm"
+        >
           Stop crawler
         </Button>
       </Form>
