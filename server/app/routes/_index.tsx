@@ -178,7 +178,7 @@ export default function Index() {
                   {currentSuggestions.map((suggestion) => (
                     <Combobox.Option
                       key={suggestion.id}
-                      className="tremor-TextInput-root border-b-1 relative flex w-full min-w-[10rem] cursor-pointer items-center border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      className="tremor-TextInput-root border-b-1 relative flex w-full min-w-[10rem] cursor-pointer items-center border-gray-300 bg-white p-2 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
