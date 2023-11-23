@@ -7,6 +7,7 @@ import { Form, useFetcher, useNavigate, useSubmit } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { getProductImageUrl } from "~/utils/amazon";
 import { Combobox, Transition } from "@headlessui/react";
+import { Separator } from "~/components/ui/separator";
 
 interface Suggestion {
   name: string;
@@ -121,6 +122,10 @@ export default function Index() {
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-[20vh] text-center md:container md:mx-auto">
       <h1 className="w-full text-5xl font-bold">Welcome to 6 Months Later!</h1>
+      <p className="text-neutral-500 opacity-90">
+        A long term reliability assessment assistant.
+      </p>
+      <Separator className="mx-auto md:w-1/2" />
       <p>Start by searching for a product:</p>
       <div className="mx-auto space-x-3 md:flex md:w-1/2">
         <Form method="post" className="w-full" ref={formRef}>
