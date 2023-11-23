@@ -129,7 +129,7 @@ export default function Index() {
             className="text-tremor-default relative w-full min-w-[10rem]"
             value={searchProdName}
           >
-            <Combobox.Button className="tremor-TextInput-root relative mb-3 flex w-full w-full min-w-[10rem] items-center rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200">
+            <Combobox.Button className="tremor-TextInput-root relative mb-3 flex w-full min-w-[10rem] items-center rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200">
               <Combobox.Input
                 className="tremor-TextInput-input w-full border-0 bg-transparent py-2 pl-4 pr-4 text-sm font-medium placeholder:text-gray-500 focus:outline-none focus:ring-0"
                 placeholder="Search for a product..."
