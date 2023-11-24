@@ -89,7 +89,7 @@ export default function App() {
       </head>
       <body className="flex min-h-screen flex-col space-y-4">
         <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
-        <Outlet context={{ supabase }} />
+        <Outlet context={{ supabase, isLoggedIn }} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
