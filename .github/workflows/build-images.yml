@@ -8,6 +8,8 @@ on:
 jobs:
   server:
     uses: ./.github/workflows/docker-build.yml
+    permissions:
+      packages: write
     with:
       name: "server"
       username: "6monthslater"
@@ -16,6 +18,8 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   scraper:
     uses: ./.github/workflows/docker-build.yml
+    permissions:
+      packages: write
     with:
       name: "scraper"
       username: "6monthslater"
@@ -25,6 +29,8 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   analyzer:
     uses: ./.github/workflows/docker-build.yml
+    permissions:
+      packages: write
     with:
       name: "analyzer"
       username: "6monthslater"
@@ -34,6 +40,8 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   crawler:
     uses: ./.github/workflows/docker-build.yml
+    permissions:
+      packages: write
     with:
       name: "crawler"
       username: "6monthslater"
