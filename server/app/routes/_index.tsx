@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { TbSearch } from "react-icons/tb";
-import Button from "~/components/tremor-ui/button";
-import type { ActionArgs } from "@remix-run/node";
+import { Button } from "~/components/shadcn-ui-mod/button";
+import type { ActionArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useFetcher, useNavigate, useSubmit } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { getProductImageUrl } from "~/utils/amazon";
 import { Combobox, Transition } from "@headlessui/react";
+import { Separator } from "~/components/ui/separator";
+import { WEBSITE_TITLE } from "~/root";
 
 interface Suggestion {
   name: string;
@@ -15,6 +17,10 @@ interface Suggestion {
 }
 
 const suggestionNumber = 3;
+
+export const meta: MetaFunction = () => {
+  return { title: WEBSITE_TITLE };
+};
 
 export async function action({ request }: ActionArgs) {
   const body = await request.formData();
@@ -121,6 +127,10 @@ export default function Index() {
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-[20vh] text-center md:container md:mx-auto">
       <h1 className="w-full text-5xl font-bold">Welcome to 6 Months Later!</h1>
+      <p className="text-neutral-500 opacity-90">
+        A long term reliability assessment assistant.
+      </p>
+      <Separator className="mx-auto md:w-1/2" />
       <p>Start by searching for a product:</p>
       <div className="mx-auto space-x-3 md:flex md:w-1/2">
         <Form method="post" className="w-full" ref={formRef}>
@@ -129,7 +139,7 @@ export default function Index() {
             className="text-tremor-default relative w-full min-w-[10rem]"
             value={searchProdName}
           >
-            <Combobox.Button className="tremor-TextInput-root relative mb-3 flex w-full w-full min-w-[10rem] items-center rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200">
+            <Combobox.Button className="tremor-TextInput-root relative mb-3 flex w-full min-w-[10rem] items-center rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200">
               <Combobox.Input
                 className="tremor-TextInput-input w-full border-0 bg-transparent py-2 pl-4 pr-4 text-sm font-medium placeholder:text-gray-500 focus:outline-none focus:ring-0"
                 placeholder="Search for a product..."
@@ -173,7 +183,7 @@ export default function Index() {
                   {currentSuggestions.map((suggestion) => (
                     <Combobox.Option
                       key={suggestion.id}
-                      className="tremor-TextInput-root border-b-1 relative flex w-full min-w-[10rem] cursor-pointer items-center border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      className="tremor-TextInput-root border-b-1 relative flex w-full min-w-[10rem] cursor-pointer items-center border-gray-300 bg-white p-2 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -191,8 +201,8 @@ export default function Index() {
             )}
           </Combobox>
 
-          <Button className="mb-3" icon={TbSearch} type="submit">
-            Search
+          <Button className="my-3" type="submit">
+            <TbSearch className="mr-2 h-4 w-4" /> Search
           </Button>
         </Form>
       </div>

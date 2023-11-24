@@ -1,10 +1,17 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { createServerClient } from "~/utils/supabase.server";
 import { Form, useActionData, useNavigation } from "@remix-run/react";
-import { Input } from "~/components/shadcn-ui/input";
-import Button from "~/components/tremor-ui/button";
-import { Label } from "~/components/shadcn-ui/label";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/shadcn-ui-mod/button";
+import { Label } from "~/components/ui/label";
+import { WEBSITE_TITLE } from "~/root";
+
+const PAGE_TITLE = "Sign Up";
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -62,7 +69,7 @@ export const Signup = () => {
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-[20vh] text-center md:container md:mx-auto">
-      <h1 className="text-2xl font-bold">Sign Up</h1>
+      <h1 className="text-2xl font-bold">{PAGE_TITLE}</h1>
 
       <div className="mx-auto content-center items-center space-x-3 md:flex md:w-1/3">
         <Form method="post" className="w-full space-y-3">
@@ -109,7 +116,6 @@ export const Signup = () => {
               type="submit"
               name="_action"
               value="signUp"
-              variant="primary"
               disabled={isSubmitting}
             >
               Sign Up

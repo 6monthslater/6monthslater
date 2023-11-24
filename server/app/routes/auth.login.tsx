@@ -1,4 +1,4 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { createServerClient } from "~/utils/supabase.server";
 import {
@@ -8,9 +8,16 @@ import {
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
-import { Input } from "~/components/shadcn-ui/input";
-import { Button, buttonVariants } from "~/components/shadcn-ui/button";
-import { Label } from "~/components/shadcn-ui/label";
+import { Input } from "~/components/ui/input";
+import { Button, buttonVariants } from "~/components/shadcn-ui-mod/button";
+import { Label } from "~/components/ui/label";
+import { WEBSITE_TITLE } from "~/root";
+
+const PAGE_TITLE = "Login";
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -69,7 +76,7 @@ export const Login = () => {
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-[20vh] text-center md:container md:mx-auto">
-      <h1 className="text-2xl font-bold">Login</h1>
+      <h1 className="text-2xl font-bold">{PAGE_TITLE}</h1>
 
       <div className="mx-auto content-center items-center space-x-3 md:flex md:w-1/3">
         <Form
@@ -129,7 +136,7 @@ export const Login = () => {
           <div className="space-x-3">
             <Link
               to="/auth/signup"
-              className={buttonVariants({ variant: "outline" })}
+              className={buttonVariants({ variant: "secondary" })}
             >
               Sign Up
             </Link>
@@ -137,7 +144,6 @@ export const Login = () => {
               type="submit"
               name="_action"
               value="login"
-              variant="secondary"
               disabled={isSubmitting}
             >
               Login
