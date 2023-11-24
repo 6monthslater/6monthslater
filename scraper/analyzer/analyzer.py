@@ -223,10 +223,8 @@ def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[
             issues (list[Issue]): Product issues
     '''
 
-    issues = []
-
     #1. Find clauses that describe issues
-    issue_clauses = []
+    issue_clauses: list[Tuple[Span, str]] = []
     for clause in doc_clauses:
         if _cl_issue_detect.prob_classify(clause.text).prob("is_issue") >= _THRESHOLD_ISSUE_REL:
             prob_dist = _cl_issue_class.prob_classify(clause.text)
@@ -237,7 +235,7 @@ def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[
                 issue_clauses.append((clause, "UNKNOWN_ISSUE")) # TODO: Issue auto-classification
 
     #2. Iterate through clauses and create/merge issues
-    temp_issues = {}
+    temp_issues: dict[Tuple[str, Optional[int]], Issue] = {}
     for issue_clause in issue_clauses:
         cur_rel_timestamp = None
 
