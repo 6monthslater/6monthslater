@@ -236,8 +236,8 @@ def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[
             else:
                 issue_clauses.append((clause, "UNKNOWN_ISSUE")) # TODO: Issue auto-classification
 
-    #2. Iterate through clauses and create issues
-    # TODO: Merge clauses with the same class (and associated time expression if applicable) into one issue
+    #2. Iterate through clauses and create/merge issues
+    temp_issues = {}
     for issue_clause in issue_clauses:
         cur_rel_timestamp = None
 
@@ -247,17 +247,22 @@ def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[
                 cur_rel_timestamp = keyframe.rel_timestamp
                 break
 
-        #Create issue object from text, class, hardcoded criticality and extracted timestamp.
-        # TODO: Other fields (frequency for periodic time expressions, relevant image, issue resolution info)
-        issues.append(Issue(text = issue_clause[0].text,
-                            classification = issue_clause[1],
-                            criticality = criticalities[issue_clause[1]] if issue_clause[1] in criticalities else 0.5,
-                            rel_timestamp = cur_rel_timestamp,
-                            frequency = None,
-                            image = None,
-                            resolution = None))
+        issue_key = (issue_clause[1], cur_rel_timestamp)
 
-    return issues
+        #Merge issues with the same class and timestamp
+        if issue_key in temp_issues:
+            temp_issues[issue_key].text += " | " + issue_clause[0].text
+
+        else:
+            temp_issues[issue_key] = Issue(text = issue_clause[0].text,
+                                           classification = issue_clause[1],
+                                           criticality = criticalities[issue_clause[1]] if issue_clause[1] in criticalities else 0.5,
+                                           rel_timestamp = cur_rel_timestamp,
+                                           frequency = None,
+                                           image = None,
+                                           resolution = None)
+
+    return list(temp_issues.values())
 
 def _get_governing_verb(t: Token) -> Token | None:
     '''
