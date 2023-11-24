@@ -59,7 +59,9 @@ export const action: ActionFunction = async ({
         command: formData.command,
         url,
         review_info: {
-          region: ReviewRegion.COM,
+          region: url.includes("amazon.ca")
+            ? ReviewRegion.CA
+            : ReviewRegion.COM,
           type: ReviewSource.AMAZON,
         },
       });
