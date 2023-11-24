@@ -120,4 +120,6 @@ The other `*.env` files have default values, or are blank. They must exist but d
 
 **WARNING: The credentials in `docker/.database.env` must match the credentials in the `DATABASE_URL` in `docker/.server.env`.**
 
-Then you can run `docker compose up` to start the application.
+Then you can run `docker compose up -d` to start the application.
+
+If you want to run while using a VPN proxy, you can configure `docker/wireproxy-config` with the appropriate values, and then run `docker compose --profile proxy up -d`;

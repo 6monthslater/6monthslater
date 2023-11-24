@@ -18,9 +18,14 @@ def request_page(url: str) -> str:
     and preset headers.
     """
 
+    proxy_url = get_env("PROXY_URL")
+
     r = session.get(url, impersonate="chrome107", headers={
         'cookie': cookie
-    } if cookie else None)
+    } if cookie else None, proxies={
+        "https": proxy_url,
+        "http": proxy_url
+    })
 
     if r.status_code != 200 or not isinstance(r.text, str):
         raise RequestError(f"Failed to fetch {url} with status code: {r.status_code}")
