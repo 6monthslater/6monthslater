@@ -13,4 +13,4 @@ COPY --from=builder /usr/src/app/public ./public
 COPY ./package.json ./package.json
 COPY ./prisma ./prisma
 EXPOSE 80
-CMD npx prisma migrate deploy; npm run start
+CMD npx prisma migrate deploy; npx prisma db seed; npm run start
