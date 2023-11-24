@@ -1,11 +1,29 @@
 from datetime import datetime, timezone
+from typing import Optional
 import time
+import spacy
 
 from parameterized import parameterized
 
 import analyzer.analyzer as analyzer
 from requester.amazon import AmazonRegion
 from parsing.amazon import Review
+
+nlp = spacy.load("en_core_web_sm")
+
+#making ruff not yell about line length
+mouse_example = "I have tried a lot of gaming mice. A lot. The shape of the original Deathadder was miles ahead for comfort, but it was enormous and I have"
+mouse_example += " small hands. I did a circuit of popular smaller mice and heard of this, instant buy from me. Scroll wheel is solid, side buttons are"
+mouse_example += " clicky. The left/right clicks are a little sensitive/soft (too much so) which takes some getting used to, but overall build quality is"
+mouse_example += " solid enough. The included grip tape is high quality and the cable lies mostly flat, which is nice if you don't want to paracord your"
+mouse_example += " mouse.This isn't the fanciest gaming mouse, it isn't wireless, doesn't have crazy dpi settings, and it looks very 'Razer', which may not"
+mouse_example += " be to your taste. But it works really well, and the intense thumb pain that I had using very popular mice like the gpw is gone."
+
+hdd_example = "Complete trash. I used it to transfer confidential documents from my laptop and while it worked well for"
+hdd_example += " a day it suddenly decided to stop working and all my computers can’t even read it anymore. The kicker"
+hdd_example += " is I can’t return it because I’m unable to delete the files and I don’t want to put them out there in"
+hdd_example += " case someone else can recover them. Bottom line - Don’t try to save money by buying this piece of junk"
+hdd_example += " and go with a more reputable brand."
 
 def produce_sample_review(
     author_id: str | None = "",
@@ -131,7 +149,7 @@ def produce_sample_review(
         [0]),
 ])
 def test_extract_keyframes(name: str, review: Review, timestamps: list[int]):
-    print(f"Testing: Processing review w/ date {review.date}")
+    print(f"Testing: Processing review w/ date {review.date} for keyframes")
     print(f"Testing: \"{review.text}\"")
 
     keyframe_list = analyzer._process_review(review).reliability_keyframes
@@ -139,3 +157,48 @@ def test_extract_keyframes(name: str, review: Review, timestamps: list[int]):
     assert len(keyframe_list) == len(timestamps), f"Expected {len(timestamps)} keyframes but got {len(keyframe_list)}"
     for kf, ts in zip(keyframe_list, timestamps):
         assert kf.rel_timestamp == ts, f"Expected relative timestamp {ts} but got {kf.rel_timestamp}"
+
+#===============================
+#===============================
+#===============================
+
+@parameterized.expand([
+    ("no_issues",
+        produce_sample_review(
+            text = mouse_example),
+        []),
+    ("issues",
+        produce_sample_review(
+            text = hdd_example),
+        ['System Inoperable']),
+])
+def test_extract_issues(name: str, review: Review, issue_classes: list[Optional[str]]):
+    print("Testing: Processing review for issues")
+    print(f"Testing: \"{review.text}\"")
+
+    issue_list = analyzer._process_review(review).issues
+
+    for issue in issue_list:
+        print(f"{issue.classification}: {issue.text}")
+
+    assert len(issue_list) == len(issue_classes), f"Expected {len(issue_classes)} issues but got {len(issue_list)}"
+    for issue, isc in zip(issue_list, issue_classes):
+        assert str(issue.classification).strip().lower() == str(isc).strip().lower(), f"Expected issue class {isc} but got {issue.classification}"
+
+#===============================
+#===============================
+#===============================
+
+@parameterized.expand([
+    ("mouse_example", mouse_example, 20),
+    ("hdd_example", hdd_example, 11),
+])
+def test_extract_clauses(name: str, review_text: str, clauses_len: int):
+    print("Testing: Processing review for clauses")
+    print(f"Testing: \"{review_text}\"")
+
+    clause_list = analyzer._extract_clauses(nlp(review_text))
+    for clause in clause_list:
+        print(clause.text)
+
+    assert len(clause_list) == clauses_len, f"Expected {clauses_len} clauses but got {len(clause_list)}"

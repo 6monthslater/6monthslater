@@ -3,12 +3,12 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from dateutil.parser import isoparse
-from typing import List, Optional, Any
+from typing import Tuple, Optional, Any
 import os
 
 import spacy
 from spacy.tokens import Doc, Token, Span
-from spacy.symbols import xcomp
+from spacy.symbols import xcomp, ccomp, aux
 from textblob.classifiers import NaiveBayesClassifier
 from sutime import SUTime
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -37,7 +37,12 @@ with open('analyzer/train_issue_class.json', 'r') as fp:
 
 _sent_analyzer = SentimentIntensityAnalyzer() #VADER library
 _sutime = SUTime(mark_time_ranges=True, include_range=True, jars=os.path.join(os.path.dirname(__file__), 'jars'))
-_debug = get_env("DEBUG") == "1"
+_debug = get_env("DEBUG") in ["1", "True", "true"]
+_THRESHOLD_OWNERSHIP_REL = float(get_env("ANALYZER_THRESHOLD_OWNERSHIP_REL"))
+_THRESHOLD_ISSUE_REL = float(get_env("ANALYZER_THRESHOLD_ISSUE_REL"))
+_THRESHOLD_ISSUE_CLASS = float(get_env("ANALYZER_THRESHOLD_ISSUE_CLASS"))
+_THRESHOLD_CCOMP_MAX_DIST = 25
+_punct_whitelist = ['(', ')', '“', '”', '"', '\'']
 
 @dataclass
 class Keyframe:
@@ -62,8 +67,8 @@ class Issue:
 class Report:
     review_id: str
     report_weight: float
-    reliability_keyframes: List[Keyframe]
-    issues: List[Issue]
+    reliability_keyframes: list[Keyframe]
+    issues: list[Issue]
 
     def __str__(self):
         '''
@@ -84,7 +89,7 @@ class Report:
 
         return result
 
-def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]:
+def _extract_keyframes(clauses: list[Span], review_text_doc: Doc, review_date: int) -> list[Keyframe]:
     '''
     Returns a list of ownership-relevant keyframes, sorted by time relative to first keyframe (assumed to be date of sale).
 
@@ -98,10 +103,12 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
     Sort keyframes based on relative time
 
         Parameters:
+            clauses (list[Span]): extracted document clauses
             review_text_doc (Doc): spaCy document object
+            review_date (int): the review date as a UTC timestamp
 
         Returns:
-            keyframes (List[Keyframe]): Sorted keyframes
+            keyframes (list[Keyframe]): Sorted keyframes
     '''
 
     keyframes = []
@@ -112,7 +119,7 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
 
     for result in parse_results:
         if _debug:
-            print(f"Type {result['type']} | Value {result['value']}")
+            print(f"DEBUG | Type {result['type']} | Value {result['value']}")
 
         # TODO: Support for other time expression categories, e.g. periodic
         if result['type'] in ['DATE', 'TIME'] and result['value'] not in ['PAST_REF', 'FUTURE_REF']:
@@ -124,7 +131,7 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
                 relative_date = datetime.utcfromtimestamp(review_date)
 
             if _debug:
-                print(f"Type {result['type']} | Value {result['value']} => Parsed {relative_date}")
+                print(f"DEBUG | Type {result['type']} | Value {result['value']} => Parsed {relative_date}")
 
             #ensuring start and end offset correspond to document token boundaries
             token_start = result['start'] #default if adjustment fails, may lead to None time_expression_span
@@ -137,22 +144,45 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
 
             token_end = next(t.idx + len(t.text) for t in review_text_doc if t.idx <= result['end']-1 < t.idx + len(t.text_with_ws))
 
+            #Find relevant clause & filter out time expr
             time_expression_span = review_text_doc.char_span(token_start, token_end)
-            relevant_phrase = _extract_relevant_phrase(time_expression_span)
+            relevant_phrase = None
+
+            for clause in clauses:
+                if time_expression_span.text in clause.text:
+                    rel_phrase = []
+
+                    for t in clause: #copy clause but exclude the time expression itself
+                        if t.i < time_expression_span.start or t.i >= time_expression_span.end:
+                            rel_phrase.append(t)
+
+                    #exclude leading punctuation and conjunctions
+                    while rel_phrase[0].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
+                        rel_phrase.pop(0)
+
+                    #exclude trailing punctuation and conjunctions
+                    while rel_phrase[-1].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
+                        rel_phrase.pop()
+
+                    relevant_phrase = ''.join(t.text + t.whitespace_ for t in rel_phrase).strip()
+                    break
+
+            if not relevant_phrase:
+                relevant_phrase = time_expression_span.sent.text
 
             #Filter them based on relevance to product ownership (90% should be a very reasonable threshold with few false negatives)
             relevance_to_ownership_exp = _cl_relevance.prob_classify(relevant_phrase).prob("relevant")
 
-            if relevance_to_ownership_exp >= 0.9:
+            if relevance_to_ownership_exp >= _THRESHOLD_OWNERSHIP_REL:
                 time_expressions.append((relative_date.date(), relevant_phrase, time_expression_span))
                 if _debug:
-                    print(f"Time expression: {time_expressions[-1]}")
+                    print(f"DEBUG | Time expression: {time_expressions[-1]}")
             else:
                 print(f"WARNING: Filtered expression '{relevant_phrase}' based on relevance to "
                     f"ownership experience (prob = {relevance_to_ownership_exp:.2f})")
 
         if _debug:
-            print("---")
+            print("DEBUG | ---")
 
     #2. Find the earliest time expression and set that as our reference point (date of sale)
     ref_date = datetime.utcfromtimestamp(review_date).date()
@@ -166,7 +196,7 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
                                   text = time_expression[1],
                                   time_start = time_expression[2].start,
                                   time_end = time_expression[2].end,
-                                  sentiment = (_sent_analyzer.polarity_scores(time_expression[1])['compound']+1)/2,
+                                  sentiment = round((_sent_analyzer.polarity_scores(time_expression[1])['compound']+1)/2, 2),
                                   interp = None)) # TODO: Keyframe interpolation
 
     # TODO: Add sentiment from potentially related but independent clauses! (e.g. "(...) on March 12th. Terrible quality!")
@@ -174,8 +204,7 @@ def _extract_keyframes(review_text_doc: Doc, review_date: int) -> List[Keyframe]
     #4. Return keyframes sorted by time
     return sorted(keyframes, key = lambda k: k.rel_timestamp)
 
-
-def _extract_issues(doc_clauses: List[Span], keyframes: List[Keyframe]) -> List[Issue]:
+def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[Issue]:
     '''
     Returns a list of issues with the product.
 
@@ -187,11 +216,11 @@ def _extract_issues(doc_clauses: List[Span], keyframes: List[Keyframe]) -> List[
     Create and return issues list
 
         Parameters:
-            doc_clauses (List[Span]): List of independent document clauses
-            keyframes (List[Keyframe]): List of keyframes to relate issues to
+            doc_clauses (list[Span]): List of independent document clauses
+            keyframes (list[Keyframe]): List of keyframes to relate issues to
 
         Returns:
-            issues (List[Issue]): Product issues
+            issues (list[Issue]): Product issues
     '''
 
     issues = []
@@ -199,10 +228,10 @@ def _extract_issues(doc_clauses: List[Span], keyframes: List[Keyframe]) -> List[
     #1. Find clauses that describe issues
     issue_clauses = []
     for clause in doc_clauses:
-        if _cl_issue_detect.prob_classify(clause.text).prob("is_issue") >= 0.9:
+        if _cl_issue_detect.prob_classify(clause.text).prob("is_issue") >= _THRESHOLD_ISSUE_REL:
             prob_dist = _cl_issue_class.prob_classify(clause.text)
 
-            if prob_dist.prob(prob_dist.max()) >= 0.9: #need to be sure to label
+            if prob_dist.prob(prob_dist.max()) >= _THRESHOLD_ISSUE_CLASS:
                 issue_clauses.append((clause, prob_dist.max()))
             else:
                 issue_clauses.append((clause, "UNKNOWN_ISSUE")) # TODO: Issue auto-classification
@@ -230,110 +259,6 @@ def _extract_issues(doc_clauses: List[Span], keyframes: List[Keyframe]) -> List[
 
     return issues
 
-def _extract_relevant_phrase(time_expr: Span) -> str:
-    '''
-    Returns clause relevant to a time expression span, excluding the span itself and leading/trailing punctuation and conjunctions.
-
-    Approach:
-    Finds the governing verb of the clause containing the span
-    Aggregates tokens from governing verb clause, excluding those of sub-clauses and those of the span itself
-    Removes leading and trailing punctuations and conjunctions
-    Builds a string from the aggregated tokens and returns it
-    If the sentence is non-verbal, returns the sentence itself.
-
-        Parameters:
-            time_expr (Span): spaCy span object corresponding to matched time expression
-
-        Returns:
-            phrase (str): Trimmed relevant phrase
-    '''
-
-    governing_verb = _get_governing_verb(time_expr.root)
-
-    if governing_verb is not None:
-        rel_phrase = []
-
-        #in the relevant phrase...
-        for t in governing_verb.subtree:
-            in_current_clause = True
-
-            if t.pos_ == 'VERB': #the governing verb, as well as any composite verbs relating to it
-                in_current_clause = (t == governing_verb or (t.head == governing_verb and t.dep == xcomp))
-            else: #tokens governed by the same verb (eg. in the clause)
-                in_current_clause = (_get_governing_verb(t) == governing_verb)
-
-            if in_current_clause and (t.i < time_expr.start or t.i >= time_expr.end): #excluding the time expression itself
-                rel_phrase.append(t)
-
-        #exclude leading punctuation and conjunctions
-        while rel_phrase[0].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
-            rel_phrase.pop(0)
-
-        #exclude trailing punctuation and conjunctions
-        while rel_phrase[-1].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
-            rel_phrase.pop()
-
-        return ''.join(t.text + t.whitespace_ for t in rel_phrase).strip()
-
-    else:
-        return time_expr.sent.text
-
-# TODO: Refactor (duplicate logic with above method)
-def _extract_clauses(doc: Doc) -> List[Span]:
-    '''
-    Returns list of all independent clauses in a given document.
-
-    Approach (bruteforce, to be refined):
-    For every verb in the document, determines span boundaries of clause, excluding sub-clauses
-    Filters clauses from the list if they are contained in another clause.
-
-        Parameters:
-            doc (Doc): spaCy document object
-
-        Returns:
-            filtered_clauses (str): List of independent clauses
-    '''
-    clauses = []
-
-    # TODO: Support nonverbal clauses
-    #Iterates document verbs
-    for verb in doc:
-        if verb.pos_ == 'VERB':
-            start = None
-            end = None
-
-            #Determines clause boundaries from subtree tokens
-            for t in verb.subtree:
-                in_current_clause = True
-
-                if t.pos_ == 'VERB': #the governing verb, as well as any composite verbs relating to it
-                    in_current_clause = (t == verb or (t.head == verb and t.dep == xcomp))
-                else: #tokens governed by the same verb (eg. in the clause)
-                    in_current_clause = (_get_governing_verb(t) == verb)
-
-                #exclude leading/trailing punctuation and conjunctions
-                if in_current_clause and t.pos_ not in ['CCONJ', 'PUNCT', 'ADP']:
-                    if start is None:
-                        start = t.i
-
-                    end = t.i + 1
-
-            if start is not None and end is not None:
-                clauses.append(doc[start:end])
-
-    #Filters clauses contained in other clauses
-    if _debug:
-        print(f"clauses {clauses}")
-
-    filtered_clauses = [
-        span1 for span1 in clauses
-        if not any(
-            span1.start >= span2.start and span1.end <= span2.end and span1 != span2 for span2 in clauses
-        )
-    ]
-
-    return filtered_clauses
-
 def _get_governing_verb(t: Token) -> Token | None:
     '''
     Returns verb token which governs the given token's clause, if available.
@@ -349,12 +274,100 @@ def _get_governing_verb(t: Token) -> Token | None:
     governing_verb = None
 
     while t.head != t:
-        if t.head.pos_ == 'VERB' and t.head.dep != xcomp: #accounts for composite verbs (e.g. "stopped working")
+        #xcomp accounts for composite verbs (e.g. "stopped working")
+        if t.head.pos_ in ['VERB', 'AUX'] and t.head.dep != xcomp:
             governing_verb = t.head
             break
         t = t.head
 
     return governing_verb
+
+def _extract_clauses(doc: Doc) -> list[Span]:
+    '''
+    Returns list of all independent clauses in a given document.
+
+    Approach:
+    For every verb in the document, determines span bounds of clause, excluding sub-clauses, and adds it to list.
+    For every sentence lacking a verb, determines span bounds of non-verbal clause and adds it to list.
+    Filters verbal clauses from the list if their governing verb is contained within another clause.
+    Sorts list to ensure text order is respected.
+    Merges clauses which are connected by a SCONJ token.
+
+        Parameters:
+            doc (Doc): spaCy document object
+
+        Returns:
+            final_clauses (list[Span]): List of independent clauses
+    '''
+    clauses: list[Tuple[Span, Optional[Token]]] = []
+
+    #Iterates document verbs
+    for verb in doc:
+        if verb.pos_ in ['VERB', 'AUX']:
+            start = None
+            end = None
+
+            #Determines clause boundaries from subtree tokens
+            for t in verb.subtree:
+                in_current_clause = False
+
+                #include if IS or IS GOVERNED BY the governing verb or any verb clausally related to it
+                cur_verb = t if t.pos_ in ['VERB', 'AUX'] else _get_governing_verb(t)
+                if cur_verb:
+                    head_dist = abs(cur_verb.i - cur_verb.head.i)
+                    in_current_clause = cur_verb==verb or (cur_verb.head==verb and cur_verb.dep in [ccomp, xcomp, aux] and head_dist<=_THRESHOLD_CCOMP_MAX_DIST)
+
+                #exclude leading/trailing punctuation and conjunctions
+                if in_current_clause and t.pos_ != 'CCONJ' and (t.pos_ != 'PUNCT' or t.text in _punct_whitelist):
+                        if start is None:
+                            start = t.i
+
+                        end = t.i + 1
+
+            if start is not None and end is not None:
+                if doc[start-1].pos_ == 'CCONJ':
+                    clauses.append((doc[start-1:end], verb))
+                else:
+                    clauses.append((doc[start:end], verb))
+
+    #Non-verbal clauses
+    for sent in doc.sents:
+        if not any(token.pos_ in ['VERB', 'AUX'] for token in sent):
+            start = None
+            end = None
+
+            for t in sent:
+                if t.pos_ != 'CCONJ' and (t.pos_ != 'PUNCT' or t.text in _punct_whitelist):
+                    if start is None:
+                        start = t.i
+
+                    end = t.i + 1
+
+            if start is not None and end is not None:
+                clauses.append((doc[start:end], None))
+
+    #Filters clauses whose governing verb is contained in other clauses
+    filtered_clauses = sorted([
+        span1[0] for span1 in clauses
+        if span1[1] is None or not any(
+            span1 != span2 and any(t == span1[1] for t in span2[0]) for span2 in clauses
+        )
+    ], key=lambda span: span.start)
+
+    #Merges clauses related by an SCONJ
+    final_clauses: list[Span] = []
+    for i, clause in enumerate(filtered_clauses):
+        if clause[0].pos_ == 'SCONJ' and i > 0:
+            merged_clause = doc[final_clauses[-1][0].i : clause[-1].i + 1]
+            final_clauses[-1] = merged_clause
+
+        else:
+            final_clauses.append(clause)
+
+    if _debug:
+        print(f"DEBUG | clauses: {final_clauses}")
+
+    return final_clauses
 
 def _process_review(review: Review) -> Report:
     '''
@@ -370,7 +383,7 @@ def _process_review(review: Review) -> Report:
     doc = _nlp(review.text)
     clauses = _extract_clauses(doc)
 
-    keyframes = _extract_keyframes(doc, review.date)
+    keyframes = _extract_keyframes(clauses, doc, review.date)
     issues = _extract_issues(clauses, keyframes)
 
     return Report(
@@ -379,15 +392,15 @@ def _process_review(review: Review) -> Report:
             reliability_keyframes = keyframes,
             issues = issues)
 
-def process_reviews(reviews: List[Review]) -> List[Report]:
+def process_reviews(reviews: list[Review]) -> list[Report]:
     '''
     Public method to process a set of reviews.
     Calls upon private worker method _process_review.
 
         Parameters:
-            reviews (List[Review]): list of reviews to process
+            reviews (list[Review]): list of reviews to process
 
         Returns:
-            reports (List[Report]): list of generated reports
+            reports (list[Report]): list of generated reports
     '''
     return [_process_review(review) for review in reviews]
