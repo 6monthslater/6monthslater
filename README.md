@@ -112,12 +112,12 @@ cd docker
 ```
 
 Then, fill in the values in each of the following `*.env` files:
-- `database.env`
-- `server.env`
-- `caddy.env`
+- `.database.env`
+- `.server.env`
+- `.caddy.env`
 
-The other `.env` files have default values, or are blank. They must exist but do not need to be edited.
+The other `*.env` files have default values, or are blank. They must exist but do not need to be edited.
 
-**WARNING: The credentials in `docker/database.env` must match the credentials in the `DATABASE_URL` in `docker/server.env`.**
+**WARNING: The credentials in `docker/.database.env` must match the credentials in the `DATABASE_URL` in `docker/.server.env`.**
 
 Then you can run `docker-compose up` to start the application.
