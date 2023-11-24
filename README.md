@@ -104,6 +104,20 @@ Further information about how the scraper works can be found in [it's dedicated 
 
 Deployment is done through the docker compose file. You must first install docker, then setup the environment variable configurations.
 
-To setup the configuration files, rename each `.env.example` file in the `docker` folder to `.env` and fill in the values. The credentials in `docker/database.env` must match the credentials in the `DATABASE_URL` in `docker/server.env`.
+To setup the configuration files, run the following command:
 
-Then you can run `docker-compose up` to start the application.
+```bash
+cd docker
+./setup.sh
+```
+
+Then, fill in the values in each of the following `*.env` files:
+- `.database.env`
+- `.server.env`
+- `.caddy.env`
+
+The other `*.env` files have default values, or are blank. They must exist but do not need to be edited.
+
+**WARNING: The credentials in `docker/.database.env` must match the credentials in the `DATABASE_URL` in `docker/.server.env`.**
+
+Then you can run `docker compose up` to start the application.
