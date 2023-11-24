@@ -6,4 +6,5 @@ cp .database.env.example .database.env --no-clobber || true
 cp .scraper.env.example .scraper.env --no-clobber || true
 cp .server.env.example .server.env --no-clobber || true
 cp .shared_scraper.env.example .shared_scraper.env --no-clobber || true
+cp wireproxy-config.example wireproxy-config --no-clobber || true
 echo "Done!"
