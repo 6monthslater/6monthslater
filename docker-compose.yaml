@@ -79,7 +79,18 @@ services:
     volumes:
       - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
-
+  wireproxy:
+    image: ghcr.io/pufferffish/wireproxy:latest
+    restart: always
+    profiles:
+      - proxy
+    ports:
+      - 8888:8888
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./docker/wireproxy-config:/etc/wireproxy/config:ro
+  
 volumes:
   database-data:
   caddy-data:

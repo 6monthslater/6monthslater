@@ -1,0 +1,17 @@
+# You do not need to edit this file if you do not plan on using a proxy
+# Instructions are in the README if you want to use this
+
+[Interface]                                                                                                                                                            ✔ 
+# ADD INFO FROM MULLVAD WIREGUARD CONFIG HERE
+PrivateKey = 
+Address = 
+DNS = 
+
+[Peer]
+# ADD INFO FROM MULLVAD WIREGUARD CONFIG HERE
+PublicKey = 
+AllowedIPs = 0.0.0.0/0,::0/0
+Endpoint = 
+
+[http]
+BindAddress = 0.0.0.0:8888
