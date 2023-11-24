@@ -111,6 +111,11 @@ def produce_sample_review(
             text = "Bought this earlier today. It arrived now."),
         [0, 0]),
 
+    ("morning_night_ref",
+        produce_sample_review(
+            text = "Bought it yesterday. It arrived this morning. I'll review it tonight."),
+        [0, 1, 1]),
+
     ("past_future_refs_filtered", #Not supported: Indeterminate past & future references
         produce_sample_review(
             text = "Bought this in the past. Will return it in the future."),
