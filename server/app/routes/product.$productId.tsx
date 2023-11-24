@@ -153,11 +153,11 @@ export default function Route() {
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
   return (
-    <div className="mx-4 h-full grow content-center items-center space-y-4 py-4 text-center md:container md:mx-auto">
+    <div className="container mx-4 h-full grow content-center items-center space-y-4 py-4 text-center md:mx-auto">
       <h1 className="text-xl font-semibold">{product?.name}</h1>
-      <div className="mx-auto space-y-4 md:w-3/4 md:columns-md">
+      <div className="mx-auto w-full space-y-4 md:h-[40vh] md:min-h-[calc(272px+16px+1.75rem+64px)] md:columns-2 lg:w-3/4 ">
         {topIssues.length > 0 && (
-          <Card>
+          <Card className="break-inside-avoid md:h-full">
             <Title className="font-semibold">Top Issues</Title>
 
             {topIssues.map((issue, index) => (
@@ -175,7 +175,7 @@ export default function Route() {
           </Card>
         )}
 
-        <Card>
+        <Card className="break-inside-avoid md:h-full">
           <Title className="font-semibold">Report History</Title>
           <AreaChart
             className="mt-4 h-72"
