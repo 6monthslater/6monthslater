@@ -37,6 +37,21 @@ export async function action({ request }: ActionArgs) {
         search: searchTerm,
         mode: "insensitive",
       },
+      reviews: {
+        some: {
+          reports: {
+            some: {
+              issues: {
+                some: {
+                  text: {
+                    not: "",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     orderBy: {
       _relevance: {
@@ -74,6 +89,21 @@ export const loader = async ({ request }): Promise<Suggestion[]> => {
       name: {
         search: searchTerm,
         mode: "insensitive",
+      },
+      reviews: {
+        some: {
+          reports: {
+            some: {
+              issues: {
+                some: {
+                  text: {
+                    not: "",
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
     orderBy: {
