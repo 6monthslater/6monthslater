@@ -157,7 +157,7 @@ export default function Route() {
       <h1 className="text-xl font-semibold">{product?.name}</h1>
       <div className="mx-auto space-y-4 md:w-3/4 md:columns-md">
         {topIssues.length > 0 && (
-          <Card>
+          <Card className="break-inside-avoid">
             <Title className="font-semibold">Top Issues</Title>
 
             {topIssues.map((issue, index) => (
@@ -175,7 +175,7 @@ export default function Route() {
           </Card>
         )}
 
-        <Card>
+        <Card className="break-inside-avoid">
           <Title className="font-semibold">Report History</Title>
           <AreaChart
             className="mt-4 h-72"
