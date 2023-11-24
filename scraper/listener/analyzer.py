@@ -114,6 +114,7 @@ def __analyze_reviews(reviews: list[dict[str, Any]]) -> list[Report]:
             country_reviewed_in=review["country_reviewed_in"],
             region=AmazonRegion(review["region"]),
             product_name=review["product_name"],
+            product_image_url=None,
             manufacturer_name=review["manufacturer_name"],
             manufacturer_id=review["manufacturer_id"]
         ) for review in reviews])
