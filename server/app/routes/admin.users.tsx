@@ -1,4 +1,8 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   useFetcher,
@@ -9,7 +13,7 @@ import {
 import { db } from "~/utils/db.server";
 import type { User } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
-import DataTable from "~/components/shadcn-ui/data-table";
+import DataTable from "~/components/shadcn-ui-mod/data-table";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -17,8 +21,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/shadcn-ui/dropdown-menu";
-import { Button } from "~/components/shadcn-ui/button";
+} from "~/components/ui/dropdown-menu";
+import { Button } from "~/components/shadcn-ui-mod/button";
 import { TbDots, TbPlus } from "react-icons/tb";
 import { getCoreRowModel } from "@tanstack/react-table";
 import {
@@ -29,15 +33,24 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "~/components/shadcn-ui/dialog";
-import { Label } from "~/components/shadcn-ui/label";
-import { Input } from "~/components/shadcn-ui/input";
+} from "~/components/ui/dialog";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
 import {
   ADMIN_ROLE_NAME,
   isAdmin,
   createServerClient,
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
+import { WEBSITE_TITLE } from "~/root";
+import { parsePagination } from "~/utils/pagination.server";
+import PaginationBar from "~/components/pagination-bar";
+
+const PAGE_TITLE = "User Management";
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const { supabase, headers } = createServerClient(request);
@@ -45,14 +58,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect(FORBIDDEN_ROUTE, { headers });
   }
 
-  const url = new URL(request.url);
-  const search = new URLSearchParams(url.search);
-
-  const pageStr = search.get("page") ?? "1";
-  const pageSizeStr = search.get("pageSize") ?? "10";
-
-  const page = parseInt(pageStr, 10);
-  const pageSize = parseInt(pageSizeStr, 10);
+  const { page, pageSize } = parsePagination(request);
 
   const users = await db.user.findMany({
     select: {
@@ -291,7 +297,7 @@ export default function Users() {
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
-      <h1 className="text-center text-2xl font-bold">Admin: Manage Users</h1>
+      <h1 className="text-center text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
       <div className="">
         <DataTable
           columns={columns}
@@ -299,27 +305,14 @@ export default function Users() {
           getCoreRowModel={getCoreRowModel()}
         />
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <span>
-          Page {pageStr} of {pageCount}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(false)}
-          disabled={!canPrevPage || navigation.state === "loading"}
-        >
-          {navigation.state === "loading" ? "Loading..." : "Previous"}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(true)}
-          disabled={!canNextPage || navigation.state === "loading"}
-        >
-          {navigation.state === "loading" ? "Loading..." : "Next"}
-        </Button>
-      </div>
+      <PaginationBar
+        pageStr={pageStr}
+        pageCount={pageCount}
+        handlePageChange={handlePageChange}
+        canPrevPage={canPrevPage}
+        canNextPage={canNextPage}
+        navigation={navigation}
+      />
     </div>
   );
 }

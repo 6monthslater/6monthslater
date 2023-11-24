@@ -1,4 +1,8 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import {
@@ -6,17 +10,25 @@ import {
   ReviewSource,
   sendCrawlerCommand,
 } from "~/queue-handling/review.server";
-import Button from "~/components/tremor-ui/button";
+import { Button } from "~/components/shadcn-ui-mod/button";
+import { Textarea } from "~/components/ui/textarea";
 import {
   isAdmin,
   createServerClient,
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
+import { WEBSITE_TITLE } from "~/root";
+
+const PAGE_TITLE = "Control Product Crawler";
 
 interface ActionData {
   data?: string;
   formError?: string;
 }
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const { supabase, headers } = createServerClient(request);
@@ -68,29 +80,41 @@ export default function Index() {
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
-      <h1 className="text-2xl font-bold">Admin: Control the Product Crawler</h1>
+      <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
 
       <Form method="post">
-        <div>
+        <div className="mx-auto px-6 md:w-1/2">
           <label>
-            <textarea
+            <Textarea
               name="url"
               rows={1}
               cols={100}
-              className="resize-y rounded-md border-2"
+              className="resize-y border-2"
             />
           </label>
         </div>
         {actionData?.formError && (
           <div className="text-red-500">{actionData.formError}</div>
         )}
-        <Button type="submit" className="mt-4" name="command" value="set">
+        <Button
+          type="submit"
+          className="mt-4"
+          name="command"
+          value="set"
+          size="sm"
+        >
           Set crawler category
         </Button>
       </Form>
 
       <Form method="post">
-        <Button type="submit" className="" name="command" value="cancel">
+        <Button
+          type="submit"
+          className=""
+          name="command"
+          value="cancel"
+          size="sm"
+        >
           Stop crawler
         </Button>
       </Form>

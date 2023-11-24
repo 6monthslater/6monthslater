@@ -1,4 +1,8 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import type { Product } from "~/queue-handling/review.server";
@@ -7,12 +11,20 @@ import {
   ReviewSource,
   sendProductToQueue,
 } from "~/queue-handling/review.server";
-import Button from "~/components/tremor-ui/button";
+import { Textarea } from "~/components/ui/textarea";
+import { Button } from "~/components/shadcn-ui-mod/button";
 import {
   isAdmin,
   createServerClient,
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
+import { WEBSITE_TITLE } from "~/root";
+
+const PAGE_TITLE = "Add Product to Scraper Queue";
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const { supabase, headers } = createServerClient(request);
@@ -73,17 +85,17 @@ export default function Index() {
 
   return (
     <div className="space-y-4 text-center">
-      <h1 className="text-2xl font-bold">Admin: Add Review to Queue</h1>
+      <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
 
       <Form method="post">
-        <div>
+        <div className="mx-auto px-6 md:w-3/4 lg:w-3/5">
           <label>
-            <textarea
+            <Textarea
               defaultValue={actionData?.data}
               name="data"
               rows={20}
               cols={100}
-              className="resize-y rounded-md border-2"
+              className="resize-y border-2"
             />
           </label>
         </div>

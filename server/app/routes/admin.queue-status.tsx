@@ -1,7 +1,12 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
 import { useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
 import type { DeltaType } from "@tremor/react";
-import { BadgeDelta, Button, Card, Title } from "@tremor/react";
+import { BadgeDelta, Card, Title } from "@tremor/react";
+import { Button } from "~/components/shadcn-ui-mod/button";
 import { useEffect, useRef } from "react";
 import {
   clearParseQueue,
@@ -14,6 +19,13 @@ import {
   createServerClient,
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
+import { WEBSITE_TITLE } from "~/root";
+
+const PAGE_TITLE = "Queue Status";
+
+export const meta: MetaFunction = () => {
+  return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
+};
 
 export const action: ActionFunction = async ({ request }) => {
   const { type } = Object.fromEntries(await request.formData());
@@ -83,11 +95,11 @@ export default function Index() {
 
   return (
     <div className="space-y-4 self-center px-6 text-center lg:w-3/5">
-      <h1 className="text-2xl font-bold">Admin: Queue Status</h1>
+      <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
 
       <div className="grid grid-cols-2 space-x-4">
         <div className="col col-span-1">
-          <Card>
+          <Card className="space-y-4">
             <Title>Product Scraping Queue</Title>
 
             {getBadge(
@@ -104,7 +116,8 @@ export default function Index() {
 
             <Button
               type="submit"
-              className="mt-4 block"
+              className="block"
+              size="sm"
               onClick={() => {
                 submit(
                   { type: "clearParseQueue" },
@@ -120,7 +133,7 @@ export default function Index() {
           </Card>
         </div>
         <div className="col col-span-1">
-          <Card>
+          <Card className="space-y-4">
             <Title>Review Processing Queue</Title>
 
             {getBadge(
@@ -137,7 +150,8 @@ export default function Index() {
 
             <Button
               type="submit"
-              className="mt-4 block"
+              className="block"
+              size="sm"
               onClick={() => {
                 submit(
                   { type: "clearToAnalyzeQueue" },

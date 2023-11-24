@@ -7,14 +7,76 @@ services:
     ports:
       - 5673:5673
     restart: always
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 30s
+      retries: 3
   database:
     image: postgres:15
-    env_file: 
+    env_file:
       - ./docker/database.env
     volumes:
       - database-data:/var/lib/postgresql/data
     ports:
       - 5832:5432
     restart: always
+  server:
+    image: ghcr.io/6monthslater/server
+    env_file: 
+      - ./docker/server.env
+    ports:
+      - 3000:3000
+    restart: always
+    depends_on:
+      queue:
+        condition: service_healthy
+      database:
+        condition: service_started
+  scraper:
+    image: ghcr.io/6monthslater/scraper
+    env_file: 
+      - ./docker/scraper.env
+    restart: always
+    depends_on:
+      queue:
+        condition: service_healthy
+      database:
+        condition: service_started
+  crawler:
+    image: ghcr.io/6monthslater/crawler
+    env_file:
+      - ./docker/crawler.env
+    restart: always
+    depends_on:
+      queue:
+        condition: service_healthy
+      database:
+        condition: service_started
+  analyzer:
+    image: ghcr.io/6monthslater/analyzer
+    env_file: 
+      - ./docker/analyzer.env
+    restart: always
+    depends_on:
+      queue:
+        condition: service_healthy
+      database:
+        condition: service_started
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - server
+    env_file:
+      - ./docker/caddy.env
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+  
 volumes:
   database-data:
+  caddy-data:
