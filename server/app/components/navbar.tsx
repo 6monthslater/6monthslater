@@ -41,7 +41,7 @@ const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
           <Link to="/">6 Months Later</Link>
         </span>
       </div>
-      <div className="block w-full flex-grow lg:flex lg:w-auto lg:items-center">
+      <div className="block flex-grow lg:flex lg:w-auto lg:items-center">
         <div className="space-x-3 text-sm lg:flex-grow">
           <NavLink to="/" end>
             Home
