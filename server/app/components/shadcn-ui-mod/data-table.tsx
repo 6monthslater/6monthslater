@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/shadcn-ui/table";
+} from "~/components/ui/table";
 
 interface DataTableProps<TData, TValue> extends TableOptions<TData> {
   columns: ColumnDef<TData, TValue>[];
