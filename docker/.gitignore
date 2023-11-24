@@ -4,3 +4,4 @@ scraper.env
 analyzer.env
 crawler.env
 caddy.env
+shared_scraper.env
