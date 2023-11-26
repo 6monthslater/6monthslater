@@ -15,6 +15,7 @@ import { Separator } from "~/components/ui/separator";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/shadcn-ui-mod/button";
 import { DatePickerControlled } from "~/components/shadcn-ui-mod/date-picker-controlled";
+import { Label } from "~/components/ui/label";
 
 interface CreateReportDialogProps {
   productName: string;
@@ -32,6 +33,7 @@ export default function CreateReportDialog({
   const [formRows, setFormRows] = useState<FormRow[]>([
     { id: createId(), eventDesc: "", date: undefined },
   ]);
+  const [purchaseDate, setPurchaseDate] = useState<Date | undefined>(undefined);
 
   const fetcher = useFetcher();
   return (
@@ -57,6 +59,22 @@ export default function CreateReportDialog({
           <p className="text-xs text-neutral-500">{productName}</p>
           <Separator className="my-3" />
           <div className="space-y-3">
+            <div className="flex flex-row items-center gap-4 px-2">
+              <Label
+                htmlFor="purchaseDate"
+                className="grow basis-7/12 text-right"
+              >
+                Purchase Date
+              </Label>
+              <DatePickerControlled
+                className="basis-5/12"
+                date={purchaseDate}
+                setDate={(newDate) => setPurchaseDate(newDate)}
+              />
+              <span className="invisible h-10 w-10 shrink-0">
+                {/* Extremely lazy way of aligning the purchase date picker with the date pickers below*/}
+              </span>
+            </div>
             <div className="max-h-[40vh] space-y-3 overflow-scroll p-2">
               {formRows.map((row) => (
                 <div key={row.id} className="flex flex-row items-center gap-4">
