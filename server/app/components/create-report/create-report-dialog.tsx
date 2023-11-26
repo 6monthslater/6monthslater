@@ -16,36 +16,48 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/shadcn-ui-mod/button";
 import { DatePickerControlled } from "~/components/shadcn-ui-mod/date-picker-controlled";
 import { Label } from "~/components/ui/label";
+import type { ReportFormRow } from "~/types/ReportFormRow";
 
 interface CreateReportDialogProps {
   productName: string;
-}
-
-interface FormRow {
-  id: string;
-  eventDesc: string;
-  date: Date | undefined;
+  productId: string;
 }
 
 export default function CreateReportDialog({
   productName,
+  productId,
 }: CreateReportDialogProps) {
-  const [formRows, setFormRows] = useState<FormRow[]>([
+  const [formRows, setFormRows] = useState<ReportFormRow[]>([
     { id: createId(), eventDesc: "", date: undefined },
   ]);
   const [purchaseDate, setPurchaseDate] = useState<Date | undefined>(undefined);
+  const [open, setOpen] = useState(false);
 
   const fetcher = useFetcher();
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">
+        <Button size="sm" onClick={() => setOpen(true)}>
           <TbPlus className="mr-2 h-4 w-4" />
           Create Report
         </Button>
       </DialogTrigger>
       <DialogContent className="md:max-w-[650px]">
-        <fetcher.Form>
+        <fetcher.Form
+          method="post"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const purchaseDateStr = purchaseDate?.toISOString();
+            fetcher.submit(
+              {
+                productId,
+                data: JSON.stringify(formRows),
+                purchaseDate: purchaseDateStr ?? "",
+              },
+              { method: "post" }
+            );
+          }}
+        >
           <DialogHeader>
             <DialogTitle>Create Report</DialogTitle>
             <DialogDescription>
@@ -141,7 +153,7 @@ export default function CreateReportDialog({
             <Button
               type="submit"
               className="mt-3"
-              onClick={() => console.log(formRows)}
+              disabled={fetcher.state === "submitting"}
             >
               Submit Report
             </Button>

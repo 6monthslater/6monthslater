@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { ActionFunction, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
@@ -6,6 +6,7 @@ import { AreaChart, Card, Title } from "@tremor/react";
 import { useState } from "react";
 import { useRootContext, WEBSITE_TITLE } from "~/root";
 import CreateReportDialog from "~/components/create-report/create-report-dialog";
+import type { ReportFormRow } from "~/types/ReportFormRow";
 
 interface TopIssue {
   text: string;
@@ -41,6 +42,74 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
     },
   });
   return json({ product });
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const formRowsStr = formData.get("data");
+  const productId = formData.get("productId");
+  const purchaseDateStr = formData.get("purchaseDate");
+
+  if (
+    !formRowsStr ||
+    typeof formRowsStr !== "string" ||
+    !productId ||
+    typeof productId !== "string" ||
+    !purchaseDateStr ||
+    typeof purchaseDateStr !== "string"
+  ) {
+    return json({ error: "Invalid data" }, { status: 400 });
+  }
+
+  const formRowsObj = JSON.parse(formRowsStr);
+
+  if (!(formRowsObj satisfies ReportFormRow[])) {
+    return json({ error: "Invalid format" }, { status: 400 });
+  }
+
+  const formRows = formRowsObj as ReportFormRow[];
+
+  for (const row of formRows) {
+    if (!row.date) {
+      return json({ error: "Missing date in row" }, { status: 400 });
+    }
+    row.date = new Date(row.date);
+  }
+
+  const purchaseDateTimestamp = Date.parse(purchaseDateStr);
+  if (Number.isNaN(purchaseDateTimestamp)) {
+    return json({ error: "Invalid purchase date format" }, { status: 400 });
+  }
+
+  const purchaseDate = new Date(purchaseDateTimestamp);
+
+  const issues = formRows.map((row) => {
+    return {
+      text: row.eventDesc,
+      rel_timestamp: Math.round(
+        ((row.date?.getTime() ?? purchaseDate.getTime()) -
+          purchaseDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      ),
+    };
+  });
+
+  await db.report.create({
+    data: {
+      report_weight: 1.0,
+      issues: {
+        create: issues,
+      },
+      product: {
+        connect: {
+          id: productId,
+        },
+      },
+      purchaseDate,
+    },
+  });
+
+  return json({ ok: true });
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -164,7 +233,10 @@ export default function Route() {
             <>
               <span className="my-auto">Own this product? Add a report!</span>
               <span className="ml-auto">
-                <CreateReportDialog productName={product?.name} />
+                <CreateReportDialog
+                  productName={product?.name}
+                  productId={product.id}
+                />
               </span>
             </>
           ) : (
