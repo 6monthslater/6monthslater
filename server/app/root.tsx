@@ -13,6 +13,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useOutletContext,
   useRevalidator,
 } from "@remix-run/react";
 
@@ -23,9 +24,12 @@ import Footer from "~/components/footer";
 import { json } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServerClient, isAdmin } from "~/utils/supabase.server";
 
 export const WEBSITE_TITLE = "6 Months Later";
+
+type ContextType = { supabase: SupabaseClient; isLoggedIn: boolean };
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -89,7 +93,7 @@ export default function App() {
       </head>
       <body className="flex min-h-screen flex-col space-y-4">
         <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
-        <Outlet context={{ supabase, isLoggedIn }} />
+        <Outlet context={{ supabase, isLoggedIn } satisfies ContextType} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
@@ -97,4 +101,8 @@ export default function App() {
       </body>
     </html>
   );
+}
+
+export function useRootContext() {
+  return useOutletContext<ContextType>();
 }
