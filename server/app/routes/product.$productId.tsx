@@ -5,6 +5,7 @@ import { db } from "~/utils/db.server";
 import { AreaChart, Card, Title } from "@tremor/react";
 import { useState } from "react";
 import { WEBSITE_TITLE } from "~/root";
+import CreateReportDialog from "~/components/create-report/create-report-dialog";
 
 interface TopIssue {
   text: string;
@@ -155,6 +156,14 @@ export default function Route() {
   return (
     <div className="container mx-4 h-full grow content-center items-center space-y-4 py-4 text-center md:mx-auto">
       <h1 className="text-xl font-semibold">{product?.name}</h1>
+      <div className="mx-auto flex w-full space-y-4 lg:w-3/4">
+        <Card className="flex content-center px-6 py-3">
+          <span className="my-auto">Own this product? Add a report!</span>
+          <span className="ml-auto">
+            <CreateReportDialog productName={product?.name} />
+          </span>
+        </Card>
+      </div>
       <div className="mx-auto w-full space-y-4 md:h-[40vh] md:min-h-[calc(272px+16px+1.75rem+64px)] md:columns-2 lg:w-3/4 ">
         {topIssues.length > 0 && (
           <Card className="break-inside-avoid md:h-full">
