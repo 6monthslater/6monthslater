@@ -53,10 +53,17 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
       },
     },
   });
-  const reports =
+  const reports = (
     product?.reports.concat(
       product?.reviews.flatMap((review) => review.reports ?? [])
-    ) ?? [];
+    ) ?? []
+  ).map((report) => ({
+    ...report,
+    issues: report.issues.map((issue) => ({
+      ...issue,
+      text: getSentenceCase(issue.text),
+    })),
+  }));
 
   return json({ product, reports });
 };
@@ -184,6 +191,12 @@ export const action: ActionFunction = async ({ request }) => {
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return { title: `Product: ${data.product?.name} - ${WEBSITE_TITLE}` };
 };
+
+function getSentenceCase(str: string): string {
+  // Fancy slicing done to combat issues with unicode causing strings to count multiple characters as one index
+  // So, it splits it to a character array first.
+  return str ? str.charAt(0).toUpperCase() + [...str].slice(1).join("") : str;
+}
 
 function getTopIssues(
   reports: Array<{
