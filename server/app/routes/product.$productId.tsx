@@ -11,6 +11,8 @@ import type { ReportFormErrors } from "~/types/ReportFormErrors";
 import { createServerClient } from "~/utils/supabase.server";
 import type { User } from "@supabase/supabase-js";
 import ProductHeader from "~/components/product-header";
+import type { PrismaClientError } from "~/types/PrismaClientError";
+import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
 
 interface TopIssue {
   text: string;
@@ -171,21 +173,33 @@ export const action: ActionFunction = async ({ request }) => {
     };
   });
 
-  await db.report.create({
-    data: {
-      report_weight: 1.0,
-      issues: {
-        create: issues,
-      },
-      product: {
-        connect: {
-          id: productId,
+  try {
+    await db.report.create({
+      data: {
+        report_weight: 1.0,
+        issues: {
+          create: issues,
         },
+        product: {
+          connect: {
+            id: productId,
+          },
+        },
+        purchaseDate,
+        authorId: sbUser.id,
       },
-      purchaseDate,
-      authorId: sbUser.id,
-    },
-  });
+    });
+  } catch (e) {
+    const prismaError = e as PrismaClientError;
+    if (prismaError) {
+      console.error(prismaError.message);
+      errors.main.push(PRISMA_ERROR_MSG);
+      return json({ errors }, { status: 500, headers });
+    } else {
+      console.error(e);
+      throw e;
+    }
+  }
 
   return json({ ok: true }, { headers });
 };

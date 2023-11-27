@@ -15,6 +15,8 @@ import { getProductImageUrl } from "~/utils/amazon";
 import { Combobox, Transition } from "@headlessui/react";
 import { Separator } from "~/components/ui/separator";
 import { WEBSITE_TITLE } from "~/root";
+import type { PrismaClientError } from "~/types/PrismaClientError";
+import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
 
 interface Suggestion {
   name: string;
@@ -37,20 +39,24 @@ export async function action({ request }: ActionArgs) {
 
   const searchTerm = createSearchTerm(productName.toString());
 
-  const data = await db.product.findFirst({
-    where: {
-      name: {
-        search: searchTerm,
-        mode: "insensitive",
-      },
-      reviews: {
-        some: {
-          reports: {
-            some: {
-              issues: {
-                some: {
-                  text: {
-                    not: "",
+  let data;
+
+  try {
+    data = await db.product.findFirst({
+      where: {
+        name: {
+          search: searchTerm,
+          mode: "insensitive",
+        },
+        reviews: {
+          some: {
+            reports: {
+              some: {
+                issues: {
+                  some: {
+                    text: {
+                      not: "",
+                    },
                   },
                 },
               },
@@ -58,18 +64,27 @@ export async function action({ request }: ActionArgs) {
           },
         },
       },
-    },
-    orderBy: {
-      _relevance: {
-        fields: ["name"],
-        search: searchTerm,
-        sort: "desc",
+      orderBy: {
+        _relevance: {
+          fields: ["name"],
+          search: searchTerm,
+          sort: "desc",
+        },
       },
-    },
-    select: {
-      id: true,
-    },
-  });
+      select: {
+        id: true,
+      },
+    });
+  } catch (e) {
+    const prismaError = e as PrismaClientError;
+    if (prismaError) {
+      console.error(prismaError.message);
+      return json({ error: PRISMA_ERROR_MSG }, { status: 500 });
+    } else {
+      console.error(e);
+      throw e;
+    }
+  }
   if (!data) {
     return json({ error: "Product not found" }, { status: 400 });
   }
