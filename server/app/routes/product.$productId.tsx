@@ -211,16 +211,16 @@ function getTopIssues(
   const issues: TopIssue[] = [];
   for (const report of reports) {
     for (const issue of report.issues) {
-      if (issue.text) {
+      if (issue.text && !issues.some((i) => i.text === issue.text)) {
         issues.push({
           text: issue.text,
           id: report.id,
         });
       }
-    }
 
-    if (issues.length >= 5) {
-      break;
+      if (issues.length >= 5) {
+        return issues;
+      }
     }
   }
 
