@@ -43,7 +43,7 @@ export default function CreateReportDialog({
       setPurchaseDate(undefined);
       setFormRows([{ id: createId(), eventDesc: "", date: undefined }]);
     }
-  }, [isSubmitting]);
+  }, [isSubmitting, fetcher?.data?.errors]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
