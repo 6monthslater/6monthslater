@@ -264,7 +264,7 @@ export default function Route() {
               <span className="ml-auto">
                 <CreateReportDialog
                   productName={product?.name}
-                  productId={product.id}
+                  productId={product?.id}
                 />
               </span>
             </>
