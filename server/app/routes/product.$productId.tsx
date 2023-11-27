@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useRootContext, WEBSITE_TITLE } from "~/root";
 import CreateReportDialog from "~/components/create-report/create-report-dialog";
 import type { ReportFormRow } from "~/types/ReportFormRow";
-
+import type { ReportFormErrors } from "~/types/ReportFormErrors";
 interface TopIssue {
   text: string;
   id: string;
@@ -50,35 +50,64 @@ export const action: ActionFunction = async ({ request }) => {
   const productId = formData.get("productId");
   const purchaseDateStr = formData.get("purchaseDate");
 
+  const errors: ReportFormErrors = {
+    main: [],
+    rows: {},
+  };
+
   if (
     !formRowsStr ||
     typeof formRowsStr !== "string" ||
     !productId ||
-    typeof productId !== "string" ||
-    !purchaseDateStr ||
-    typeof purchaseDateStr !== "string"
+    typeof productId !== "string"
   ) {
-    return json({ error: "Invalid data" }, { status: 400 });
+    errors.main.push("Request missing required data");
+    return json({ errors }, { status: 400 });
+  }
+
+  if (!purchaseDateStr || typeof purchaseDateStr !== "string") {
+    errors.purchaseDate = "Purchase date is required";
+    return json({ errors }, { status: 400 });
   }
 
   const formRowsObj = JSON.parse(formRowsStr);
 
   if (!(formRowsObj satisfies ReportFormRow[])) {
-    return json({ error: "Invalid format" }, { status: 400 });
+    errors.main.push("Request format invalid");
+    return json({ errors }, { status: 400 });
   }
 
   const formRows = formRowsObj as ReportFormRow[];
 
   for (const row of formRows) {
-    if (!row.date) {
-      return json({ error: "Missing date in row" }, { status: 400 });
+    if (!row.eventDesc) {
+      errors.main.push("Descriptions are required for each event");
+      errors.rows[row.id] = errors.rows[row.id] || {
+        eventDesc: false,
+        date: false,
+      };
+      errors.rows[row.id].eventDesc = true;
     }
-    row.date = new Date(row.date);
+    if (!row.date) {
+      errors.main.push("Dates are required for each event");
+      errors.rows[row.id] = errors.rows[row.id] || {
+        eventDesc: false,
+        date: false,
+      };
+      errors.rows[row.id].date = true;
+    }
+    // The fallback value will not actually be used since the request will reject right after
+    row.date = row.date ? new Date(row.date) : new Date();
+  }
+
+  if (Object.keys(errors.rows).length > 0) {
+    return json({ errors }, { status: 400 });
   }
 
   const purchaseDateTimestamp = Date.parse(purchaseDateStr);
   if (Number.isNaN(purchaseDateTimestamp)) {
-    return json({ error: "Invalid purchase date format" }, { status: 400 });
+    errors.purchaseDate = "Purchase date format is invalid";
+    return json({ errors }, { status: 400 });
   }
 
   const purchaseDate = new Date(purchaseDateTimestamp);

@@ -34,6 +34,7 @@ export default function CreateReportDialog({
   const [open, setOpen] = useState(false);
 
   const fetcher = useFetcher();
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -87,12 +88,22 @@ export default function CreateReportDialog({
                 {/* Extremely lazy way of aligning the purchase date picker with the date pickers below*/}
               </span>
             </div>
+            <p
+              className={`text-center text-sm text-red-500`}
+              hidden={!fetcher.data?.errors?.purchaseDate}
+            >
+              {fetcher.data?.errors?.purchaseDate}
+            </p>
             <div className="max-h-[40vh] space-y-3 overflow-scroll p-2">
               {formRows.map((row) => (
                 <div key={row.id} className="flex flex-row items-center gap-4">
                   <Input
                     placeholder="Event Description"
-                    className="grow basis-7/12"
+                    className={`grow basis-7/12 ${
+                      fetcher?.data?.errors?.rows[row.id]?.eventDesc
+                        ? "!ring-ring !ring-2 !ring-red-500"
+                        : ""
+                    }`}
                     name="eventDesc"
                     value={row.eventDesc}
                     onChange={(event) => {
@@ -105,7 +116,11 @@ export default function CreateReportDialog({
                     }}
                   ></Input>
                   <DatePickerControlled
-                    className="basis-5/12"
+                    className={`basis-5/12 ${
+                      fetcher?.data?.errors?.rows[row.id]?.date
+                        ? "!ring-ring !ring-2 !ring-red-500"
+                        : ""
+                    }`}
                     date={row.date}
                     setDate={(newDate) => {
                       const nextFormRows = formRows.map((oldRow) =>
@@ -147,6 +162,18 @@ export default function CreateReportDialog({
                 <TbPlus className="mr-2 h-4 w-4" />
                 Add Event
               </Button>
+            </div>
+            <div>
+              {fetcher.data?.errors?.main?.length > 0
+                ? fetcher.data?.errors?.main?.map((errorText: string) => (
+                    <p
+                      key={createId()}
+                      className="text-center text-sm text-red-500"
+                    >
+                      {errorText}
+                    </p>
+                  ))
+                : null}
             </div>
           </div>
           <DialogFooter>
