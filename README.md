@@ -123,3 +123,5 @@ The other `*.env` files have default values, or are blank. They must exist but d
 Then you can run `docker compose up -d` to start the application.
 
 If you want to run while using a VPN proxy, you can configure `docker/wireproxy-config` with the appropriate values, and then run `docker compose --profile proxy up -d`;
+
+Note: If you are on an old version of docker, you may need to use `docker-compose` instead of `docker compose`.
