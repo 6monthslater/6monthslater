@@ -5,6 +5,7 @@ import { db } from "~/utils/db.server";
 import { AreaChart, Card, Title } from "@tremor/react";
 import { useState } from "react";
 import { WEBSITE_TITLE } from "~/root";
+import ProductHeader from "~/components/product-header";
 
 interface TopIssue {
   text: string;
@@ -154,7 +155,8 @@ export default function Route() {
 
   return (
     <div className="container mx-4 h-full grow content-center items-center space-y-4 py-4 text-center md:mx-auto">
-      <h1 className="text-xl font-semibold">{product?.name}</h1>
+      <ProductHeader product={product} />
+
       <div className="mx-auto w-full space-y-4 md:h-[40vh] md:min-h-[calc(272px+16px+1.75rem+64px)] md:columns-2 lg:w-3/4 ">
         {topIssues.length > 0 && (
           <Card className="break-inside-avoid md:h-full">
