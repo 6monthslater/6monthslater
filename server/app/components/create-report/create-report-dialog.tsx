@@ -1,5 +1,5 @@
 import { useFetcher } from "@remix-run/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createId } from "@paralleldrive/cuid2";
 import { TbPlus, TbMinus } from "react-icons/tb";
 import {
@@ -34,6 +34,16 @@ export default function CreateReportDialog({
   const [open, setOpen] = useState(false);
 
   const fetcher = useFetcher();
+
+  const isSubmitting = fetcher.state === "submitting";
+
+  useEffect(() => {
+    if (!isSubmitting && !fetcher?.data?.errors) {
+      setOpen(false);
+      setPurchaseDate(undefined);
+      setFormRows([{ id: createId(), eventDesc: "", date: undefined }]);
+    }
+  }, [isSubmitting]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
