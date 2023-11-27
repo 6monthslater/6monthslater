@@ -37,6 +37,21 @@ export async function action({ request }: ActionArgs) {
         search: searchTerm,
         mode: "insensitive",
       },
+      reviews: {
+        some: {
+          reports: {
+            some: {
+              issues: {
+                some: {
+                  text: {
+                    not: "",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     orderBy: {
       _relevance: {
@@ -74,6 +89,21 @@ export const loader = async ({ request }): Promise<Suggestion[]> => {
       name: {
         search: searchTerm,
         mode: "insensitive",
+      },
+      reviews: {
+        some: {
+          reports: {
+            some: {
+              issues: {
+                some: {
+                  text: {
+                    not: "",
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
     orderBy: {
@@ -144,6 +174,7 @@ export default function Index() {
                 className="tremor-TextInput-input w-full border-0 bg-transparent py-2 pl-4 pr-4 text-sm font-medium placeholder:text-gray-500 focus:outline-none focus:ring-0"
                 placeholder="Search for a product..."
                 name="productName"
+                autoComplete="off"
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
                     event.preventDefault();

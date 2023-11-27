@@ -15,7 +15,7 @@ services:
   database:
     image: postgres:15
     env_file:
-      - ./docker/database.env
+      - docker/.database.env
     volumes:
       - database-data:/var/lib/postgresql/data
     ports:
@@ -23,8 +23,8 @@ services:
     restart: always
   server:
     image: ghcr.io/6monthslater/server
-    env_file: 
-      - ./docker/server.env
+    env_file:
+      - docker/.server.env
     ports:
       - 3000:3000
     restart: always
@@ -35,8 +35,9 @@ services:
         condition: service_started
   scraper:
     image: ghcr.io/6monthslater/scraper
-    env_file: 
-      - ./docker/scraper.env
+    env_file:
+      - docker/.shared_scraper.env
+      - docker/.scraper.env
     restart: always
     depends_on:
       queue:
@@ -46,7 +47,8 @@ services:
   crawler:
     image: ghcr.io/6monthslater/crawler
     env_file:
-      - ./docker/crawler.env
+      - docker/.shared_scraper.env
+      - docker/.crawler.env
     restart: always
     depends_on:
       queue:
@@ -55,8 +57,9 @@ services:
         condition: service_started
   analyzer:
     image: ghcr.io/6monthslater/analyzer
-    env_file: 
-      - ./docker/analyzer.env
+    env_file:
+      - docker/.shared_scraper.env
+      - docker/.analyzer.env
     restart: always
     depends_on:
       queue:
@@ -72,10 +75,21 @@ services:
     links:
       - server
     env_file:
-      - ./docker/caddy.env
+      - docker/.caddy.env
     volumes:
       - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
+  wireproxy:
+    image: ghcr.io/pufferffish/wireproxy:latest
+    restart: always
+    profiles:
+      - proxy
+    ports:
+      - 8888:8888
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./docker/wireproxy-config:/etc/wireproxy/config:ro
   
 volumes:
   database-data:

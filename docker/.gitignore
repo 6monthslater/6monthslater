@@ -1,6 +1,2 @@
-database.env
-server.env
-scraper.env
-analyzer.env
-crawler.env
-caddy.env
+*.env
+wireproxy-config
