@@ -20,7 +20,9 @@ const ProductHeader = ({ product }: ProductHeaderProps) => (
         </span>
 
         <span className="md:col-span-6">
-          <h1 className="text-xl font-semibold">{product?.name}</h1>
+          <h1 className="text-center text-xl font-semibold md:text-left">
+            {product?.name}
+          </h1>
         </span>
       </Card>
     )}
