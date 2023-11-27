@@ -84,6 +84,15 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const action = formData.get("action");
 
+  const { supabase, headers } = createServerClient(request);
+
+  if (!(await isAdmin(supabase))) {
+    return json(
+      { error: "Requesting user is not an administrator or is not logged in" },
+      { status: 400, headers }
+    );
+  }
+
   if (action === "role") {
     const id = formData.get("id");
     const role = formData.get("role");
@@ -97,14 +106,14 @@ export const action: ActionFunction = async ({ request }) => {
     ) {
       return json(
         { error: "Users page backend error: Incomplete Request" },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
 
     if (role !== ADMIN_ROLE_NAME) {
       return json(
         { error: `Users page backend error: Invalid Role '${role}'` },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
 
@@ -139,13 +148,13 @@ export const action: ActionFunction = async ({ request }) => {
       },
     });
 
-    return json({ ok: true });
+    return json({ ok: true }, { headers });
   } else {
     const userId = formData.get("userId");
     if (!userId || !(typeof userId === "string")) {
       return json(
         { error: "Users page backend error: Incomplete Request" },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
     await db.user.create({
@@ -153,7 +162,7 @@ export const action: ActionFunction = async ({ request }) => {
         id: userId,
       },
     });
-    return json({ ok: true });
+    return json({ ok: true }, { headers });
   }
 };
 
