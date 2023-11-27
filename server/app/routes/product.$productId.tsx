@@ -10,6 +10,8 @@ import type { ReportFormRow } from "~/types/ReportFormRow";
 import type { ReportFormErrors } from "~/types/ReportFormErrors";
 import { createServerClient } from "~/utils/supabase.server";
 import type { User } from "@supabase/supabase-js";
+import ProductHeader from "~/components/product-header";
+
 interface TopIssue {
   text: string;
   id: string;
@@ -310,7 +312,8 @@ export default function Route() {
 
   return (
     <div className="container mx-4 h-full grow content-center items-center space-y-4 py-4 text-center md:mx-auto">
-      <h1 className="text-xl font-semibold">{product?.name}</h1>
+      <ProductHeader product={product} />
+
       <div className="mx-auto flex w-full space-y-4 lg:w-3/4">
         <Card className="flex content-center px-6 py-3">
           {isLoggedIn ? (
