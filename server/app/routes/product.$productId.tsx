@@ -25,6 +25,16 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
     },
     include: {
       manufacturer: true,
+      reports: {
+        include: {
+          review: true,
+          issues: {
+            include: {
+              images: true,
+            },
+          },
+        },
+      },
       reviews: {
         include: {
           reports: {
@@ -41,7 +51,12 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
       },
     },
   });
-  return json({ product });
+  const reports =
+    product?.reports.concat(
+      product?.reviews.flatMap((review) => review.reports ?? [])
+    ) ?? [];
+
+  return json({ product, reports });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -181,20 +196,22 @@ function getRelativeTimestampDate(
     review: {
       date_text: string;
     };
+    purchaseDate: Date;
   },
   issue: {
     text: string;
     rel_timestamp: number | null;
   }
 ): Date {
-  if (!issue.rel_timestamp) return new Date(report.review.date_text);
+  if (!issue.rel_timestamp)
+    return new Date(report.purchaseDate ?? report.review.date_text);
 
   if (issue.rel_timestamp > 1600000000) {
     // Treat as unix
     return new Date(issue.rel_timestamp * 1000);
   } else {
     // Treat as days since review was created
-    const reviewDate = new Date(report.review.date_text);
+    const reviewDate = new Date(report.purchaseDate ?? report.review.date_text);
     reviewDate.setDate(reviewDate.getDate() + issue.rel_timestamp);
 
     return reviewDate;
@@ -207,6 +224,7 @@ function getIssueGraphData(
       text: string;
       rel_timestamp: number | null;
     }>;
+    purchaseDate: Date;
     review: {
       date_text: string;
     };
@@ -248,8 +266,7 @@ function getIssueGraphData(
 }
 
 export default function Route() {
-  const { product } = useLoaderData<typeof loader>();
-  const reports = product?.reviews.flatMap((review) => review.reports) ?? [];
+  const { product, reports } = useLoaderData<typeof loader>();
   const topIssues = getTopIssues(reports);
   const issueGraphData = getIssueGraphData(reports);
 
@@ -334,7 +351,7 @@ export default function Route() {
                 id={report.id}
                 decoration={selectedProduct === report.id ? "left" : ""}
               >
-                <Title className="font-semibold">{report.review.title}</Title>
+                <Title className="font-semibold">{report?.review?.title}</Title>
                 <div>
                   {report.issues.map(
                     (issue) =>
@@ -389,27 +406,27 @@ export default function Route() {
                       )
                   )}
                 </div>
-                {report.review.is_top_positive_review ? (
+                {report?.review?.is_top_positive_review ? (
                   <p>
                     <b>Top Positive Review</b>
                   </p>
                 ) : null}
-                {report.review.is_top_critical_review ? (
+                {report?.review?.is_top_critical_review ? (
                   <p>
                     <b>Top Critical Review</b>
                   </p>
                 ) : null}
                 <p>
                   <b>Date: </b>
-                  {report.review.date_text}
+                  {report?.review?.date_text}
                 </p>
                 <p>
                   <b>Verified Purchase: </b>
-                  {report.review.verified_purchase ? "Yes" : "No"}
+                  {report?.review?.verified_purchase ? "Yes" : "No"}
                 </p>
                 <p>
                   <b>"Found Helpful" Votes: </b>
-                  {report.review.found_helpful_count}
+                  {report?.review?.found_helpful_count}
                 </p>
                 <hr className="my-2" />
               </Card>
