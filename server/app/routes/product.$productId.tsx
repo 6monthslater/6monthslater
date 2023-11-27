@@ -79,9 +79,13 @@ export const action: ActionFunction = async ({ request }) => {
 
   const formRows = formRowsObj as ReportFormRow[];
 
+  const eventDescErrText = "Descriptions are required for each event";
+  const dateErrText = "Dates are required for each event";
+
   for (const row of formRows) {
     if (!row.eventDesc) {
-      errors.main.push("Descriptions are required for each event");
+      !errors.main.includes(eventDescErrText) &&
+        errors.main.push(eventDescErrText);
       errors.rows[row.id] = errors.rows[row.id] || {
         eventDesc: false,
         date: false,
@@ -89,7 +93,7 @@ export const action: ActionFunction = async ({ request }) => {
       errors.rows[row.id].eventDesc = true;
     }
     if (!row.date) {
-      errors.main.push("Dates are required for each event");
+      !errors.main.includes(dateErrText) && errors.main.push(dateErrText);
       errors.rows[row.id] = errors.rows[row.id] || {
         eventDesc: false,
         date: false,
