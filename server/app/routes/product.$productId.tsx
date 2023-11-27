@@ -8,6 +8,8 @@ import { useRootContext, WEBSITE_TITLE } from "~/root";
 import CreateReportDialog from "~/components/create-report/create-report-dialog";
 import type { ReportFormRow } from "~/types/ReportFormRow";
 import type { ReportFormErrors } from "~/types/ReportFormErrors";
+import { createServerClient } from "~/utils/supabase.server";
+import type { User } from "@supabase/supabase-js";
 interface TopIssue {
   text: string;
   id: string;
@@ -70,6 +72,24 @@ export const action: ActionFunction = async ({ request }) => {
     rows: {},
   };
 
+  const { supabase, headers } = createServerClient(request);
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    errors.main.push("You must be logged in to create a report");
+    return json({ errors }, { status: 400, headers });
+  }
+
+  if (!session.user) {
+    errors.main.push("Internal error: User does not exist");
+    return json({ errors }, { status: 400, headers });
+  }
+
+  const sbUser: User = session.user;
+
   if (
     !formRowsStr ||
     typeof formRowsStr !== "string" ||
@@ -77,19 +97,19 @@ export const action: ActionFunction = async ({ request }) => {
     typeof productId !== "string"
   ) {
     errors.main.push("Request missing required data");
-    return json({ errors }, { status: 400 });
+    return json({ errors }, { status: 400, headers });
   }
 
   if (!purchaseDateStr || typeof purchaseDateStr !== "string") {
     errors.purchaseDate = "Purchase date is required";
-    return json({ errors }, { status: 400 });
+    return json({ errors }, { status: 400, headers });
   }
 
   const formRowsObj = JSON.parse(formRowsStr);
 
   if (!(formRowsObj satisfies ReportFormRow[])) {
     errors.main.push("Request format invalid");
-    return json({ errors }, { status: 400 });
+    return json({ errors }, { status: 400, headers });
   }
 
   const formRows = formRowsObj as ReportFormRow[];
@@ -120,13 +140,13 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   if (Object.keys(errors.rows).length > 0) {
-    return json({ errors }, { status: 400 });
+    return json({ errors }, { status: 400, headers });
   }
 
   const purchaseDateTimestamp = Date.parse(purchaseDateStr);
   if (Number.isNaN(purchaseDateTimestamp)) {
     errors.purchaseDate = "Purchase date format is invalid";
-    return json({ errors }, { status: 400 });
+    return json({ errors }, { status: 400, headers });
   }
 
   const purchaseDate = new Date(purchaseDateTimestamp);
@@ -154,10 +174,11 @@ export const action: ActionFunction = async ({ request }) => {
         },
       },
       purchaseDate,
+      authorId: sbUser.id,
     },
   });
 
-  return json({ ok: true });
+  return json({ ok: true }, { headers });
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
