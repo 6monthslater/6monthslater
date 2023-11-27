@@ -10,7 +10,7 @@ interface ProductHeaderProps {
 const ProductHeader = ({ product }: ProductHeaderProps) => (
   <>
     {product?.image_url && (
-      <Card className="mx-auto grid w-full grid-cols-1 gap-1 md:h-full md:grid-cols-7 md:gap-6 lg:w-3/4">
+      <Card className="mx-auto grid w-full grid-cols-1 gap-1 md:grid-cols-7 md:gap-6 lg:w-3/4">
         <span className="grid justify-center">
           <img
             className="my-auto"
