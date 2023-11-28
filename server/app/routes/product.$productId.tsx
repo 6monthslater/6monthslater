@@ -391,7 +391,7 @@ export default function Route() {
                 issue.classification !== "UNKNOWN_ISSUE" ? (
                   <b>{issue.classification}:</b>
                 ) : (
-                  ""
+                  null
                 )}{" "}
                 {issue.text}
               </Link>
