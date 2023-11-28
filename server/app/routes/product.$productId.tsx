@@ -14,6 +14,7 @@ import ProductHeader from "~/components/product-header";
 
 interface TopIssue {
   text: string;
+  classification: string;
   id: string;
 }
 
@@ -204,14 +205,33 @@ function getTopIssues(
   reports: Array<{
     issues: Array<{
       text: string;
+      classification: string;
     }>;
     id: string;
   }>
 ): TopIssue[] {
   const issues: TopIssue[] = [];
+  //First pass: adding classified issues with priority
   for (const report of reports) {
     for (const issue of report.issues) {
-      if (issue.text) {
+      if (issue.text && issue.classification !== "UNKNOWN_ISSUE") {
+        issues.push({
+          text: issue.text,
+          classification: issue.classification,
+          id: report.id,
+        });
+      }
+    }
+
+    if (issues.length >= 5) {
+      return issues;
+    }
+  }
+
+  //Second pass: adding unclassified issues if needed
+  for (const report of reports) {
+    for (const issue of report.issues) {
+      if (issue.text && issue.classification === "UNKNOWN_ISSUE") {
         issues.push({
           text: issue.text,
           id: report.id,
@@ -357,7 +377,7 @@ export default function Route() {
                   setSelectedProduct(issue.id);
                 }}
               >
-                {index + 1}. {issue.text}
+                {index + 1}. {issue.classification && issue.classification !== "UNKNOWN_ISSUE" ? <b>{issue.classification}:</b> : ''} {issue.text}
               </Link>
             ))}
           </Card>
