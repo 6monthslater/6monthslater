@@ -374,7 +374,7 @@ def _extract_clauses(doc: Doc) -> list[Span]:
     #Merges clauses related by an SCONJ
     final_clauses: list[Span] = []
     for i, clause in enumerate(filtered_clauses):
-        if clause[0].pos_ == 'SCONJ' and i > 0:
+        if i > 0 and clause[0].pos_ == 'SCONJ' and clause[0].i - final_clauses[-1][-1].i == 1:
             merged_clause = doc[final_clauses[-1][0].i : clause[-1].i + 1]
             final_clauses[-1] = merged_clause
 
