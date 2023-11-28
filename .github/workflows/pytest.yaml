@@ -32,6 +32,3 @@ jobs:
         run: pytest
         env:
           AMAZON_COOKIE: ${{ secrets.AMAZON_COOKIE }}
-          ANALYZER_THRESHOLD_OWNERSHIP_REL: 0.9
-          ANALYZER_THRESHOLD_ISSUE_REL: 0.55
-          ANALYZER_THRESHOLD_ISSUE_CLASS: 0.8
