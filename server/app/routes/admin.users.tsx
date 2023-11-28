@@ -45,6 +45,7 @@ import {
 import { WEBSITE_TITLE } from "~/root";
 import { parsePagination } from "~/utils/pagination.server";
 import PaginationBar from "~/components/pagination-bar";
+import { Prisma } from "@prisma/client";
 
 const PAGE_TITLE = "User Management";
 
@@ -157,11 +158,24 @@ export const action: ActionFunction = async ({ request }) => {
         { status: 400, headers }
       );
     }
-    await db.user.create({
-      data: {
-        id: userId,
-      },
-    });
+    try {
+      await db.user.create({
+        data: {
+          id: userId,
+        },
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === "P2002") {
+          return json(
+            { error: "User already exists in the database" },
+            { status: 400, headers }
+          );
+        } else {
+          throw e;
+        }
+      }
+    }
     return json({ ok: true }, { headers });
   }
 };
