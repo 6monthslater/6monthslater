@@ -214,7 +214,7 @@ function getTopIssues(
   //First pass: adding classified issues with priority
   for (const report of reports) {
     for (const issue of report.issues) {
-      if (issue.text && issue.classification !== "UNKNOWN_ISSUE") {
+      if (issue.text && !issues.some((i) => i.text === issue.text) && issue.classification !== "UNKNOWN_ISSUE") {
         issues.push({
           text: issue.text,
           classification: issue.classification,
@@ -231,16 +231,16 @@ function getTopIssues(
   //Second pass: adding unclassified issues if needed
   for (const report of reports) {
     for (const issue of report.issues) {
-      if (issue.text && issue.classification === "UNKNOWN_ISSUE") {
+      if (issue.text && !issues.some((i) => i.text === issue.text) && issue.classification === "UNKNOWN_ISSUE") {
         issues.push({
           text: issue.text,
           id: report.id,
         });
       }
-    }
 
-    if (issues.length >= 5) {
-      break;
+      if (issues.length >= 5) {
+        return issues;
+      }
     }
   }
 
