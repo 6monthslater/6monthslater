@@ -13,6 +13,7 @@ import type { User } from "@supabase/supabase-js";
 import ProductHeader from "~/components/product-header";
 import type { PrismaClientError } from "~/types/PrismaClientError";
 import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
+import { PRODUCT_INCLUDE } from "~/prisma-select-include/product";
 
 interface TopIssue {
   text: string;
@@ -29,33 +30,8 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
     where: {
       id: params.productId,
     },
-    include: {
-      manufacturer: true,
-      reports: {
-        include: {
-          review: true,
-          issues: {
-            include: {
-              images: true,
-            },
-          },
-        },
-      },
-      reviews: {
-        include: {
-          reports: {
-            include: {
-              review: true,
-              issues: {
-                include: {
-                  images: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+    // Spliced because ~/components/product-card also needs access to the include object
+    include: PRODUCT_INCLUDE,
   });
   const reports = (
     product?.reports.concat(
