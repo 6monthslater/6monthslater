@@ -41,9 +41,12 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors }, { status: 400, headers });
   }
 
+  const url = new URL(request.url);
+
   const data = await supabase.auth.signUp({
     email,
     password,
+    options: { emailRedirectTo: `${url.protocol}://${url.host}/` },
   });
 
   if (data.error) {
