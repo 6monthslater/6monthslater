@@ -38,7 +38,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Reject for validation errors
   if (Object.keys(errors).length > 0) {
-    return json({ errors });
+    return json({ errors }, { status: 400, headers });
   }
 
   const url = new URL(request.url);
@@ -56,7 +56,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Reject for Supabase errors
   if (Object.keys(errors).length > 0) {
-    return json({ errors });
+    return json({ errors }, { status: 400, headers });
   }
 
   return redirect("/auth/success", {
