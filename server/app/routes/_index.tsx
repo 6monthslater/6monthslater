@@ -3,12 +3,22 @@ import { TbSearch } from "react-icons/tb";
 import { Button } from "~/components/shadcn-ui-mod/button";
 import type { ActionArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useFetcher, useNavigate, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useFetcher,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+} from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { getProductImageUrl } from "~/utils/amazon";
 import { Combobox, Transition } from "@headlessui/react";
 import { Separator } from "~/components/ui/separator";
 import { WEBSITE_TITLE } from "~/root";
+import { useToast } from "~/components/ui/use-toast";
+import type { PrismaClientError } from "~/types/PrismaClientError";
+import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
 
 interface Suggestion {
   name: string;
@@ -26,25 +36,29 @@ export async function action({ request }: ActionArgs) {
   const body = await request.formData();
   const productName = body.get("productName");
   if (!productName) {
-    return json({ errors: ["No Product Name provided"] }, { status: 400 });
+    return json({ error: "No Product Name provided" }, { status: 400 });
   }
 
   const searchTerm = createSearchTerm(productName.toString());
 
-  const data = await db.product.findFirst({
-    where: {
-      name: {
-        search: searchTerm,
-        mode: "insensitive",
-      },
-      reviews: {
-        some: {
-          reports: {
-            some: {
-              issues: {
-                some: {
-                  text: {
-                    not: "",
+  let data;
+
+  try {
+    data = await db.product.findFirst({
+      where: {
+        name: {
+          search: searchTerm,
+          mode: "insensitive",
+        },
+        reviews: {
+          some: {
+            reports: {
+              some: {
+                issues: {
+                  some: {
+                    text: {
+                      not: "",
+                    },
                   },
                 },
               },
@@ -52,20 +66,29 @@ export async function action({ request }: ActionArgs) {
           },
         },
       },
-    },
-    orderBy: {
-      _relevance: {
-        fields: ["name"],
-        search: searchTerm,
-        sort: "desc",
+      orderBy: {
+        _relevance: {
+          fields: ["name"],
+          search: searchTerm,
+          sort: "desc",
+        },
       },
-    },
-    select: {
-      id: true,
-    },
-  });
+      select: {
+        id: true,
+      },
+    });
+  } catch (e) {
+    const prismaError = e as PrismaClientError;
+    if (prismaError) {
+      console.error(prismaError.message);
+      return json({ error: PRISMA_ERROR_MSG }, { status: 500 });
+    } else {
+      console.error(e);
+      throw e;
+    }
+  }
   if (!data) {
-    return json({ errors: ["Product not found"] }, { status: 400 });
+    return json({ error: "Product not found" }, { status: 400 });
   }
   return redirect(`/product/${data.id}`);
 }
@@ -138,12 +161,33 @@ function createSearchTerm(productName: string) {
 export default function Index() {
   const [searchProdName, setSearchProdName] = useState("");
   const searchSuggestionFetcher = useFetcher<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const [currentSuggestions, setCurrentSuggestions] = useState<Suggestion[]>(
     []
   );
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
   const submit = useSubmit();
+
+  // Email Verification confirmation
+  const [searchParams] = useSearchParams();
+  const { toast } = useToast();
+  const [toastDisplayed, setToastDisplayed] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("code") && !toastDisplayed) {
+      setToastDisplayed(true);
+      // Without the timeout, it appears the toast attempts to render too early and doesn't show up
+      setTimeout(
+        () =>
+          toast({
+            title: "Success!",
+            description: "Your email has been verified.",
+          }),
+        100
+      );
+    }
+  }, [searchParams, toast, toastDisplayed]);
 
   useEffect(() => {
     if (
@@ -231,6 +275,12 @@ export default function Index() {
               </Transition>
             )}
           </Combobox>
+          <p
+            className={`text-center text-sm text-red-500`}
+            hidden={!actionData?.error}
+          >
+            {actionData?.error}
+          </p>
 
           <Button className="my-3" type="submit">
             <TbSearch className="mr-2 h-4 w-4" /> Search

@@ -38,12 +38,15 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Reject for validation errors
   if (Object.keys(errors).length > 0) {
-    return json({ errors });
+    return json({ errors }, { status: 400, headers });
   }
+
+  const url = new URL(request.url);
 
   const data = await supabase.auth.signUp({
     email,
     password,
+    options: { emailRedirectTo: `${url.protocol}://${url.host}/` },
   });
 
   if (data.error) {
@@ -53,7 +56,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Reject for Supabase errors
   if (Object.keys(errors).length > 0) {
-    return json({ errors });
+    return json({ errors }, { status: 400, headers });
   }
 
   return redirect("/auth/success", {

@@ -21,6 +21,7 @@ import stylesheet from "~/tailwind.css";
 
 import Navbar from "~/components/navbar";
 import Footer from "~/components/footer";
+import { Toaster } from "~/components/ui/toaster";
 import { json } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
@@ -94,6 +95,7 @@ export default function App() {
       <body className="flex min-h-screen flex-col space-y-4">
         <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
         <Outlet context={{ supabase, isLoggedIn } satisfies ContextType} />
+        <Toaster />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
