@@ -214,7 +214,11 @@ function getTopIssues(
   //First pass: adding classified issues with priority
   for (const report of reports) {
     for (const issue of report.issues) {
-      if (issue.text && !issues.some((i) => i.text === issue.text) && issue.classification !== "UNKNOWN_ISSUE") {
+      if (
+        issue.text &&
+        !issues.some((i) => i.text === issue.text) &&
+        issue.classification !== "UNKNOWN_ISSUE"
+      ) {
         issues.push({
           text: issue.text,
           classification: issue.classification,
@@ -231,9 +235,14 @@ function getTopIssues(
   //Second pass: adding unclassified issues if needed
   for (const report of reports) {
     for (const issue of report.issues) {
-      if (issue.text && !issues.some((i) => i.text === issue.text) && issue.classification === "UNKNOWN_ISSUE") {
+      if (
+        issue.text &&
+        !issues.some((i) => i.text === issue.text) &&
+        issue.classification === "UNKNOWN_ISSUE"
+      ) {
         issues.push({
           text: issue.text,
+          classification: issue.classification,
           id: report.id,
         });
       }
@@ -377,7 +386,14 @@ export default function Route() {
                   setSelectedProduct(issue.id);
                 }}
               >
-                {index + 1}. {issue.classification && issue.classification !== "UNKNOWN_ISSUE" ? <b>{issue.classification}:</b> : ''} {issue.text}
+                {index + 1}.{" "}
+                {issue.classification &&
+                issue.classification !== "UNKNOWN_ISSUE" ? (
+                  <b>{issue.classification}:</b>
+                ) : (
+                  ""
+                )}{" "}
+                {issue.text}
               </Link>
             ))}
           </Card>
