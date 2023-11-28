@@ -262,7 +262,7 @@ def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[
         issue_key = (issue_clause[1], cur_rel_timestamp)
 
         #Merge issues with the same class and timestamp
-        if issue_key in temp_issues:
+        if issue_key[1] is not None and issue_key in temp_issues:
             temp_issues[issue_key].text += " | " + issue_clause[0].text
 
         else:
