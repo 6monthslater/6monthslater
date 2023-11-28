@@ -211,7 +211,7 @@ function getTopIssues(
   }>
 ): TopIssue[] {
   const issues: TopIssue[] = [];
-  //First pass: adding classified issues with priority
+  // First pass: adding classified issues with priority
   for (const report of reports) {
     for (const issue of report.issues) {
       if (
@@ -232,7 +232,7 @@ function getTopIssues(
     }
   }
 
-  //Second pass: adding unclassified issues if needed
+  // Second pass: adding unclassified issues if needed
   for (const report of reports) {
     for (const issue of report.issues) {
       if (

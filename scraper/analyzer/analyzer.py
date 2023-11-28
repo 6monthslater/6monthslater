@@ -31,7 +31,7 @@ with open('analyzer/train_relevance.json', 'r') as fp:
 with open('analyzer/train_issue_detection.json', 'r') as fp:
     _cl_issue_detect = NaiveBayesClassifier(fp, format="json")
 
-#Classifying an issue
+# Classifying an issue
 with open('analyzer/train_issue_class.json', 'r', encoding='utf-8') as fp:
     _cl_issue_class = NaiveBayesClassifier(fp, format="json")
 
@@ -150,7 +150,7 @@ def _extract_keyframes(clauses: list[Span], review_text_doc: Doc, review_date: i
 
             token_end = next(t.idx + len(t.text) for t in review_text_doc if t.idx <= result['end']-1 < t.idx + len(t.text_with_ws))
 
-            #Find relevant clause & filter out time expr
+            # Find relevant clause & filter out time expr
             time_expression_span = review_text_doc.char_span(token_start, token_end)
             relevant_phrase = None
 
@@ -158,15 +158,15 @@ def _extract_keyframes(clauses: list[Span], review_text_doc: Doc, review_date: i
                 if time_expression_span.text in clause.text:
                     rel_phrase = []
 
-                    for t in clause: #copy clause but exclude the time expression itself
+                    for t in clause: # Copy clause but exclude the time expression itself
                         if t.i < time_expression_span.start or t.i >= time_expression_span.end:
                             rel_phrase.append(t)
 
-                    #exclude leading punctuation and conjunctions
+                    # Exclude leading punctuation and conjunctions
                     while rel_phrase[0].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
                         rel_phrase.pop(0)
 
-                    #exclude trailing punctuation and conjunctions
+                    # Exclude trailing punctuation and conjunctions
                     while rel_phrase[-1].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
                         rel_phrase.pop()
 
@@ -176,7 +176,7 @@ def _extract_keyframes(clauses: list[Span], review_text_doc: Doc, review_date: i
             if not relevant_phrase:
                 relevant_phrase = time_expression_span.sent.text
 
-            #Filter them based on relevance to product ownership (90% should be a very reasonable threshold with few false negatives)
+            # Filter them based on relevance to product ownership (90% should be a very reasonable threshold with few false negatives)
             relevance_to_ownership_exp = _cl_relevance.prob_classify(relevant_phrase).prob("relevant")
 
             if relevance_to_ownership_exp >= _THRESHOLD_OWNERSHIP_REL:
@@ -190,7 +190,7 @@ def _extract_keyframes(clauses: list[Span], review_text_doc: Doc, review_date: i
         if _debug:
             print("DEBUG | ---")
 
-    #2. Find the earliest time expression and set that as our reference point (date of sale)
+    # 2. Find the earliest time expression and set that as our reference point (date of sale)
     ref_date = datetime.utcfromtimestamp(review_date).date()
     for time_expression in time_expressions:
         if time_expression[0] <= ref_date:
@@ -229,7 +229,7 @@ def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[
             issues (list[Issue]): Product issues
     '''
 
-    #1. Find clauses that describe issues
+    # 1. Find clauses that describe issues
     issue_clauses: list[Tuple[Span, str]] = []
     for clause in doc_clauses:
         prob_dist = _cl_issue_class.prob_classify(clause.text)
@@ -248,7 +248,7 @@ def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[
             issue_clauses.append((clause, "UNKNOWN_ISSUE"))
             print(f"FOUND ISSUE: {clause.text}")
 
-    #2. Iterate through clauses and create/merge issues
+    # 2. Iterate through clauses and create/merge issues
     temp_issues: dict[Tuple[str, Optional[int]], Issue] = {}
     for issue_clause in issue_clauses:
         cur_rel_timestamp = None
@@ -261,7 +261,7 @@ def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[
 
         issue_key = (issue_clause[1], cur_rel_timestamp)
 
-        #Merge issues with the same class and timestamp
+        # Merge issues with the same class and timestamp
         if issue_key[1] is not None and issue_key in temp_issues:
             temp_issues[issue_key].text += " | " + issue_clause[0].text
 
@@ -291,7 +291,7 @@ def _get_governing_verb(t: Token) -> Token | None:
     governing_verb = None
 
     while t.head != t:
-        #xcomp accounts for composite verbs (e.g. "stopped working")
+        # xcomp accounts for composite verbs (e.g. "stopped working")
         if t.head.pos_ in ['VERB', 'AUX'] and t.head.dep != xcomp:
             governing_verb = t.head
             break
@@ -318,17 +318,17 @@ def _extract_clauses(doc: Doc) -> list[Span]:
     '''
     clauses: list[Tuple[Span, Optional[Token]]] = []
 
-    #Iterates document verbs
+    # Iterates document verbs
     for verb in doc:
         if verb.pos_ in ['VERB', 'AUX']:
             start = None
             end = None
 
-            #Determines clause boundaries from subtree tokens
+            # Determines clause boundaries from subtree tokens
             for t in verb.subtree:
                 in_current_clause = False
 
-                #include if IS or IS GOVERNED BY the governing verb or any verb clausally related to it
+                # Include if IS or IS GOVERNED BY the governing verb or any verb clausally related to it
                 cur_verb = t if t.pos_ in ['VERB', 'AUX'] else _get_governing_verb(t)
                 if cur_verb:
                     head_dist = abs(cur_verb.i - cur_verb.head.i)
@@ -338,7 +338,7 @@ def _extract_clauses(doc: Doc) -> list[Span]:
                     if cur_verb.head == verb and cur_verb.dep in [ccomp, xcomp, aux] and head_dist <= _THRESHOLD_CCOMP_MAX_DIST:
                         in_current_clause = True
 
-                #exclude leading/trailing punctuation and conjunctions
+                # Exclude leading/trailing punctuation and conjunctions
                 if in_current_clause and t.pos_ != 'CCONJ' and (t.pos_ != 'PUNCT' or t.text in _punct_whitelist):
                     if start is None:
                         start = t.i
@@ -351,7 +351,7 @@ def _extract_clauses(doc: Doc) -> list[Span]:
                 else:
                     clauses.append((doc[start:end], verb))
 
-    #Non-verbal clauses
+    # Non-verbal clauses
     for sent in doc.sents:
         if not any(token.pos_ in ['VERB', 'AUX'] for token in sent):
             start = None
@@ -367,7 +367,7 @@ def _extract_clauses(doc: Doc) -> list[Span]:
             if start is not None and end is not None:
                 clauses.append((doc[start:end], None))
 
-    #Filters clauses whose governing verb is contained in other clauses
+    # Filters clauses whose governing verb is contained in other clauses
     filtered_clauses = sorted([
         span1[0] for span1 in clauses
         if span1[1] is None or not any(
@@ -375,7 +375,7 @@ def _extract_clauses(doc: Doc) -> list[Span]:
         )
     ], key=lambda span: span.start)
 
-    #Merges clauses related by an SCONJ & orphans
+    # Merges clauses related by an SCONJ & orphans
     final_clauses: list[Span] = []
     for i, clause in enumerate(filtered_clauses):
         if i > 0 and ((clause[0].pos_ == 'SCONJ' and clause[0].i - final_clauses[-1][-1].i == 1) or (clause[-1].i == clause[0].i)):

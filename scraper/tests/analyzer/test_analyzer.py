@@ -11,7 +11,7 @@ from parsing.amazon import Review
 
 nlp = spacy.load("en_core_web_sm")
 
-#making ruff not yell about line length
+# Split to avoid line length warnings
 mouse_example = "I have tried a lot of gaming mice. A lot. The shape of the original Deathadder was miles ahead for comfort, but it was enormous and I have"
 mouse_example += " small hands. I did a circuit of popular smaller mice and heard of this, instant buy from me. Scroll wheel is solid, side buttons are"
 mouse_example += " clicky. The left/right clicks are a little sensitive/soft (too much so) which takes some getting used to, but overall build quality is"
@@ -116,7 +116,7 @@ def produce_sample_review(
             text = "Bought it yesterday. It arrived this morning. I'll review it tonight."),
         [0, 1, 1]),
 
-    ("past_future_refs_filtered", #Not supported: Indeterminate past & future references
+    ("past_future_refs_filtered", # Not supported: Indeterminate past & future references
         produce_sample_review(
             text = "Bought this in the past. Will return it in the future."),
         []),
