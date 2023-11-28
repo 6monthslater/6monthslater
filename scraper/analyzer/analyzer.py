@@ -43,6 +43,7 @@ _THRESHOLD_ISSUE_REL = float(get_env("ANALYZER_THRESHOLD_ISSUE_REL"))
 _THRESHOLD_ISSUE_CLASS = float(get_env("ANALYZER_THRESHOLD_ISSUE_CLASS"))
 _THRESHOLD_CCOMP_MAX_DIST = 25
 _punct_whitelist = ['(', ')', '“', '”', '"', '\'']
+_debug_clause_tracker = []
 
 @dataclass
 class Keyframe:
@@ -124,11 +125,16 @@ def _extract_keyframes(clauses: list[Span], review_text_doc: Doc, review_date: i
         # TODO: Support for other time expression categories, e.g. periodic
         if result['type'] in ['DATE', 'TIME'] and result['value'] not in ['PAST_REF', 'FUTURE_REF']:
             try:
+                if _debug:
+                    print(f"DEBUG | Parsing date '{result['value']}'")
+
                 relative_date = isoparse(str(result['value'])).astimezone(timezone.utc)
             except ValueError:
                 if result['value'] != 'PRESENT_REF':
                     print(f"WARNING: Failed to parse expression '{result['value']}' from SUTime result; defaulting to review date.")
                 relative_date = datetime.utcfromtimestamp(review_date)
+            except OSError: #weird incorrect parses
+                continue
 
             if _debug:
                 print(f"DEBUG | Type {result['type']} | Value {result['value']} => Parsed {relative_date}")
@@ -393,6 +399,12 @@ def _process_review(review: Review) -> Report:
     '''
     doc = _nlp(review.text)
     clauses = _extract_clauses(doc)
+    if _debug:
+        global _debug_clause_tracker
+        _debug_clause_tracker.extend([f'{clause.text}' for clause in clauses])
+        with open('clause_tracker.txt', 'w', encoding='utf-8') as file:
+            file.write(str(_debug_clause_tracker))
+
 
     keyframes = _extract_keyframes(clauses, doc, review.date)
     issues = _extract_issues(clauses, keyframes)
