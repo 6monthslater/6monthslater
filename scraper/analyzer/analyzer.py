@@ -32,7 +32,7 @@ with open('analyzer/train_issue_detection.json', 'r') as fp:
     _cl_issue_detect = NaiveBayesClassifier(fp, format="json")
 
 #Classifying an issue
-with open('analyzer/train_issue_class.json', 'r') as fp:
+with open('analyzer/train_issue_class.json', 'r', encoding='utf-8') as fp:
     _cl_issue_class = NaiveBayesClassifier(fp, format="json")
 
 _sent_analyzer = SentimentIntensityAnalyzer() #VADER library
@@ -226,13 +226,21 @@ def _extract_issues(doc_clauses: list[Span], keyframes: list[Keyframe]) -> list[
     #1. Find clauses that describe issues
     issue_clauses: list[Tuple[Span, str]] = []
     for clause in doc_clauses:
-        if _cl_issue_detect.prob_classify(clause.text).prob("is_issue") >= _THRESHOLD_ISSUE_REL:
-            prob_dist = _cl_issue_class.prob_classify(clause.text)
+        prob_dist = _cl_issue_class.prob_classify(clause.text)
+        class_probabilities = [(sample, prob_dist.prob(sample)) for sample in prob_dist.samples()]
+        class_probabilities.sort(key=lambda x: x[1], reverse=True)
+        found_via_class = False
 
-            if prob_dist.prob(prob_dist.max()) >= _THRESHOLD_ISSUE_CLASS:
-                issue_clauses.append((clause, prob_dist.max()))
-            else:
-                issue_clauses.append((clause, "UNKNOWN_ISSUE")) # TODO: Issue auto-classification
+        for class_probability in class_probabilities:
+            if class_probability[0] != "UNKNOWN_ISSUE" and class_probability[1] > _THRESHOLD_ISSUE_CLASS:
+                issue_clauses.append((clause, class_probability[0]))
+                found_via_class = True
+                print(f"FOUND ISSUE w/ CLASS: {clause.text} => {class_probability[0]}, p: {class_probability[1]}")
+                break
+
+        if not found_via_class and _cl_issue_detect.prob_classify(clause.text).prob("is_issue") >= 0.9:
+            issue_clauses.append((clause, "UNKNOWN_ISSUE"))
+            print(f"FOUND ISSUE: {clause.text}")
 
     #2. Iterate through clauses and create/merge issues
     temp_issues: dict[Tuple[str, Optional[int]], Issue] = {}
