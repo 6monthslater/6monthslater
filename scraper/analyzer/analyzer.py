@@ -332,14 +332,18 @@ def _extract_clauses(doc: Doc) -> list[Span]:
                 cur_verb = t if t.pos_ in ['VERB', 'AUX'] else _get_governing_verb(t)
                 if cur_verb:
                     head_dist = abs(cur_verb.i - cur_verb.head.i)
-                    in_current_clause = cur_verb==verb or (cur_verb.head==verb and cur_verb.dep in [ccomp, xcomp, aux] and head_dist<=_THRESHOLD_CCOMP_MAX_DIST)
+
+                    if cur_verb == verb:
+                        in_current_clause = True
+                    if cur_verb.head == verb and cur_verb.dep in [ccomp, xcomp, aux] and head_dist <= _THRESHOLD_CCOMP_MAX_DIST:
+                        in_current_clause = True
 
                 #exclude leading/trailing punctuation and conjunctions
                 if in_current_clause and t.pos_ != 'CCONJ' and (t.pos_ != 'PUNCT' or t.text in _punct_whitelist):
-                        if start is None:
-                            start = t.i
+                    if start is None:
+                        start = t.i
 
-                        end = t.i + 1
+                    end = t.i + 1
 
             if start is not None and end is not None:
                 if doc[start-1].pos_ == 'CCONJ':
@@ -371,10 +375,10 @@ def _extract_clauses(doc: Doc) -> list[Span]:
         )
     ], key=lambda span: span.start)
 
-    #Merges clauses related by an SCONJ
+    #Merges clauses related by an SCONJ & orphans
     final_clauses: list[Span] = []
     for i, clause in enumerate(filtered_clauses):
-        if i > 0 and clause[0].pos_ == 'SCONJ' and clause[0].i - final_clauses[-1][-1].i == 1:
+        if i > 0 and ((clause[0].pos_ == 'SCONJ' and clause[0].i - final_clauses[-1][-1].i == 1) or (clause[-1].i == clause[0].i)):
             merged_clause = doc[final_clauses[-1][0].i : clause[-1].i + 1]
             final_clauses[-1] = merged_clause
 
