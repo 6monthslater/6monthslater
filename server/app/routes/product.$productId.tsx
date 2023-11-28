@@ -13,6 +13,10 @@ import type { User } from "@supabase/supabase-js";
 import ProductHeader from "~/components/product-header";
 import type { PrismaClientError } from "~/types/PrismaClientError";
 import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
+import type {
+  ProdPageIssue,
+  ProdPageReport,
+} from "~/prisma-select-include/product";
 import { PRODUCT_INCLUDE } from "~/prisma-select-include/product";
 
 interface TopIssue {
@@ -190,14 +194,7 @@ function getSentenceCase(str: string): string {
   return str ? str.charAt(0).toUpperCase() + [...str].slice(1).join("") : str;
 }
 
-function getTopIssues(
-  reports: Array<{
-    issues: Array<{
-      text: string;
-    }>;
-    id: string;
-  }>
-): TopIssue[] {
+function getTopIssues(reports: ProdPageReport[]): TopIssue[] {
   const issues: TopIssue[] = [];
   for (const report of reports) {
     for (const issue of report.issues) {
@@ -218,17 +215,13 @@ function getTopIssues(
 }
 
 function getRelativeTimestampDate(
-  report: {
-    review: {
-      date_text: string;
-    };
-    purchaseDate: Date;
-  },
-  issue: {
-    text: string;
-    rel_timestamp: number | null;
-  }
+  report: ProdPageReport,
+  issue: ProdPageIssue
 ): Date {
+  // TODO: Improve return value
+  if (!report.review) {
+    return new Date();
+  }
   if (!issue.rel_timestamp)
     return new Date(report.purchaseDate ?? report.review.date_text);
 
@@ -244,18 +237,7 @@ function getRelativeTimestampDate(
   }
 }
 
-function getIssueGraphData(
-  reports: Array<{
-    issues: Array<{
-      text: string;
-      rel_timestamp: number | null;
-    }>;
-    purchaseDate: Date;
-    review: {
-      date_text: string;
-    };
-  }>
-): IssueGraphData[] {
+function getIssueGraphData(reports: ProdPageReport[]): IssueGraphData[] {
   const issueGraphData: IssueGraphData[] = [];
   const months: number[] = [];
   for (let i = 11; i >= 0; i--) {
