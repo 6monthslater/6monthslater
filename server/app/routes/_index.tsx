@@ -3,12 +3,19 @@ import { TbSearch } from "react-icons/tb";
 import { Button } from "~/components/shadcn-ui-mod/button";
 import type { ActionArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useFetcher, useNavigate, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  useFetcher,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+} from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { getProductImageUrl } from "~/utils/amazon";
 import { Combobox, Transition } from "@headlessui/react";
 import { Separator } from "~/components/ui/separator";
 import { WEBSITE_TITLE } from "~/root";
+import { useToast } from "~/components/ui/use-toast";
 
 interface Suggestion {
   name: string;
@@ -144,6 +151,26 @@ export default function Index() {
   const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
   const submit = useSubmit();
+
+  // Email Verification confirmation
+  const [searchParams] = useSearchParams();
+  const { toast } = useToast();
+  const [toastDisplayed, setToastDisplayed] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("code") && !toastDisplayed) {
+      setToastDisplayed(true);
+      // Without the timeout, it appears the toast attempts to render too early and doesn't show up
+      setTimeout(
+        () =>
+          toast({
+            title: "Success!",
+            description: "Your email has been verified.",
+          }),
+        100
+      );
+    }
+  }, [searchParams, toast, toastDisplayed]);
 
   useEffect(() => {
     if (
