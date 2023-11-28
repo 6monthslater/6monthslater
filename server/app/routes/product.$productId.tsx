@@ -404,9 +404,7 @@ export default function Route() {
                 {issue.classification &&
                 issue.classification !== "UNKNOWN_ISSUE" ? (
                   <b>{issue.classification}:</b>
-                ) : (
-                  null
-                )}{" "}
+                ) : null}{" "}
                 {issue.text}
               </Link>
             ))}
