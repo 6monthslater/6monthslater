@@ -133,7 +133,7 @@ export default function ReportCard({
             const date = report?.review?.date ?? report.createdAt;
             return (
               <div className="flex flex-col items-center justify-center text-center">
-                <div className="text-sm font-semibold">Report Date</div>
+                <div className="text-sm">Reported</div>
                 <div className="text-xl font-semibold">
                   {new Date(date).toLocaleDateString("en-US", {
                     day: "numeric",
@@ -148,7 +148,7 @@ export default function ReportCard({
         <div className="flex h-full flex-col items-center justify-center px-2 leading-snug">
           {report?.review?.verified_purchase ? (
             <>
-              <TbCircleCheck className="h-10 w-10 stroke-lime-500" />
+              <TbCircleCheck className="h-7 w-7 stroke-lime-500" />
               <span>Verified Purchase</span>
             </>
           ) : null}
