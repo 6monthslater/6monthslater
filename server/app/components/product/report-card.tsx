@@ -56,7 +56,8 @@ export default function ReportCard({
                   )}
                 {(issue.rel_timestamp != null || issue.criticality != null) && (
                   <div className="flex flex-col">
-                    {(issue.rel_timestamp != null || issue.criticality) && (
+                    {(issue.rel_timestamp != null ||
+                      issue.criticality != null) && (
                       <Separator className="my-2 h-0.5" />
                     )}
                     <div
