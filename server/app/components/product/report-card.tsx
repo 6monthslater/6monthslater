@@ -47,7 +47,7 @@ export default function ReportCard({
                 key={issue.id}
                 className="my-3 rounded border-2 border-slate-100 bg-slate-50 p-2"
               >
-                <div>{issue.text}</div>
+                <div className="px-1">{issue.text}</div>
                 {issue.classification &&
                   issue.classification !== "UNKNOWN_ISSUE" && (
                     <div>
