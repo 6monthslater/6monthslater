@@ -24,7 +24,7 @@ function IssueTimeBlock({ days }: IssueTimeProps) {
       <div className="text-3xl">
         {interval === Infinity ? <>&infin;</> : interval}
       </div>
-      <div>{units} ago</div>
+      <div>{units} later</div>
     </div>
   );
 }
