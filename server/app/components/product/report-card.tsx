@@ -1,13 +1,29 @@
 import type { Prisma } from "@prisma/client";
 import type { REPORT_INCLUDE } from "~/types/product";
-import { Card, Title } from "@tremor/react";
-import { getRelativeTimestampDate } from "~/utils/product";
+import { Card, DonutChart } from "@tremor/react";
+import { Badge } from "~/components/ui/badge";
+import { getSingleUnitDateInterval } from "~/utils/format";
+import { TbCircleCheck, TbThumbUpFilled } from "react-icons/tb";
 
 type Report = Prisma.ReportGetPayload<{ include: typeof REPORT_INCLUDE }>;
 
 interface ProductCardProps {
   report: Report;
   selectedProduct: string | null;
+}
+
+interface IssueTimeProps {
+  days: number;
+}
+
+function IssueTimeBlock({ days }: IssueTimeProps) {
+  const { interval, units } = getSingleUnitDateInterval(days);
+  return (
+    <>
+      <div>{interval === Infinity ? <>&infin;</> : interval}</div>
+      <div>{units} ago</div>
+    </>
+  );
 }
 
 export default function ReportCard({
@@ -20,7 +36,6 @@ export default function ReportCard({
       id={report.id}
       decoration={selectedProduct === report.id ? "left" : ""}
     >
-      <Title className="font-semibold">{report?.review?.title}</Title>
       <div>
         {report.issues.map(
           (issue) =>
@@ -29,52 +44,68 @@ export default function ReportCard({
                 key={issue.id}
                 className="my-3 rounded border-2 border-slate-100 bg-slate-50 p-2"
               >
-                <div>
-                  <b>Report</b>: {issue.text}
-                </div>
+                <div>{issue.text}</div>
                 {issue.classification &&
                   issue.classification !== "UNKNOWN_ISSUE" && (
                     <div>
-                      <b>Classification</b>: {issue.classification}
+                      <Badge variant="outline">{issue.classification}</Badge>
                     </div>
                   )}
-                {issue.criticality && (
-                  <div>
-                    <b>Criticality</b>: {issue.criticality}
-                  </div>
-                )}
                 <div>
-                  <b>Date</b>:{" "}
-                  {getRelativeTimestampDate(report, issue).toLocaleString(
-                    "en-US",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    }
+                  {issue.rel_timestamp && (
+                    <span>
+                      <IssueTimeBlock days={issue.rel_timestamp} />
+                    </span>
+                  )}
+                  {issue.criticality && (
+                    <span>
+                      <DonutChart
+                        data={[
+                          { name: "Criticality", value: issue.criticality },
+                          { name: "", value: 1 - issue.criticality },
+                        ]}
+                        label={`${(issue.criticality * 100).toString()}%`}
+                        showLabel
+                        colors={(() => {
+                          if (!issue.criticality || issue.criticality > 1) {
+                            return ["slate", "slate"];
+                          } else if (issue.criticality > 0.8) {
+                            return ["red", "slate"];
+                          } else if (issue.criticality > 0.5) {
+                            return ["orange", "slate"];
+                          } else if (issue.criticality > 0.3) {
+                            return ["yellow", "slate"];
+                          } else if (issue.criticality > 0.0) {
+                            return ["green", "slate"];
+                          } else {
+                            return ["cyan", "slate"];
+                          }
+                        })()}
+                        className="h-20"
+                      />
+                    </span>
                   )}
                 </div>
-                {issue.frequency && (
-                  <div>
-                    <b>Frequency</b>: {issue.frequency}
-                  </div>
-                )}
-                {issue.images?.length > 0 && (
-                  <div>
-                    <b>Images</b>:{" "}
-                    {issue.images.map((image) => (
-                      <img
-                        key={image.image_url}
-                        src={image.image_url}
-                        alt="Product"
-                      />
-                    ))}
-                  </div>
-                )}
               </div>
             )
         )}
       </div>
+      <p>
+        <b>Date: </b>
+        {report?.review?.date_text}
+      </p>
+      {report?.review?.verified_purchase ? (
+        <p>
+          <b>
+            <TbCircleCheck />
+            Verified Purchase
+          </b>
+        </p>
+      ) : null}
+      <p>
+        <TbThumbUpFilled />
+        {report?.review?.found_helpful_count}
+      </p>
       {report?.review?.is_top_positive_review ? (
         <p>
           <b>Top Positive Review</b>
@@ -85,19 +116,6 @@ export default function ReportCard({
           <b>Top Critical Review</b>
         </p>
       ) : null}
-      <p>
-        <b>Date: </b>
-        {report?.review?.date_text}
-      </p>
-      <p>
-        <b>Verified Purchase: </b>
-        {report?.review?.verified_purchase ? "Yes" : "No"}
-      </p>
-      <p>
-        <b>"Found Helpful" Votes: </b>
-        {report?.review?.found_helpful_count}
-      </p>
-      <hr className="my-2" />
     </Card>
   );
 }
