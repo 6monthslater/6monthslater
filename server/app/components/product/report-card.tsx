@@ -155,7 +155,7 @@ export default function ReportCard({
         </div>
         <div className="flex h-full items-center justify-center gap-2 px-2 text-2xl">
           <TbThumbUp className="h-8 w-8 fill-blue-400 stroke-1" />
-          {report?.review?.found_helpful_count}
+          {report?.review?.found_helpful_count ?? 0}
         </div>
       </div>
       <div
