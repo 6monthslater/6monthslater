@@ -298,7 +298,7 @@ export default function Route() {
       </div>
       <div className="spacing-y-4 mx-auto columns-sm">
         {reports.map(
-          (report) =>
+          (report: ProdPageReport) =>
             report.issues.length > 0 && (
               <ReportCard
                 key={report.id}
