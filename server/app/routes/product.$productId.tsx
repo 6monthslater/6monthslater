@@ -297,13 +297,16 @@ export default function Route() {
         <h2 className="text-lg font-semibold">Recent Reports</h2>
       </div>
       <div className="spacing-y-4 mx-auto columns-sm">
-        {reports.map((report) => (
-          <ReportCard
-            key={report.id}
-            report={report}
-            selectedProduct={selectedProduct}
-          />
-        ))}
+        {reports.map(
+          (report) =>
+            report.issues.length > 0 && (
+              <ReportCard
+                key={report.id}
+                report={report}
+                selectedProduct={selectedProduct}
+              />
+            )
+        )}
       </div>
     </div>
   );
