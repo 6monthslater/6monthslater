@@ -180,7 +180,14 @@ export default function Index() {
       </h2>
 
       <div className="flex flex-row flex-wrap">
-        {productData && getProductBoxes(productData.products, submit)}
+        {productData &&
+          productData.products.map((product) => (
+            <AdminProductCard
+              key={product.id}
+              product={product}
+              submit={submit}
+            />
+          ))}
       </div>
       <PaginationBar
         pageStr={pageStr}
@@ -194,77 +201,77 @@ export default function Index() {
   );
 }
 
-function getProductBoxes(
-  products: SerializeFrom<ProductData>[],
-  submit: SubmitFunction
-) {
-  return products.map((product) => {
-    return (
-      <Card key={product.id} className="m-5 grow basis-72">
-        <Title>{product.name}</Title>
-        <div className="my-3">
-          <div>
-            <b>ID</b>: {product.id}
-          </div>
-          <div>
-            <b>Name</b>: {product.name}
-          </div>
-          <div>
-            <b>Reviews</b>: {product.reviewCount}
-          </div>
-          <div>
-            <b>Reports</b>: {product.reportCount}
-          </div>
-          <div>
-            <b>Created on</b>: {product.createdAt}
-          </div>
-          <div>
-            <b>Updated on</b>: {product.updatedAt}
-          </div>
+interface AdminProductCardProps {
+  product: SerializeFrom<ProductData>;
+  submit: SubmitFunction;
+}
+
+function AdminProductCard({ product, submit }: AdminProductCardProps) {
+  return (
+    <Card className="m-5 grow basis-72">
+      <Title>{product.name}</Title>
+      <div className="my-3">
+        <div>
+          <b>ID</b>: {product.id}
         </div>
+        <div>
+          <b>Name</b>: {product.name}
+        </div>
+        <div>
+          <b>Reviews</b>: {product.reviewCount}
+        </div>
+        <div>
+          <b>Reports</b>: {product.reportCount}
+        </div>
+        <div>
+          <b>Created on</b>: {product.createdAt}
+        </div>
+        <div>
+          <b>Updated on</b>: {product.updatedAt}
+        </div>
+      </div>
 
-        <Link to={`/admin/product/${product.id}`}>
-          <Button className="mt-4 block" size="sm">
-            View Product Information
-          </Button>
-        </Link>
-
-        <Button
-          type="submit"
-          className="mt-4 block"
-          size="sm"
-          onClick={() => {
-            if (confirm("Are you sure you would like to clear all reports?")) {
-              submit(
-                { type: "clearReport", productId: product.id },
-                {
-                  preventScrollReset: true,
-                  method: "post",
-                }
-              );
-            }
-          }}
-        >
-          Clear Reports
+      <Link to={`/admin/product/${product.id}`}>
+        <Button className="mt-4 block" size="sm">
+          View Product Information
         </Button>
+      </Link>
 
-        <Button
-          type="submit"
-          className="mt-4 block"
-          size="sm"
-          onClick={() => {
+      <Button
+        type="submit"
+        className="mt-4 block"
+        size="sm"
+        onClick={() => {
+          if (confirm("Are you sure you would like to clear all reports?")) {
             submit(
-              { type: "analyzeReviews", productId: product.id },
+              { type: "clearReport", productId: product.id },
               {
                 preventScrollReset: true,
                 method: "post",
               }
             );
-          }}
-        >
-          Analyze Reviews
-        </Button>
-      </Card>
-    );
-  });
+          }
+        }}
+      >
+        Clear Reports
+      </Button>
+
+      <Button
+        type="submit"
+        className="mt-4 block"
+        size="sm"
+        onClick={() => {
+          submit(
+            { type: "analyzeReviews", productId: product.id },
+            {
+              preventScrollReset: true,
+              method: "post",
+            }
+          );
+        }}
+      >
+        Analyze Reviews
+      </Button>
+    </Card>
+  );
 }
