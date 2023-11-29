@@ -218,6 +218,7 @@ export default function Index() {
             as="div"
             className="text-tremor-default relative w-full min-w-[10rem]"
             value={searchProdName}
+            disabled={isSubmitting}
           >
             <Combobox.Button className="tremor-TextInput-root relative mb-3 flex w-full min-w-[10rem] items-center rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200">
               <Combobox.Input

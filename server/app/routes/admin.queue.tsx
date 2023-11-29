@@ -102,6 +102,7 @@ export default function Index() {
               rows={20}
               cols={100}
               className="resize-y border-2"
+              disabled={isSubmitting}
             />
           </label>
         </div>

@@ -93,6 +93,7 @@ export default function CreateReportDialog({
               <DatePickerControlled
                 className="basis-5/12"
                 date={purchaseDate}
+                disabled={isSubmitting}
                 setDate={(newDate) => setPurchaseDate(newDate)}
               />
               <span className="invisible h-10 w-10 shrink-0">
@@ -117,6 +118,7 @@ export default function CreateReportDialog({
                     }`}
                     name="eventDesc"
                     value={row.eventDesc}
+                    disabled={isSubmitting}
                     onChange={(event) => {
                       const nextFormRows = formRows.map((someRow) =>
                         someRow.id === row.id
@@ -133,6 +135,7 @@ export default function CreateReportDialog({
                         : ""
                     }`}
                     date={row.date}
+                    disabled={isSubmitting}
                     setDate={(newDate) => {
                       const nextFormRows = formRows.map((oldRow) =>
                         oldRow.id === row.id
@@ -147,6 +150,7 @@ export default function CreateReportDialog({
                     size="icon"
                     className="ml-auto shrink-0 grow-0"
                     type="button"
+                    disabled={isSubmitting}
                     onClick={() => {
                       setFormRows(
                         formRows.filter((someRow) => someRow.id !== row.id)
@@ -163,6 +167,7 @@ export default function CreateReportDialog({
                 variant="outline"
                 className="w-full"
                 type="button"
+                disabled={isSubmitting}
                 onClick={() =>
                   setFormRows([
                     ...formRows,

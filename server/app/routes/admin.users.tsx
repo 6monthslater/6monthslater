@@ -283,6 +283,7 @@ export default function Users() {
                     name="userId"
                     placeholder="User ID"
                     className="col-span-3"
+                    disabled={isSubmitting}
                   />
                 </div>
                 <DialogFooter>
@@ -311,7 +312,7 @@ export default function Users() {
               <DropdownMenuSeparator />
               {/* There is no loading circle for this because the menu disappears on click*/}
               <DropdownMenuCheckboxItem
-                disabled={fetcher.state === "submitting"}
+                disabled={isSubmitting}
                 checked={user.roles.includes(ADMIN_ROLE_NAME)}
                 onCheckedChange={(checked) => {
                   handleRoleUpdate(user.id, ADMIN_ROLE_NAME, checked);

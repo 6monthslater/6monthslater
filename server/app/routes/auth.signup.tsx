@@ -102,6 +102,7 @@ export const Signup = () => {
             type="email"
             placeholder="Email"
             name="email"
+            disabled={isSubmitting}
             className={`${
               actionData?.errors?.email
                 ? "!ring-ring !ring-2 !ring-red-500"
@@ -121,6 +122,7 @@ export const Signup = () => {
             type="password"
             name="password"
             placeholder="Password"
+            disabled={isSubmitting}
             className={`${
               actionData?.errors?.password
                 ? "!ring-ring !ring-2 !ring-red-500"
