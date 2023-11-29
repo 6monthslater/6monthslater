@@ -15,7 +15,7 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { Card, Title } from "@tremor/react";
-import { Button } from "~/components/shadcn-ui-mod/button";
+import { Button, buttonVariants } from "~/components/shadcn-ui-mod/button";
 import { analyzeProduct } from "~/queue-handling/review.server";
 import { db } from "~/utils/db.server";
 import {
@@ -231,47 +231,48 @@ function AdminProductCard({ product, submit }: AdminProductCardProps) {
         </div>
       </div>
 
-      <Link to={`/admin/product/${product.id}`}>
-        <Button className="mt-4 block" size="sm">
+      <div className="flex flex-col gap-2">
+        <Link
+          to={`/admin/product/${product.id}`}
+          className={buttonVariants({ size: "sm" })}
+        >
           View Product Information
-        </Button>
-      </Link>
+        </Link>
 
-      <Button
-        type="submit"
-        className="mt-4 block"
-        size="sm"
-        onClick={() => {
-          if (confirm("Are you sure you would like to clear all reports?")) {
+        <Button
+          type="submit"
+          size="sm"
+          onClick={() => {
+            if (confirm("Are you sure you would like to clear all reports?")) {
+              submit(
+                { type: "clearReport", productId: product.id },
+                {
+                  preventScrollReset: true,
+                  method: "post",
+                }
+              );
+            }
+          }}
+        >
+          Clear Reports
+        </Button>
+
+        <Button
+          type="submit"
+          size="sm"
+          onClick={() => {
             submit(
-              { type: "clearReport", productId: product.id },
+              { type: "analyzeReviews", productId: product.id },
               {
                 preventScrollReset: true,
                 method: "post",
               }
             );
-          }
-        }}
-      >
-        Clear Reports
-      </Button>
-
-      <Button
-        type="submit"
-        className="mt-4 block"
-        size="sm"
-        onClick={() => {
-          submit(
-            { type: "analyzeReviews", productId: product.id },
-            {
-              preventScrollReset: true,
-              method: "post",
-            }
-          );
-        }}
-      >
-        Analyze Reviews
-      </Button>
+          }}
+        >
+          Analyze Reviews
+        </Button>
+      </div>
     </Card>
   );
 }
