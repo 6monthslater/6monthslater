@@ -56,7 +56,7 @@ export default function ReportCard({
                   )}
                 <div>
                   {(issue.rel_timestamp || issue.criticality) && (
-                    <Separator className="my-2" />
+                    <Separator className="my-2 h-0.5" />
                   )}
                   <div
                     className={`grid ${
