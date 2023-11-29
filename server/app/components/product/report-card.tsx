@@ -3,7 +3,7 @@ import type { REPORT_INCLUDE } from "~/types/product";
 import { Card, DonutChart } from "@tremor/react";
 import { Badge } from "~/components/ui/badge";
 import { getSingleUnitDateInterval } from "~/utils/format";
-import { TbCircleCheck, TbThumbUp } from "react-icons/tb";
+import { TbCircleCheck, TbStar, TbThumbUp } from "react-icons/tb";
 import { Separator } from "~/components/ui/separator";
 
 type Report = Prisma.ReportGetPayload<{ include: typeof REPORT_INCLUDE }>;
@@ -163,19 +163,21 @@ export default function ReportCard({
           !report?.review?.is_top_critical_review &&
           !report?.review?.is_top_positive_review
         }
-        className="text-center"
+        className="text-center font-semibold"
       >
         <Separator className="my-2 h-0.5" />
-        {report?.review?.is_top_positive_review ? (
-          <p>
-            <b>Top Positive Review</b>
-          </p>
-        ) : null}
-        {report?.review?.is_top_critical_review ? (
-          <p>
-            <b>Top Critical Review</b>
-          </p>
-        ) : null}
+        <div className="flex justify-center">
+          {report?.review?.is_top_positive_review ? (
+            <p className="flex items-center justify-center">
+              <TbStar className="mr-1" /> Top Positive Review
+            </p>
+          ) : null}
+          {report?.review?.is_top_critical_review ? (
+            <p className="flex items-center justify-center">
+              <TbStar className="mr-1" /> Top Critical Review
+            </p>
+          ) : null}
+        </div>
       </div>
     </Card>
   );
