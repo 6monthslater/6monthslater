@@ -55,22 +55,22 @@ export default function ReportCard({
                     </div>
                   )}
                 <div>
-                  {(issue.rel_timestamp || issue.criticality) && (
+                  {(issue.rel_timestamp != null || issue.criticality) && (
                     <Separator className="my-2 h-0.5" />
                   )}
                   <div
                     className={`grid ${
-                      issue.rel_timestamp && issue.criticality
+                      issue.rel_timestamp != null && issue.criticality
                         ? "grid-cols-2"
                         : ""
                     } items-center justify-center divide-x-2`}
                   >
-                    {issue.rel_timestamp && (
+                    {issue.rel_timestamp != null && (
                       <span className="flex items-center justify-center">
                         <IssueTimeBlock days={issue.rel_timestamp} />
                       </span>
                     )}
-                    {issue.criticality && (
+                    {issue.criticality != null && (
                       <span className="flex flex-col items-center justify-center">
                         <DonutChart
                           data={[
