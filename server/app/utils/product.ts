@@ -24,9 +24,12 @@ export function getRelativeTimestampDate(
   report: ProdPageReport,
   issue: ProdPageIssue
 ): Date {
-  // TODO: Improve return value
+  if (!report.purchaseDate && !report.review) {
+    throw new Error(`No usable date in report ${report.id}`);
+  }
   if (!report.review) {
-    return new Date();
+    // Code should not be reached (all reports should have either a review or purchaseDate)
+    throw new Error(`Illegal ${report.id}`);
   }
   if (!issue.rel_timestamp)
     return new Date(report.purchaseDate ?? report.review.date_text);
