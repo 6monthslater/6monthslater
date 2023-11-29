@@ -18,6 +18,7 @@ import { PRODUCT_INCLUDE } from "~/types/product";
 import { getRelativeTimestampDate, getTopIssues } from "~/utils/product";
 import { getSentenceCase } from "~/utils/format";
 import ReportCard from "~/components/product/report-card";
+import { buttonVariants } from "~/components/shadcn-ui-mod/button";
 
 interface IssueGraphData {
   date: string;
@@ -263,21 +264,30 @@ export default function Route() {
       </div>
       <div className="mx-auto w-full space-y-4 md:h-[40vh] md:min-h-[calc(272px+16px+1.75rem+64px)] md:columns-2 lg:w-3/4 ">
         {topIssues.length > 0 && (
-          <Card className="break-inside-avoid md:h-full">
+          <Card className="flex break-inside-avoid flex-col space-y-3 md:h-full">
             <Title className="font-semibold">Top Issues</Title>
+            <p className="!mt-0 text-sm text-neutral-500 opacity-90">
+              Click on an issue to see more details.
+            </p>
 
-            {topIssues.map((issue, index) => (
-              <Link
-                to={`#${issue.id}`}
-                key={issue.text}
-                className="block py-1"
-                onClick={() => {
-                  setSelectedProduct(issue.id);
-                }}
-              >
-                {index + 1}. {issue.text}
-              </Link>
-            ))}
+            <div className="-mx-3 space-y-3 overflow-scroll px-3">
+              {topIssues.map((issue, index) => (
+                <Link
+                  to={`#${issue.id}`}
+                  key={issue.text}
+                  className={`${buttonVariants({
+                    variant: "secondary",
+                  })} h-min !justify-start !whitespace-normal`}
+                  onClick={() => {
+                    setSelectedProduct(issue.id);
+                  }}
+                >
+                  <span className="w-full">
+                    {index + 1}. {issue.text}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </Card>
         )}
 
