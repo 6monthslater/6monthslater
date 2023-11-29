@@ -71,7 +71,7 @@ export default function ReportCard({
                       </span>
                     )}
                     {issue.criticality && (
-                      <span className="flex items-center justify-center">
+                      <span className="flex flex-col items-center justify-center">
                         <DonutChart
                           data={[
                             { name: "Criticality", value: issue.criticality },
@@ -96,6 +96,29 @@ export default function ReportCard({
                           })()}
                           className="h-20 w-20"
                         />
+                        {(() => {
+                          if (!issue.criticality || issue.criticality > 1) {
+                            return null;
+                          } else if (issue.criticality > 0.8) {
+                            return (
+                              <Badge className="bg-red-500">CRITICAL</Badge>
+                            );
+                          } else if (issue.criticality > 0.5) {
+                            return (
+                              <Badge className="bg-orange-500">SEVERE</Badge>
+                            );
+                          } else if (issue.criticality > 0.3) {
+                            return (
+                              <Badge className="bg-yellow-500">MODERATE</Badge>
+                            );
+                          } else if (issue.criticality > 0.0) {
+                            return (
+                              <Badge className="bg-green-500">MINOR</Badge>
+                            );
+                          } else {
+                            return null;
+                          }
+                        })()}
                       </span>
                     )}
                   </div>
