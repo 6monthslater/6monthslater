@@ -24,22 +24,25 @@ export function getRelativeTimestampDate(
   report: ProdPageReport,
   issue: ProdPageIssue
 ): Date {
-  if (!report.purchaseDate && !report.review) {
+  let baseDate: Date;
+
+  if (report.purchaseDate) {
+    baseDate = report.purchaseDate;
+  } else if (report.review) {
+    baseDate = report.review.date;
+  } else {
+    // Code should not be reached (all reports should have either a review or purchaseDate)
     throw new Error(`No usable date in report ${report.id}`);
   }
-  if (!report.review) {
-    // Code should not be reached (all reports should have either a review or purchaseDate)
-    throw new Error(`Illegal ${report.id}`);
-  }
-  if (!issue.rel_timestamp)
-    return new Date(report.purchaseDate ?? report.review.date_text);
+
+  if (!issue.rel_timestamp) return new Date(baseDate);
 
   if (issue.rel_timestamp > 1600000000) {
     // Treat as unix
     return new Date(issue.rel_timestamp * 1000);
   } else {
     // Treat as days since review was created
-    const reviewDate = new Date(report.purchaseDate ?? report.review.date_text);
+    const reviewDate = new Date(baseDate);
     reviewDate.setDate(reviewDate.getDate() + issue.rel_timestamp);
 
     return reviewDate;
