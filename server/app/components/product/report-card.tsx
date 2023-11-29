@@ -4,6 +4,7 @@ import { Card, DonutChart } from "@tremor/react";
 import { Badge } from "~/components/ui/badge";
 import { getSingleUnitDateInterval } from "~/utils/format";
 import { TbCircleCheck, TbThumbUpFilled } from "react-icons/tb";
+import { Separator } from "~/components/ui/separator";
 
 type Report = Prisma.ReportGetPayload<{ include: typeof REPORT_INCLUDE }>;
 
@@ -19,10 +20,12 @@ interface IssueTimeProps {
 function IssueTimeBlock({ days }: IssueTimeProps) {
   const { interval, units } = getSingleUnitDateInterval(days);
   return (
-    <>
-      <div>{interval === Infinity ? <>&infin;</> : interval}</div>
+    <div className="grid grid-rows-2 items-center justify-center text-center">
+      <div className="text-3xl">
+        {interval === Infinity ? <>&infin;</> : interval}
+      </div>
       <div>{units} ago</div>
-    </>
+    </div>
   );
 }
 
@@ -52,39 +55,50 @@ export default function ReportCard({
                     </div>
                   )}
                 <div>
-                  {issue.rel_timestamp && (
-                    <span>
-                      <IssueTimeBlock days={issue.rel_timestamp} />
-                    </span>
+                  {(issue.rel_timestamp || issue.criticality) && (
+                    <Separator className="my-2" />
                   )}
-                  {issue.criticality && (
-                    <span>
-                      <DonutChart
-                        data={[
-                          { name: "Criticality", value: issue.criticality },
-                          { name: "", value: 1 - issue.criticality },
-                        ]}
-                        label={`${(issue.criticality * 100).toString()}%`}
-                        showLabel
-                        colors={(() => {
-                          if (!issue.criticality || issue.criticality > 1) {
-                            return ["slate", "slate"];
-                          } else if (issue.criticality > 0.8) {
-                            return ["red", "slate"];
-                          } else if (issue.criticality > 0.5) {
-                            return ["orange", "slate"];
-                          } else if (issue.criticality > 0.3) {
-                            return ["yellow", "slate"];
-                          } else if (issue.criticality > 0.0) {
-                            return ["green", "slate"];
-                          } else {
-                            return ["cyan", "slate"];
-                          }
-                        })()}
-                        className="h-20"
-                      />
-                    </span>
-                  )}
+                  <div
+                    className={`grid ${
+                      issue.rel_timestamp && issue.criticality
+                        ? "grid-cols-2"
+                        : ""
+                    } items-center justify-center divide-x-2`}
+                  >
+                    {issue.rel_timestamp && (
+                      <span className="flex items-center justify-center">
+                        <IssueTimeBlock days={issue.rel_timestamp} />
+                      </span>
+                    )}
+                    {issue.criticality && (
+                      <span className="flex items-center justify-center">
+                        <DonutChart
+                          data={[
+                            { name: "Criticality", value: issue.criticality },
+                            { name: "", value: 1 - issue.criticality },
+                          ]}
+                          label={`${(issue.criticality * 100).toString()}%`}
+                          showLabel
+                          colors={(() => {
+                            if (!issue.criticality || issue.criticality > 1) {
+                              return ["slate", "slate"];
+                            } else if (issue.criticality > 0.8) {
+                              return ["red", "slate"];
+                            } else if (issue.criticality > 0.5) {
+                              return ["orange", "slate"];
+                            } else if (issue.criticality > 0.3) {
+                              return ["yellow", "slate"];
+                            } else if (issue.criticality > 0.0) {
+                              return ["green", "slate"];
+                            } else {
+                              return ["cyan", "slate"];
+                            }
+                          })()}
+                          className="h-20 w-20"
+                        />
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             )
