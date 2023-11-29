@@ -66,7 +66,7 @@ export default function ReportCard({
                     } items-center justify-center divide-x-2`}
                   >
                     {issue.rel_timestamp != null && (
-                      <span className="flex items-center justify-center">
+                      <span className="flex h-20 items-center justify-center">
                         <IssueTimeBlock days={issue.rel_timestamp} />
                       </span>
                     )}
