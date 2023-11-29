@@ -54,75 +54,82 @@ export default function ReportCard({
                       <Badge variant="outline">{issue.classification}</Badge>
                     </div>
                   )}
-                <div>
-                  {(issue.rel_timestamp != null || issue.criticality) && (
-                    <Separator className="my-2 h-0.5" />
-                  )}
-                  <div
-                    className={`grid ${
-                      issue.rel_timestamp != null && issue.criticality
-                        ? "grid-cols-2"
-                        : ""
-                    } items-center justify-center divide-x-2`}
-                  >
-                    {issue.rel_timestamp != null && (
-                      <span className="flex h-20 items-center justify-center">
-                        <IssueTimeBlock days={issue.rel_timestamp} />
-                      </span>
+                {(issue.rel_timestamp != null || issue.criticality != null) && (
+                  <div className="flex flex-col">
+                    {(issue.rel_timestamp != null || issue.criticality) && (
+                      <Separator className="my-2 h-0.5" />
                     )}
-                    {issue.criticality != null && (
-                      <span className="flex flex-col items-center justify-center">
-                        <DonutChart
-                          data={[
-                            { name: "Criticality", value: issue.criticality },
-                            { name: "", value: 1 - issue.criticality },
-                          ]}
-                          label={`${(issue.criticality * 100).toString()}%`}
-                          showLabel
-                          colors={(() => {
+                    <div
+                      className={`grid grid-cols-2 items-center justify-center divide-x-2`}
+                    >
+                      {issue.rel_timestamp != null ? (
+                        <span className="flex h-20 items-center justify-center">
+                          <IssueTimeBlock days={issue.rel_timestamp} />
+                        </span>
+                      ) : (
+                        <span className="h-20"></span>
+                      )}
+                      {issue.criticality != null ? (
+                        <span className="flex flex-col items-center justify-center">
+                          <DonutChart
+                            data={[
+                              {
+                                name: "Criticality",
+                                value: issue.criticality,
+                              },
+                              { name: "", value: 1 - issue.criticality },
+                            ]}
+                            label={`${(issue.criticality * 100).toString()}%`}
+                            showLabel
+                            colors={(() => {
+                              if (!issue.criticality || issue.criticality > 1) {
+                                return ["slate", "slate"];
+                              } else if (issue.criticality > 0.8) {
+                                return ["red", "slate"];
+                              } else if (issue.criticality > 0.5) {
+                                return ["orange", "slate"];
+                              } else if (issue.criticality > 0.3) {
+                                return ["yellow", "slate"];
+                              } else if (issue.criticality > 0.0) {
+                                return ["green", "slate"];
+                              } else {
+                                return ["cyan", "slate"];
+                              }
+                            })()}
+                            className="h-20 w-20"
+                          />
+                          {(() => {
                             if (!issue.criticality || issue.criticality > 1) {
-                              return ["slate", "slate"];
+                              return null;
                             } else if (issue.criticality > 0.8) {
-                              return ["red", "slate"];
+                              return (
+                                <Badge className="bg-red-500">CRITICAL</Badge>
+                              );
                             } else if (issue.criticality > 0.5) {
-                              return ["orange", "slate"];
+                              return (
+                                <Badge className="bg-orange-500">SEVERE</Badge>
+                              );
                             } else if (issue.criticality > 0.3) {
-                              return ["yellow", "slate"];
+                              return (
+                                <Badge className="bg-yellow-500">
+                                  MODERATE
+                                </Badge>
+                              );
                             } else if (issue.criticality > 0.0) {
-                              return ["green", "slate"];
+                              return (
+                                <Badge className="bg-green-500">MINOR</Badge>
+                              );
                             } else {
-                              return ["cyan", "slate"];
+                              return null;
                             }
                           })()}
-                          className="h-20 w-20"
-                        />
-                        {(() => {
-                          if (!issue.criticality || issue.criticality > 1) {
-                            return null;
-                          } else if (issue.criticality > 0.8) {
-                            return (
-                              <Badge className="bg-red-500">CRITICAL</Badge>
-                            );
-                          } else if (issue.criticality > 0.5) {
-                            return (
-                              <Badge className="bg-orange-500">SEVERE</Badge>
-                            );
-                          } else if (issue.criticality > 0.3) {
-                            return (
-                              <Badge className="bg-yellow-500">MODERATE</Badge>
-                            );
-                          } else if (issue.criticality > 0.0) {
-                            return (
-                              <Badge className="bg-green-500">MINOR</Badge>
-                            );
-                          } else {
-                            return null;
-                          }
-                        })()}
-                      </span>
-                    )}
+                        </span>
+                      ) : (
+                        <span className="h-20"></span>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             )
         )}
