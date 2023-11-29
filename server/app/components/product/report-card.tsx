@@ -92,7 +92,7 @@ export default function ReportCard({
       </div>
       <p>
         <b>Date: </b>
-        {report?.review?.date_text}
+        {<>{report?.review?.date_text ?? report.createdAt}</>}
       </p>
       {report?.review?.verified_purchase ? (
         <p>
