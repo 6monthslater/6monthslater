@@ -44,3 +44,8 @@ export type ProdPageProduct = Prisma.ProductGetPayload<{
 export type ProdPageIssue = Prisma.IssueGetPayload<{
   include: typeof ISSUE_INCLUDE;
 }>;
+
+export interface TopIssue {
+  text: string;
+  id: string;
+}

@@ -13,13 +13,10 @@ import type { User } from "@supabase/supabase-js";
 import ProductHeader from "~/components/product-header";
 import type { PrismaClientError } from "~/types/PrismaClientError";
 import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
-import type { ProdPageIssue, ProdPageReport } from "~/types/product";
+import type { ProdPageReport } from "~/types/product";
 import { PRODUCT_INCLUDE } from "~/types/product";
-
-interface TopIssue {
-  text: string;
-  id: string;
-}
+import { getRelativeTimestampDate, getTopIssues } from "~/utils/product";
+import { getSentenceCase } from "~/utils/format";
 
 interface IssueGraphData {
   date: string;
@@ -184,55 +181,6 @@ export const action: ActionFunction = async ({ request }) => {
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return { title: `Product: ${data.product?.name} - ${WEBSITE_TITLE}` };
 };
-
-function getSentenceCase(str: string): string {
-  // Fancy slicing done to combat issues with unicode causing strings to count multiple characters as one index
-  // So, it splits it to a character array first.
-  return str ? str.charAt(0).toUpperCase() + [...str].slice(1).join("") : str;
-}
-
-function getTopIssues(reports: ProdPageReport[]): TopIssue[] {
-  const issues: TopIssue[] = [];
-  for (const report of reports) {
-    for (const issue of report.issues) {
-      if (issue.text && !issues.some((i) => i.text === issue.text)) {
-        issues.push({
-          text: issue.text,
-          id: report.id,
-        });
-      }
-
-      if (issues.length >= 5) {
-        return issues;
-      }
-    }
-  }
-
-  return issues;
-}
-
-function getRelativeTimestampDate(
-  report: ProdPageReport,
-  issue: ProdPageIssue
-): Date {
-  // TODO: Improve return value
-  if (!report.review) {
-    return new Date();
-  }
-  if (!issue.rel_timestamp)
-    return new Date(report.purchaseDate ?? report.review.date_text);
-
-  if (issue.rel_timestamp > 1600000000) {
-    // Treat as unix
-    return new Date(issue.rel_timestamp * 1000);
-  } else {
-    // Treat as days since review was created
-    const reviewDate = new Date(report.purchaseDate ?? report.review.date_text);
-    reviewDate.setDate(reviewDate.getDate() + issue.rel_timestamp);
-
-    return reviewDate;
-  }
-}
 
 function getIssueGraphData(reports: ProdPageReport[]): IssueGraphData[] {
   const issueGraphData: IssueGraphData[] = [];
