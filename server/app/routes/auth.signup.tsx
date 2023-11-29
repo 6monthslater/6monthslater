@@ -11,6 +11,7 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/shadcn-ui-mod/button";
 import { Label } from "~/components/ui/label";
 import { WEBSITE_TITLE } from "~/root";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 const PAGE_TITLE = "Sign Up";
 
@@ -71,6 +72,8 @@ export const Signup = () => {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const submit = useSubmit();
+
+  // Pending UI
   const isSubmitting =
     navigation.state === "submitting" || navigation.state === "loading";
 
@@ -139,7 +142,7 @@ export const Signup = () => {
               value="signUp"
               disabled={isSubmitting}
             >
-              Sign Up
+              <InlineLoadingSpinner show={isSubmitting} /> Sign Up
             </Button>
           </div>
         </Form>

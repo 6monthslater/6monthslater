@@ -17,6 +17,7 @@ import { Button } from "~/components/shadcn-ui-mod/button";
 import { DatePickerControlled } from "~/components/shadcn-ui-mod/date-picker-controlled";
 import { Label } from "~/components/ui/label";
 import type { ReportFormRow } from "~/types/ReportFormRow";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 interface CreateReportDialogProps {
   productName: string;
@@ -187,12 +188,8 @@ export default function CreateReportDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button
-              type="submit"
-              className="mt-3"
-              disabled={fetcher.state === "submitting"}
-            >
-              Submit Report
+            <Button type="submit" className="mt-3" disabled={isSubmitting}>
+              <InlineLoadingSpinner show={isSubmitting} /> Submit Report
             </Button>
           </DialogFooter>
         </fetcher.Form>

@@ -26,6 +26,8 @@ import {
 import { WEBSITE_TITLE } from "~/root";
 import PaginationBar from "~/components/pagination-bar";
 import { parsePagination } from "~/utils/pagination.server";
+import { useEffect, useState } from "react";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 const PAGE_TITLE = "Manage Scraped Products";
 
@@ -144,14 +146,26 @@ export default function Index() {
 
   // Pagination
   const [searchParams, setSearchParams] = useSearchParams();
+  const [action, setAction] = useState("");
   const pageStr = searchParams.get("page") ?? "1";
   const pageSizeStr = searchParams.get("pageSize") ?? "10";
   const page = parseInt(pageStr, 10);
   const pageSize = parseInt(pageSizeStr, 10);
   const navigation = useNavigation();
 
+  // Pending UI
+  const isSubmitting = navigation.state === "submitting";
+
   const canNextPage = pageCount - page > 0;
   const canPrevPage = pageCount - page < pageCount - 1;
+
+  useEffect(() => {
+    if (navigation.state === "idle") {
+      setAction("");
+    }
+  }, [navigation]);
+
+  // Pagination (continued)
 
   const handlePageChange = (next: boolean) => {
     let newPage: number;
@@ -186,6 +200,9 @@ export default function Index() {
               key={product.id}
               product={product}
               submit={submit}
+              action={action}
+              setAction={setAction}
+              isSubmitting={isSubmitting}
             />
           ))}
       </div>
@@ -204,9 +221,22 @@ export default function Index() {
 interface AdminProductCardProps {
   product: SerializeFrom<ProductData>;
   submit: SubmitFunction;
+  action: string;
+  setAction: (action: string) => void;
+  isSubmitting: boolean;
 }
 
-function AdminProductCard({ product, submit }: AdminProductCardProps) {
+function AdminProductCard({
+  product,
+  submit,
+  action,
+  setAction,
+  isSubmitting,
+}: AdminProductCardProps) {
+  const navigation = useNavigation();
+  const isNavProdInfo =
+    navigation.state === "loading" &&
+    navigation.location.pathname === `/admin/product/${product.id}`;
   return (
     <Card className="m-5 grow basis-72">
       <Title>{product.name}</Title>
@@ -234,15 +264,20 @@ function AdminProductCard({ product, submit }: AdminProductCardProps) {
       <div className="flex flex-col gap-2">
         <Link
           to={`/admin/product/${product.id}`}
-          className={buttonVariants({ size: "sm" })}
+          className={`${buttonVariants({ size: "sm" })} ${
+            isNavProdInfo ? "disabled pointer-events-none opacity-50" : ""
+          }`}
         >
+          <InlineLoadingSpinner show={isNavProdInfo} />
           View Product Information
         </Link>
 
         <Button
           type="submit"
           size="sm"
+          disabled={isSubmitting}
           onClick={() => {
+            setAction(`clear-${product.id}`);
             if (confirm("Are you sure you would like to clear all reports?")) {
               submit(
                 { type: "clearReport", productId: product.id },
@@ -254,13 +289,16 @@ function AdminProductCard({ product, submit }: AdminProductCardProps) {
             }
           }}
         >
+          <InlineLoadingSpinner show={action === `clear-${product.id}`} />
           Clear Reports
         </Button>
 
         <Button
           type="submit"
           size="sm"
+          disabled={isSubmitting}
           onClick={() => {
+            setAction(`analyze-${product.id}`);
             submit(
               { type: "analyzeReviews", productId: product.id },
               {
@@ -270,6 +308,7 @@ function AdminProductCard({ product, submit }: AdminProductCardProps) {
             );
           }}
         >
+          <InlineLoadingSpinner show={action === `analyze-${product.id}`} />
           Analyze Reviews
         </Button>
       </div>

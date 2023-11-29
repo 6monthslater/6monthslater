@@ -46,6 +46,7 @@ import { WEBSITE_TITLE } from "~/root";
 import { parsePagination } from "~/utils/pagination.server";
 import PaginationBar from "~/components/pagination-bar";
 import { Prisma } from "@prisma/client";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 const PAGE_TITLE = "User Management";
 
@@ -190,6 +191,9 @@ export default function Users() {
 
   const navigation = useNavigation();
 
+  // Pending UI
+  const isSubmitting = navigation.state === "submitting";
+
   // Table Data
   const { users, pageCount, ADMIN_ROLE_NAME } = useLoaderData<typeof loader>();
 
@@ -282,7 +286,10 @@ export default function Users() {
                   />
                 </div>
                 <DialogFooter>
-                  <Button type="submit">Add</Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    <InlineLoadingSpinner show={isSubmitting} />
+                    Add
+                  </Button>
                 </DialogFooter>
               </div>
             </fetcher.Form>
@@ -302,6 +309,7 @@ export default function Users() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Edit Roles</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              {/* There is no loading circle for this because the menu disappears on click*/}
               <DropdownMenuCheckboxItem
                 disabled={fetcher.state === "submitting"}
                 checked={user.roles.includes(ADMIN_ROLE_NAME)}

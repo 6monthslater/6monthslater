@@ -3,11 +3,16 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
+import {
+  useFetcher,
+  useLoaderData,
+  useNavigation,
+  useSubmit,
+} from "@remix-run/react";
 import type { DeltaType } from "@tremor/react";
 import { BadgeDelta, Card, Title } from "@tremor/react";
 import { Button } from "~/components/shadcn-ui-mod/button";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   clearParseQueue,
   clearToAnalyzeQueue,
@@ -20,6 +25,7 @@ import {
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 const PAGE_TITLE = "Queue Status";
 
@@ -93,77 +99,102 @@ export default function Index() {
     initialQueueData;
   const nextData = nextQueueData.data;
 
+  // Pending UI
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+  const [action, setAction] = useState("");
+
+  useEffect(() => {
+    if (navigation.state === "idle") {
+      setAction("");
+    }
+  }, [navigation]);
+
   return (
     <div className="space-y-4 self-center px-6 text-center lg:w-3/5">
       <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
 
       <div className="grid grid-cols-2 space-x-4">
         <div className="col col-span-1">
-          <Card className="space-y-4">
+          <Card className="flex flex-col space-y-4">
             <Title>Product Scraping Queue</Title>
 
-            {getBadge(
-              nextData?.parseQueue?.messageCount,
-              previousData?.parseQueue?.messageCount,
-              "product"
-            )}
+            <div className="flex">
+              {getBadge(
+                nextData?.parseQueue?.messageCount,
+                previousData?.parseQueue?.messageCount,
+                "product"
+              )}
 
-            {getBadge(
-              nextData?.parseQueue?.consumerCount,
-              previousData?.parseQueue?.consumerCount,
-              "scraper instance"
-            )}
+              {getBadge(
+                nextData?.parseQueue?.consumerCount,
+                previousData?.parseQueue?.consumerCount,
+                "scraper instance"
+              )}
+            </div>
 
-            <Button
-              type="submit"
-              className="block"
-              size="sm"
-              onClick={() => {
-                submit(
-                  { type: "clearParseQueue" },
-                  {
-                    preventScrollReset: true,
-                    method: "post",
-                  }
-                );
-              }}
-            >
-              Clear Queue
-            </Button>
+            <div>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isSubmitting}
+                onClick={() => {
+                  const nextAction = "clearParseQueue";
+                  setAction(nextAction);
+                  submit(
+                    { type: nextAction },
+                    {
+                      preventScrollReset: true,
+                      method: "post",
+                    }
+                  );
+                }}
+              >
+                <InlineLoadingSpinner show={action === "clearParseQueue"} />
+                Clear Queue
+              </Button>
+            </div>
           </Card>
         </div>
         <div className="col col-span-1">
-          <Card className="space-y-4">
+          <Card className="flex flex-col space-y-4">
             <Title>Review Processing Queue</Title>
 
-            {getBadge(
-              nextData?.processQueue?.messageCount,
-              previousData?.processQueue?.messageCount,
-              "review"
-            )}
+            <div className="flex">
+              {getBadge(
+                nextData?.processQueue?.messageCount,
+                previousData?.processQueue?.messageCount,
+                "review"
+              )}
 
-            {getBadge(
-              nextData?.processQueue?.consumerCount,
-              previousData?.processQueue?.consumerCount,
-              "processing instance"
-            )}
+              {getBadge(
+                nextData?.processQueue?.consumerCount,
+                previousData?.processQueue?.consumerCount,
+                "processing instance"
+              )}
+            </div>
 
-            <Button
-              type="submit"
-              className="block"
-              size="sm"
-              onClick={() => {
-                submit(
-                  { type: "clearToAnalyzeQueue" },
-                  {
-                    preventScrollReset: true,
-                    method: "post",
-                  }
-                );
-              }}
-            >
-              Clear Queue
-            </Button>
+            <div>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isSubmitting}
+                onClick={() => {
+                  const nextAction = "clearToAnalyzeQueue";
+                  setAction(nextAction);
+                  submit(
+                    { type: nextAction },
+                    {
+                      preventScrollReset: true,
+                      method: "post",
+                    }
+                  );
+                }}
+              >
+                <InlineLoadingSpinner show={action === "clearToAnalyzeQueue"} />
+                Clear Queue
+              </Button>
+            </div>
           </Card>
         </div>
       </div>

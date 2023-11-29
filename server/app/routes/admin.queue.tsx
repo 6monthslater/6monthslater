@@ -4,7 +4,7 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useNavigation } from "@remix-run/react";
 import type { Product } from "~/queue-handling/review.server";
 import {
   ReviewRegion,
@@ -19,6 +19,7 @@ import {
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 const PAGE_TITLE = "Add Product to Scraper Queue";
 
@@ -83,6 +84,11 @@ export const action: ActionFunction = async ({
 export default function Index() {
   const actionData = useActionData<ActionData | undefined>();
 
+  // Pending UI
+  const navigation = useNavigation();
+
+  const isSubmitting = navigation.state === "submitting";
+
   return (
     <div className="space-y-4 text-center">
       <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
@@ -102,7 +108,8 @@ export default function Index() {
         {actionData?.formError && (
           <div className="text-red-500">{actionData.formError}</div>
         )}
-        <Button type="submit" className="mt-4">
+        <Button type="submit" className="mt-4" disabled={isSubmitting}>
+          <InlineLoadingSpinner show={isSubmitting} />
           Add
         </Button>
       </Form>

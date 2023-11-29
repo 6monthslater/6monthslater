@@ -4,7 +4,7 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useNavigation } from "@remix-run/react";
 import {
   ReviewRegion,
   ReviewSource,
@@ -18,6 +18,8 @@ import {
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
+import { useEffect, useState } from "react";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 const PAGE_TITLE = "Control Product Crawler";
 
@@ -80,6 +82,19 @@ export const action: ActionFunction = async ({
 export default function Index() {
   const actionData = useActionData<ActionData | undefined>();
 
+  // Pending UI
+  const navigation = useNavigation();
+  const isSubmitting =
+    navigation.state === "loading" || navigation.state === "submitting";
+
+  const [action, setAction] = useState("");
+
+  useEffect(() => {
+    if (navigation.state === "idle") {
+      setAction("");
+    }
+  }, [navigation]);
+
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
       <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
@@ -104,7 +119,12 @@ export default function Index() {
           name="command"
           value="set"
           size="sm"
+          disabled={isSubmitting}
+          onClick={() => {
+            setAction("set");
+          }}
         >
+          <InlineLoadingSpinner show={action === "set"} />
           Set crawler category
         </Button>
       </Form>
@@ -116,7 +136,12 @@ export default function Index() {
           name="command"
           value="cancel"
           size="sm"
+          disabled={isSubmitting}
+          onClick={() => {
+            setAction("cancel");
+          }}
         >
+          <InlineLoadingSpinner show={action === "cancel"} />
           Stop crawler
         </Button>
       </Form>

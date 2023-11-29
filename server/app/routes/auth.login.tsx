@@ -12,6 +12,7 @@ import { Input } from "~/components/ui/input";
 import { Button, buttonVariants } from "~/components/shadcn-ui-mod/button";
 import { Label } from "~/components/ui/label";
 import { WEBSITE_TITLE } from "~/root";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 const PAGE_TITLE = "Login";
 
@@ -71,8 +72,14 @@ export const Login = () => {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const submit = useSubmit();
+
+  // Pending UI
   const isSubmitting =
-    navigation.state === "submitting" || navigation.state === "loading";
+    (navigation.state === "submitting" || navigation.state === "loading") &&
+    navigation.formAction === "/auth/login";
+  const isNavSignUp =
+    navigation.state === "loading" &&
+    navigation.location.pathname === "/auth/signup";
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-[20vh] text-center md:container md:mx-auto">
@@ -136,8 +143,11 @@ export const Login = () => {
           <div className="space-x-3">
             <Link
               to="/auth/signup"
-              className={buttonVariants({ variant: "secondary" })}
+              className={`${buttonVariants({ variant: "secondary" })} ${
+                isNavSignUp ? "disabled pointer-events-none opacity-50" : ""
+              }`}
             >
+              <InlineLoadingSpinner show={isNavSignUp} />
               Sign Up
             </Link>
             <Button
@@ -146,6 +156,7 @@ export const Login = () => {
               value="login"
               disabled={isSubmitting}
             >
+              <InlineLoadingSpinner show={isSubmitting} />
               Login
             </Button>
           </div>
