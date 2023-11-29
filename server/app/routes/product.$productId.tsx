@@ -13,11 +13,8 @@ import type { User } from "@supabase/supabase-js";
 import ProductHeader from "~/components/product-header";
 import type { PrismaClientError } from "~/types/PrismaClientError";
 import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
-import type {
-  ProdPageIssue,
-  ProdPageReport,
-} from "~/prisma-select-include/product";
-import { PRODUCT_INCLUDE } from "~/prisma-select-include/product";
+import type { ProdPageIssue, ProdPageReport } from "~/types/product";
+import { PRODUCT_INCLUDE } from "~/types/product";
 
 interface TopIssue {
   text: string;
