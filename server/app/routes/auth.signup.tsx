@@ -1,7 +1,12 @@
 import type { ActionFunction, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { createServerClient } from "~/utils/supabase.server";
-import { Form, useActionData, useNavigation } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useNavigation,
+  useSubmit,
+} from "@remix-run/react";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/shadcn-ui-mod/button";
 import { Label } from "~/components/ui/label";
@@ -41,12 +46,10 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors }, { status: 400, headers });
   }
 
-  const url = new URL(request.url);
-
   const data = await supabase.auth.signUp({
     email,
     password,
-    options: { emailRedirectTo: `${url.protocol}://${url.host}/` },
+    options: { emailRedirectTo: formData.get("redirectUrl")?.toString() ?? "" },
   });
 
   if (data.error) {
@@ -67,6 +70,7 @@ export const action: ActionFunction = async ({ request }) => {
 export const Signup = () => {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
+  const submit = useSubmit();
   const isSubmitting =
     navigation.state === "submitting" || navigation.state === "loading";
 
@@ -75,7 +79,21 @@ export const Signup = () => {
       <h1 className="text-2xl font-bold">{PAGE_TITLE}</h1>
 
       <div className="mx-auto content-center items-center space-x-3 md:flex md:w-1/3">
-        <Form method="post" className="w-full space-y-3">
+        <Form
+          className="w-full space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            formData.set(
+              "redirectUrl",
+              `${window.location.protocol}//${window.location.host}/`
+            );
+
+            submit(formData, {
+              method: "post",
+            });
+          }}
+        >
           <Label htmlFor="email">Email</Label>
           <Input
             type="email"
