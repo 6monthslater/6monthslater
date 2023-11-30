@@ -47,6 +47,8 @@ import { parsePagination } from "~/utils/pagination.server";
 import PaginationBar from "~/components/pagination-bar";
 import { Prisma } from "@prisma/client";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
+import { useEffect } from "react";
+import { useToast } from "~/components/ui/use-toast";
 
 const PAGE_TITLE = "User Management";
 
@@ -150,7 +152,7 @@ export const action: ActionFunction = async ({ request }) => {
       },
     });
 
-    return json({ ok: true }, { headers });
+    return json({ ok: true, action, userId: id }, { headers });
   } else {
     const userId = formData.get("userId");
     if (!userId || !(typeof userId === "string")) {
@@ -177,7 +179,7 @@ export const action: ActionFunction = async ({ request }) => {
         }
       }
     }
-    return json({ ok: true }, { headers });
+    return json({ ok: true, action, userId }, { headers });
   }
 };
 
@@ -190,16 +192,36 @@ export default function Users() {
   const pageSize = parseInt(pageSizeStr, 10);
 
   const navigation = useNavigation();
+  const fetcher = useFetcher();
 
   // Pending UI
   const isSubmitting = navigation.state === "submitting";
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (fetcher.state === "idle") {
+      if (fetcher?.data?.ok) {
+        toast({
+          title:
+            fetcher?.data?.action === "role"
+              ? "User roles updated!"
+              : "User added!",
+          description: `User ID: ${fetcher?.data?.userId}`,
+        });
+      } else if (fetcher?.data?.error) {
+        toast({
+          title: "Error",
+          description: fetcher.data.error,
+          variant: "destructive",
+        });
+      }
+    }
+  }, [fetcher, toast]);
 
   // Table Data
   const { users, pageCount, ADMIN_ROLE_NAME } = useLoaderData<typeof loader>();
 
   // Action Handlers
-  const fetcher = useFetcher();
-
   const handleRoleUpdate = (id: string, role: string, checked: boolean) => {
     fetcher.submit(
       { id: id, role: role, checked: checked, action: "role" },

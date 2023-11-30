@@ -20,6 +20,8 @@ import {
 import { WEBSITE_TITLE } from "~/root";
 import { useEffect, useState } from "react";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
+import { useToast } from "~/components/ui/use-toast";
+import type { ToastVariant } from "~/components/ui/toast";
 
 const PAGE_TITLE = "Control Product Crawler";
 
@@ -80,7 +82,7 @@ export const action: ActionFunction = async ({ request }) => {
       break;
   }
 
-  return json({ ok: true }, { headers });
+  return json({ ok: true, action: formData.command }, { headers });
 };
 
 export default function Index() {
@@ -88,6 +90,7 @@ export default function Index() {
 
   // Pending UI
   const navigation = useNavigation();
+  const { toast } = useToast();
   const isSubmitting =
     navigation.state === "loading" || navigation.state === "submitting";
 
@@ -96,8 +99,34 @@ export default function Index() {
   useEffect(() => {
     if (navigation.state === "idle") {
       setAction("");
+      if (actionData?.ok) {
+        let title: string;
+        let description: string;
+        let variant: ToastVariant;
+        switch (actionData?.action) {
+          case "set": {
+            title = "Success!";
+            description = "Crawler category set.";
+            variant = "default";
+            break;
+          }
+          case "cancel": {
+            title = "Success!";
+            description = "Crawler stopped.";
+            variant = "default";
+            break;
+          }
+          default: {
+            title = "Error";
+            description = "Invalid Response";
+            variant = "destructive";
+            break;
+          }
+        }
+        toast({ title, description, variant });
+      }
     }
-  }, [navigation]);
+  }, [navigation, actionData, toast]);
 
   return (
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">

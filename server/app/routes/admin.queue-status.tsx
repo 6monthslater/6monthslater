@@ -4,6 +4,7 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import {
+  useActionData,
   useFetcher,
   useLoaderData,
   useNavigation,
@@ -26,6 +27,8 @@ import {
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
+import { useToast } from "~/components/ui/use-toast";
+import type { ToastVariant } from "~/components/ui/toast";
 
 const PAGE_TITLE = "Queue Status";
 
@@ -59,7 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
 
-  return json({ ok: true }, { headers });
+  return json({ ok: true, action: type }, { headers });
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -83,6 +86,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Index() {
   const submit = useSubmit();
   const initialQueueData = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const nextQueueData = useFetcher<typeof loader>();
   const allQueueDataRef = useRef([initialQueueData]);
   const interval = useRef<NodeJS.Timeout>();
@@ -112,12 +116,45 @@ export default function Index() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const [action, setAction] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     if (navigation.state === "idle") {
       setAction("");
+      if (actionData?.ok) {
+        let title: string;
+        let description: string;
+        let variant: ToastVariant;
+        switch (actionData?.action) {
+          case "clearParseQueue": {
+            title = "Success!";
+            description = "Scraper queue cleared.";
+            variant = "default";
+            break;
+          }
+          case "clearToAnalyzeQueue": {
+            title = "Success!";
+            description = "Analyzer queue cleared.";
+            variant = "default";
+            break;
+          }
+          default: {
+            title = "Error";
+            description = "Invalid Response";
+            variant = "destructive";
+            break;
+          }
+        }
+        toast({ title, description, variant });
+      } else if (actionData?.error) {
+        toast({
+          title: "Error",
+          description: actionData.error,
+          variant: "destructive",
+        });
+      }
     }
-  }, [navigation]);
+  }, [navigation, actionData, toast]);
 
   return (
     <div className="space-y-4 self-center px-6 text-center lg:w-3/5">

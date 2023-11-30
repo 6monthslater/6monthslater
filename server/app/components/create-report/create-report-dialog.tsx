@@ -18,6 +18,7 @@ import { DatePickerControlled } from "~/components/shadcn-ui-mod/date-picker-con
 import { Label } from "~/components/ui/label";
 import type { ReportFormRow } from "~/types/ReportFormRow";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
+import { useToast } from "~/components/ui/use-toast";
 
 interface CreateReportDialogProps {
   productName: string;
@@ -38,13 +39,19 @@ export default function CreateReportDialog({
 
   const isSubmitting = fetcher.state === "submitting";
 
+  const { toast } = useToast();
+
   useEffect(() => {
-    if (!isSubmitting && !fetcher?.data?.errors) {
+    if (!isSubmitting && fetcher?.data?.ok) {
+      toast({
+        title: "Report submitted successfully!",
+        description: "Thanks for your help.",
+      });
       setOpen(false);
       setPurchaseDate(undefined);
       setFormRows([{ id: createId(), eventDesc: "", date: undefined }]);
     }
-  }, [isSubmitting, fetcher?.data?.errors]);
+  }, [isSubmitting, fetcher?.data?.ok, toast]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

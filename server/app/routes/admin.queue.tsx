@@ -20,6 +20,8 @@ import {
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
+import { useEffect } from "react";
+import { useToast } from "~/components/ui/use-toast";
 
 const PAGE_TITLE = "Add Product to Scraper Queue";
 
@@ -87,6 +89,17 @@ export default function Index() {
   const navigation = useNavigation();
 
   const isSubmitting = navigation.state === "submitting";
+
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (navigation.state === "idle" && actionData?.ok) {
+      toast({
+        title: "Success!",
+        description: "Product added to scraper queue.",
+      });
+    }
+  }, [navigation, actionData, toast]);
 
   return (
     <div className="space-y-4 text-center">

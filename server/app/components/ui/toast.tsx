@@ -118,9 +118,12 @@ type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
 
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
+type ToastVariant = "default" | "destructive" | null | undefined;
+
 export {
   type ToastProps,
   type ToastActionElement,
+  type ToastVariant,
   ToastProvider,
   ToastViewport,
   Toast,

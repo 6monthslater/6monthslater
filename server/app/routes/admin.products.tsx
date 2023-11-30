@@ -9,6 +9,7 @@ import { json, redirect } from "@remix-run/node";
 import type { SubmitFunction } from "@remix-run/react";
 import {
   Link,
+  useActionData,
   useLoaderData,
   useNavigation,
   useSearchParams,
@@ -28,6 +29,8 @@ import PaginationBar from "~/components/pagination-bar";
 import { parsePagination } from "~/utils/pagination.server";
 import { useEffect, useState } from "react";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
+import { useToast } from "~/components/ui/use-toast";
+import type { ToastVariant } from "~/components/ui/toast";
 
 const PAGE_TITLE = "Manage Scraped Products";
 
@@ -97,7 +100,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
 
-  return json({ ok: true }, { headers });
+  return json({ ok: true, action: type, productId }, { headers });
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -164,6 +167,8 @@ export default function Index() {
 
   // Pending UI
   const isSubmitting = navigation.state === "submitting";
+  const actionData = useActionData<typeof action>();
+  const { toast } = useToast();
 
   const canNextPage = pageCount - page > 0;
   const canPrevPage = pageCount - page < pageCount - 1;
@@ -171,8 +176,40 @@ export default function Index() {
   useEffect(() => {
     if (navigation.state === "idle") {
       setAction("");
+      if (actionData?.ok) {
+        let title: string;
+        let description: string;
+        let variant: ToastVariant;
+        switch (actionData?.action) {
+          case "clearReport": {
+            title = "Reports cleared!";
+            description = `Product ID: ${actionData?.productId}`;
+            variant = "default";
+            break;
+          }
+          case "analyzeReviews": {
+            title = "Analysis started!";
+            description = `Product ID: ${actionData?.productId}`;
+            variant = "default";
+            break;
+          }
+          default: {
+            title = "Error";
+            description = "Invalid Response";
+            variant = "destructive";
+            break;
+          }
+        }
+        toast({ title, description, variant });
+      } else if (actionData?.error) {
+        toast({
+          title: "Error",
+          description: actionData?.error,
+          variant: "destructive",
+        });
+      }
     }
-  }, [navigation]);
+  }, [navigation, actionData, toast]);
 
   // Pagination (continued)
 
