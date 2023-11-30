@@ -19,12 +19,22 @@ interface IssueTimeProps {
 
 function IssueTimeBlock({ days }: IssueTimeProps) {
   const { interval, units } = getSingleUnitDateInterval(days);
+
+  let mainText: React.ReactNode;
+  let subText: string;
+
+  if (days === 0) {
+    mainText = "on arrival";
+    subText = "(purchase date)";
+  } else {
+    mainText = interval === Infinity ? <>&infin;</> : interval;
+    subText = `${units} later`;
+  }
+
   return (
     <div className="grid grid-rows-2 items-center justify-center text-center">
-      <div className="text-3xl">
-        {interval === Infinity ? <>&infin;</> : interval}
-      </div>
-      <div>{units} later</div>
+      <div className="text-3xl">{mainText}</div>
+      <div>{subText}</div>
     </div>
   );
 }
