@@ -103,6 +103,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const eventDescErrText = "Descriptions are required for each event";
   const dateErrText = "Dates are required for each event";
+  const critErrText = "A badness rating is required for each event";
 
   for (const row of formRows) {
     if (!row.eventDesc) {
@@ -111,6 +112,7 @@ export const action: ActionFunction = async ({ request }) => {
       errors.rows[row.id] = errors.rows[row.id] || {
         eventDesc: false,
         date: false,
+        criticality: false,
       };
       errors.rows[row.id].eventDesc = true;
     }
@@ -119,8 +121,18 @@ export const action: ActionFunction = async ({ request }) => {
       errors.rows[row.id] = errors.rows[row.id] || {
         eventDesc: false,
         date: false,
+        criticality: false,
       };
       errors.rows[row.id].date = true;
+    }
+    if (!row.criticality) {
+      !errors.main.includes(critErrText) && errors.main.push(critErrText);
+      errors.rows[row.id] = errors.rows[row.id] || {
+        eventDesc: false,
+        date: false,
+        criticality: false,
+      };
+      errors.rows[row.id].criticality = true;
     }
     // The fallback value will not actually be used since the request will reject right after
     row.date = row.date ? new Date(row.date) : new Date();
@@ -146,6 +158,7 @@ export const action: ActionFunction = async ({ request }) => {
           purchaseDate.getTime()) /
           (1000 * 60 * 60 * 24)
       ),
+      criticality: row.criticality[0],
     };
   });
 

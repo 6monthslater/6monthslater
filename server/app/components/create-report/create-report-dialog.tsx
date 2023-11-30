@@ -17,6 +17,7 @@ import { Button } from "~/components/shadcn-ui-mod/button";
 import { DatePickerControlled } from "~/components/shadcn-ui-mod/date-picker-controlled";
 import { Label } from "~/components/ui/label";
 import type { ReportFormRow } from "~/types/ReportFormRow";
+import { Slider } from "~/components/ui/slider";
 
 interface CreateReportDialogProps {
   productName: string;
@@ -28,7 +29,7 @@ export default function CreateReportDialog({
   productId,
 }: CreateReportDialogProps) {
   const [formRows, setFormRows] = useState<ReportFormRow[]>([
-    { id: createId(), eventDesc: "", date: undefined },
+    { id: createId(), eventDesc: "", date: undefined, criticality: [0.5] },
   ]);
   const [purchaseDate, setPurchaseDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
@@ -41,7 +42,9 @@ export default function CreateReportDialog({
     if (!isSubmitting && !fetcher?.data?.errors) {
       setOpen(false);
       setPurchaseDate(undefined);
-      setFormRows([{ id: createId(), eventDesc: "", date: undefined }]);
+      setFormRows([
+        { id: createId(), eventDesc: "", date: undefined, criticality: [0.5] },
+      ]);
     }
   }, [isSubmitting, fetcher?.data?.errors]);
 
@@ -53,7 +56,7 @@ export default function CreateReportDialog({
           Create Report
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:max-w-[650px]">
+      <DialogContent className="md:max-w-[850px]">
         <fetcher.Form
           method="post"
           onSubmit={(event) => {
@@ -85,15 +88,21 @@ export default function CreateReportDialog({
             <div className="flex flex-row items-center gap-4 px-2">
               <Label
                 htmlFor="purchaseDate"
-                className="grow basis-7/12 text-right"
+                className="grow basis-64 text-right"
               >
                 Purchase Date
               </Label>
               <DatePickerControlled
-                className="basis-5/12"
+                className="basis-56"
                 date={purchaseDate}
                 setDate={(newDate) => setPurchaseDate(newDate)}
               />
+              <span className="shrink-0 basis-52">
+                <p className="text-center text-sm">How bad is it?</p>
+                <p className="text-center text-xs text-neutral-500 opacity-90">
+                  Left to right, minor to severe.
+                </p>
+              </span>
               <span className="invisible h-10 w-10 shrink-0">
                 {/* Extremely lazy way of aligning the purchase date picker with the date pickers below*/}
               </span>
@@ -109,7 +118,7 @@ export default function CreateReportDialog({
                 <div key={row.id} className="flex flex-row items-center gap-4">
                   <Input
                     placeholder="Event Description"
-                    className={`grow basis-7/12 ${
+                    className={`grow basis-64 ${
                       fetcher?.data?.errors?.rows[row.id]?.eventDesc
                         ? "!ring-ring !ring-2 !ring-red-500"
                         : ""
@@ -126,7 +135,7 @@ export default function CreateReportDialog({
                     }}
                   ></Input>
                   <DatePickerControlled
-                    className={`basis-5/12 ${
+                    className={`basis-56 ${
                       fetcher?.data?.errors?.rows[row.id]?.date
                         ? "!ring-ring !ring-2 !ring-red-500"
                         : ""
@@ -138,6 +147,22 @@ export default function CreateReportDialog({
                           ? { ...oldRow, date: newDate }
                           : oldRow
                       );
+                      setFormRows(nextFormRows);
+                    }}
+                  />
+                  <Slider
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    className="basis-52"
+                    value={row.criticality}
+                    onValueChange={(newCrit) => {
+                      const nextFormRows = formRows.map((someRow) =>
+                        someRow.id === row.id
+                          ? { ...someRow, criticality: [...newCrit] }
+                          : someRow
+                      );
+                      console.log(formRows);
                       setFormRows(nextFormRows);
                     }}
                   />
@@ -165,7 +190,12 @@ export default function CreateReportDialog({
                 onClick={() =>
                   setFormRows([
                     ...formRows,
-                    { id: createId(), eventDesc: "", date: undefined },
+                    {
+                      id: createId(),
+                      eventDesc: "",
+                      date: undefined,
+                      criticality: [0.5],
+                    },
                   ])
                 }
               >

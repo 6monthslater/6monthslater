@@ -5,6 +5,7 @@ export interface ReportFormErrors {
     [key: string]: {
       eventDesc: boolean;
       date: boolean;
+      criticality: boolean;
     };
   };
 }
