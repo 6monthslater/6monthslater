@@ -91,6 +91,13 @@ export const action: ActionFunction = async ({ request }) => {
             },
           },
         }),
+        db.report.deleteMany({
+          where: {
+            product: {
+              id: productId,
+            },
+          },
+        }),
       ]);
       break;
     }
