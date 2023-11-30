@@ -19,6 +19,7 @@ import { Label } from "~/components/ui/label";
 import type { ReportFormRow } from "~/types/ReportFormRow";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 import { useToast } from "~/components/ui/use-toast";
+import { Slider } from "~/components/ui/slider";
 
 interface CreateReportDialogProps {
   productName: string;
@@ -30,7 +31,7 @@ export default function CreateReportDialog({
   productId,
 }: CreateReportDialogProps) {
   const [formRows, setFormRows] = useState<ReportFormRow[]>([
-    { id: createId(), eventDesc: "", date: undefined },
+    { id: createId(), eventDesc: "", date: undefined, criticality: [0.5] },
   ]);
   const [purchaseDate, setPurchaseDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
@@ -49,7 +50,9 @@ export default function CreateReportDialog({
       });
       setOpen(false);
       setPurchaseDate(undefined);
-      setFormRows([{ id: createId(), eventDesc: "", date: undefined }]);
+      setFormRows([
+        { id: createId(), eventDesc: "", date: undefined, criticality: [0.5] },
+      ]);
     }
   }, [isSubmitting, fetcher?.data?.ok, toast]);
 
@@ -61,9 +64,10 @@ export default function CreateReportDialog({
           Create Report
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:max-w-[650px]">
+      <DialogContent className="md:max-w-[650px] lg:max-w-[850px]">
         <fetcher.Form
           method="post"
+          className="flex flex-col items-center"
           onSubmit={(event) => {
             event.preventDefault();
             const purchaseDateStr = purchaseDate?.toISOString();
@@ -77,32 +81,44 @@ export default function CreateReportDialog({
             );
           }}
         >
-          <DialogHeader>
-            <DialogTitle>Create Report</DialogTitle>
-            <DialogDescription>
+          <DialogHeader className="lg:max-w-xl">
+            <DialogTitle className="text-center">Create Report</DialogTitle>
+            <DialogDescription className="text-center">
               Add any significant events you've experienced with your product,
               both good and bad. <br />
               Not sure exactly when something happened? That's ok! Just put in
               your best estimate.
             </DialogDescription>
           </DialogHeader>
-          <p>You're adding a report for the following product:</p>
-          <p className="text-xs text-neutral-500">{productName}</p>
+          <div className="lg:max-w-md">
+            <p className="text-center">
+              You're adding a report for the following product:
+            </p>
+            <p className="text-center text-xs text-neutral-500">
+              {productName}
+            </p>
+          </div>
           <Separator className="my-3" />
-          <div className="space-y-3">
+          <div className="w-full space-y-3">
             <div className="flex flex-row items-center gap-4 px-2">
               <Label
                 htmlFor="purchaseDate"
-                className="grow basis-7/12 text-right"
+                className="grow basis-64 text-right"
               >
                 Purchase Date
               </Label>
               <DatePickerControlled
-                className="basis-5/12"
+                className="basis-56"
                 date={purchaseDate}
                 disabled={isSubmitting}
                 setDate={(newDate) => setPurchaseDate(newDate)}
               />
+              <span className="shrink-0 basis-52">
+                <p className="text-center text-sm">How bad is it?</p>
+                <p className="text-center text-xs text-neutral-500 opacity-90">
+                  Left to right, minor to severe.
+                </p>
+              </span>
               <span className="invisible h-10 w-10 shrink-0">
                 {/* Extremely lazy way of aligning the purchase date picker with the date pickers below*/}
               </span>
@@ -118,7 +134,7 @@ export default function CreateReportDialog({
                 <div key={row.id} className="flex flex-row items-center gap-4">
                   <Input
                     placeholder="Event Description"
-                    className={`grow basis-7/12 ${
+                    className={`grow basis-64 ${
                       fetcher?.data?.errors?.rows[row.id]?.eventDesc
                         ? "!ring-ring !ring-2 !ring-red-500"
                         : ""
@@ -136,7 +152,7 @@ export default function CreateReportDialog({
                     }}
                   ></Input>
                   <DatePickerControlled
-                    className={`basis-5/12 ${
+                    className={`basis-56 ${
                       fetcher?.data?.errors?.rows[row.id]?.date
                         ? "!ring-ring !ring-2 !ring-red-500"
                         : ""
@@ -149,6 +165,26 @@ export default function CreateReportDialog({
                           ? { ...oldRow, date: newDate }
                           : oldRow
                       );
+                      setFormRows(nextFormRows);
+                    }}
+                  />
+                  <Slider
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    className={`basis-52 ${
+                      fetcher?.data?.errors?.rows[row.id]?.criticality
+                        ? "!ring-ring !ring-2 !ring-red-500"
+                        : ""
+                    }`}
+                    value={row.criticality}
+                    onValueChange={(newCrit) => {
+                      const nextFormRows = formRows.map((someRow) =>
+                        someRow.id === row.id
+                          ? { ...someRow, criticality: [...newCrit] }
+                          : someRow
+                      );
+                      console.log(formRows);
                       setFormRows(nextFormRows);
                     }}
                   />
@@ -178,7 +214,12 @@ export default function CreateReportDialog({
                 onClick={() =>
                   setFormRows([
                     ...formRows,
-                    { id: createId(), eventDesc: "", date: undefined },
+                    {
+                      id: createId(),
+                      eventDesc: "",
+                      date: undefined,
+                      criticality: [0.5],
+                    },
                   ])
                 }
               >

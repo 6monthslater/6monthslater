@@ -7,7 +7,10 @@ import { useState } from "react";
 import { useRootContext, WEBSITE_TITLE } from "~/root";
 import CreateReportDialog from "~/components/create-report/create-report-dialog";
 import type { ReportFormRow } from "~/types/ReportFormRow";
-import type { ReportFormErrors } from "~/types/ReportFormErrors";
+import type {
+  ReportFormErrorRow,
+  ReportFormErrors,
+} from "~/types/ReportFormErrors";
 import { createServerClient } from "~/utils/supabase.server";
 import type { User } from "@supabase/supabase-js";
 import ProductHeader from "~/components/product-header";
@@ -47,6 +50,25 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
 
   return json({ product, reports });
 };
+
+function pushMainErrorMsg(errors: ReportFormErrors, msg: string): void {
+  if (!errors.main.includes(msg)) {
+    errors.main.push(msg);
+  }
+}
+
+function upsertErrorRow(
+  errors: ReportFormErrors,
+  id: string,
+  field: keyof ReportFormErrorRow
+) {
+  errors.rows[id] = errors.rows[id] ?? {
+    eventDesc: false,
+    date: false,
+    criticality: false,
+  };
+  errors.rows[id][field] = true;
+}
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -92,6 +114,14 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors }, { status: 400, headers });
   }
 
+  const purchaseDateTimestamp = Date.parse(purchaseDateStr);
+  if (Number.isNaN(purchaseDateTimestamp)) {
+    errors.purchaseDate = "Purchase date format is invalid";
+    return json({ errors }, { status: 400, headers });
+  }
+
+  const purchaseDate = new Date(purchaseDateTimestamp);
+
   const formRowsObj = JSON.parse(formRowsStr);
 
   if (!(formRowsObj satisfies ReportFormRow[])) {
@@ -101,26 +131,35 @@ export const action: ActionFunction = async ({ request }) => {
 
   const formRows = formRowsObj as ReportFormRow[];
 
-  const eventDescErrText = "Descriptions are required for each event";
-  const dateErrText = "Dates are required for each event";
-
   for (const row of formRows) {
     if (!row.eventDesc) {
-      !errors.main.includes(eventDescErrText) &&
-        errors.main.push(eventDescErrText);
-      errors.rows[row.id] = errors.rows[row.id] || {
-        eventDesc: false,
-        date: false,
-      };
-      errors.rows[row.id].eventDesc = true;
+      pushMainErrorMsg(errors, "Descriptions are required for each event");
+      upsertErrorRow(errors, row.id, "eventDesc");
     }
     if (!row.date) {
-      !errors.main.includes(dateErrText) && errors.main.push(dateErrText);
+      pushMainErrorMsg(errors, "Dates are required for each event");
       errors.rows[row.id] = errors.rows[row.id] || {
         eventDesc: false,
         date: false,
+        criticality: false,
       };
       errors.rows[row.id].date = true;
+    } else if (row.date && new Date(row.date) < purchaseDate) {
+      pushMainErrorMsg(
+        errors,
+        "Event dates cannot be earlier than the purchase date"
+      );
+      upsertErrorRow(errors, row.id, "date");
+    }
+    if (!row.criticality || row.criticality.length < 1) {
+      pushMainErrorMsg(errors, "A badness rating is required for each event");
+      upsertErrorRow(errors, row.id, "criticality");
+    } else if (row.criticality[0] < 0 || row.criticality[0] > 1) {
+      pushMainErrorMsg(
+        errors,
+        "Each badness rating must be a number between 0 and 1"
+      );
+      upsertErrorRow(errors, row.id, "criticality");
     }
     // The fallback value will not actually be used since the request will reject right after
     row.date = row.date ? new Date(row.date) : new Date();
@@ -130,14 +169,6 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors }, { status: 400, headers });
   }
 
-  const purchaseDateTimestamp = Date.parse(purchaseDateStr);
-  if (Number.isNaN(purchaseDateTimestamp)) {
-    errors.purchaseDate = "Purchase date format is invalid";
-    return json({ errors }, { status: 400, headers });
-  }
-
-  const purchaseDate = new Date(purchaseDateTimestamp);
-
   const issues = formRows.map((row) => {
     return {
       text: row.eventDesc,
@@ -146,6 +177,7 @@ export const action: ActionFunction = async ({ request }) => {
           purchaseDate.getTime()) /
           (1000 * 60 * 60 * 24)
       ),
+      criticality: row.criticality[0],
     };
   });
 
