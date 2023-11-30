@@ -68,34 +68,58 @@ export const action: ActionFunction = async ({ request }) => {
       await db.$transaction([
         db.issue.deleteMany({
           where: {
-            report: {
-              review: {
-                product_id: productId,
+            OR: [
+              {
+                report: {
+                  review: {
+                    product_id: productId,
+                  },
+                },
               },
-            },
+              {
+                report: {
+                  product: {
+                    id: productId,
+                  },
+                },
+              },
+            ],
           },
         }),
         db.reliabilityKeyframe.deleteMany({
           where: {
-            report: {
-              review: {
-                product_id: productId,
+            OR: [
+              {
+                report: {
+                  review: {
+                    product_id: productId,
+                  },
+                },
               },
-            },
+              {
+                report: {
+                  product: {
+                    id: productId,
+                  },
+                },
+              },
+            ],
           },
         }),
         db.report.deleteMany({
           where: {
-            review: {
-              product_id: productId,
-            },
-          },
-        }),
-        db.report.deleteMany({
-          where: {
-            product: {
-              id: productId,
-            },
+            OR: [
+              {
+                review: {
+                  product_id: productId,
+                },
+              },
+              {
+                product: {
+                  id: productId,
+                },
+              },
+            ],
           },
         }),
       ]);
