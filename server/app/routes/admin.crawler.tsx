@@ -57,7 +57,7 @@ export const action: ActionFunction = async ({
         return { formError: `Data missing` };
       }
 
-      sendCrawlerCommand({
+      await sendCrawlerCommand({
         command: formData.command,
         url,
         review_info: {
@@ -70,7 +70,7 @@ export const action: ActionFunction = async ({
       break;
     }
     case "cancel":
-      sendCrawlerCommand({
+      await sendCrawlerCommand({
         command: formData.command,
       });
       break;

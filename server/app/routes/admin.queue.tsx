@@ -68,7 +68,7 @@ export const action: ActionFunction = async ({
         type: ReviewSource.AMAZON,
       };
 
-      sendProductToQueue(product);
+      await sendProductToQueue(product);
     } else {
       errors += `Invalid product ID: ${line}\n`;
     }
