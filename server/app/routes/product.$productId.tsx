@@ -104,6 +104,8 @@ export const action: ActionFunction = async ({ request }) => {
   const eventDescErrText = "Descriptions are required for each event";
   const dateErrText = "Dates are required for each event";
   const critErrText = "A badness rating is required for each event";
+  const critRangeErrText =
+    "Each badness rating must be a number between 0 and 1";
 
   for (const row of formRows) {
     if (!row.eventDesc) {
@@ -125,8 +127,17 @@ export const action: ActionFunction = async ({ request }) => {
       };
       errors.rows[row.id].date = true;
     }
-    if (!row.criticality) {
+    if (!row.criticality || row.criticality.length < 1) {
       !errors.main.includes(critErrText) && errors.main.push(critErrText);
+      errors.rows[row.id] = errors.rows[row.id] || {
+        eventDesc: false,
+        date: false,
+        criticality: false,
+      };
+      errors.rows[row.id].criticality = true;
+    } else if (row.criticality[0] < 0 || row.criticality[0] > 1) {
+      !errors.main.includes(critRangeErrText) &&
+        errors.main.push(critRangeErrText);
       errors.rows[row.id] = errors.rows[row.id] || {
         eventDesc: false,
         date: false,
