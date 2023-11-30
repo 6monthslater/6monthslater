@@ -284,7 +284,7 @@ function AdminProductCard({
     navigation.state === "loading" &&
     navigation.location.pathname === `/admin/product/${product.id}`;
   return (
-    <Card className="m-5 grow basis-72">
+    <Card className="m-5 flex grow basis-72 flex-col">
       <Title>{product.name}</Title>
       <div className="my-3">
         <div>
@@ -307,7 +307,7 @@ function AdminProductCard({
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-[225px] flex-col gap-2">
+      <div className="mx-auto mt-auto flex max-w-[225px] flex-col gap-2">
         <Link
           to={`/admin/product/${product.id}`}
           className={`${buttonVariants({ size: "sm" })} ${
