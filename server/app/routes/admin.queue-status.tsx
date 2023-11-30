@@ -139,13 +139,13 @@ export default function Index() {
             {getBadge(
               nextData?.processQueue?.messageCount,
               previousData?.processQueue?.messageCount,
-              "review"
+              "product"
             )}
 
             {getBadge(
               nextData?.processQueue?.consumerCount,
               previousData?.processQueue?.consumerCount,
-              "processing instance"
+              "analyzer instance"
             )}
 
             <Button
