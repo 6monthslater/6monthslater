@@ -47,7 +47,7 @@ import { parsePagination } from "~/utils/pagination.server";
 import PaginationBar from "~/components/pagination-bar";
 import { Prisma } from "@prisma/client";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "~/components/ui/use-toast";
 
 const PAGE_TITLE = "User Management";
@@ -195,11 +195,14 @@ export default function Users() {
   const fetcher = useFetcher();
 
   // Pending UI
-  const isSubmitting = navigation.state === "submitting";
+  const isDialogSubmitting = navigation.state === "submitting";
+  const isRoleSubmitting = fetcher.state === "submitting";
+  const [modUserId, setModUserId] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
     if (fetcher.state === "idle") {
+      setModUserId("");
       if (fetcher?.data?.ok) {
         toast({
           title:
@@ -223,6 +226,7 @@ export default function Users() {
 
   // Action Handlers
   const handleRoleUpdate = (id: string, role: string, checked: boolean) => {
+    setModUserId(id);
     fetcher.submit(
       { id: id, role: role, checked: checked, action: "role" },
       { method: "post" }
@@ -305,12 +309,12 @@ export default function Users() {
                     name="userId"
                     placeholder="User ID"
                     className="col-span-3"
-                    disabled={isSubmitting}
+                    disabled={isDialogSubmitting}
                   />
                 </div>
                 <DialogFooter>
-                  <Button type="submit" disabled={isSubmitting}>
-                    <InlineLoadingSpinner show={isSubmitting} />
+                  <Button type="submit" disabled={isDialogSubmitting}>
+                    <InlineLoadingSpinner show={isDialogSubmitting} />
                     Add
                   </Button>
                 </DialogFooter>
@@ -324,17 +328,24 @@ export default function Users() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0"
+                disabled={isRoleSubmitting}
+              >
                 <span className="sr-only">Open menu</span>
-                <TbDots className="h-4 w-4" />
+                {isRoleSubmitting && modUserId === user.id ? (
+                  <InlineLoadingSpinner show={true} className="!mr-0" />
+                ) : (
+                  <TbDots className="h-4 w-4" />
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Edit Roles</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {/* There is no loading circle for this because the menu disappears on click*/}
               <DropdownMenuCheckboxItem
-                disabled={isSubmitting}
+                disabled={isRoleSubmitting}
                 checked={user.roles.includes(ADMIN_ROLE_NAME)}
                 onCheckedChange={(checked) => {
                   handleRoleUpdate(user.id, ADMIN_ROLE_NAME, checked);
