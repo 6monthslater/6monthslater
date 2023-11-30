@@ -5,6 +5,9 @@ load_dotenv()
 
 defaults = {
     "AMAZON_COOKIE": "csm-sid=568-8411815-1797105; session-id=140-6102862-5001741; session-id-time=2082787201l",
+    "ANALYZER_THRESHOLD_OWNERSHIP_REL": "0.9",
+    "ANALYZER_THRESHOLD_ISSUE_REL": "0.9",
+    "ANALYZER_THRESHOLD_ISSUE_CLASS": "0.1",
     "QUEUE_PREFETCH_COUNT": "10",
     "TRAINING_MODE": "false",
     "QUEUE_HOST": "localhost",
