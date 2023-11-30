@@ -286,7 +286,7 @@ export default function Route() {
                     {index + 1}.{" "}
                     {issue.classification &&
                     issue.classification !== "UNKNOWN_ISSUE" ? (
-                      <b>{issue.classification}:</b>
+                      <span className="font-semibold">{issue.classification}:</span>
                     ) : null}{" "}
                     {issue.text}
                   </span>
