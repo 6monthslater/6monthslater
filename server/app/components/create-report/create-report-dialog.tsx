@@ -56,7 +56,7 @@ export default function CreateReportDialog({
           Create Report
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:max-w-[850px]">
+      <DialogContent className="md:max-w-[650px] lg:max-w-[850px]">
         <fetcher.Form
           method="post"
           className="flex flex-col items-center"
@@ -73,7 +73,7 @@ export default function CreateReportDialog({
             );
           }}
         >
-          <DialogHeader className="md:max-w-xl">
+          <DialogHeader className="lg:max-w-xl">
             <DialogTitle className="text-center">Create Report</DialogTitle>
             <DialogDescription className="text-center">
               Add any significant events you've experienced with your product,
@@ -82,7 +82,7 @@ export default function CreateReportDialog({
               your best estimate.
             </DialogDescription>
           </DialogHeader>
-          <div className="md:max-w-md">
+          <div className="lg:max-w-md">
             <p className="text-center">
               You're adding a report for the following product:
             </p>
