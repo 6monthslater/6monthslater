@@ -8,6 +8,7 @@ import {
   useActionData,
   useFetcher,
   useNavigate,
+  useNavigation,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
@@ -19,6 +20,7 @@ import { WEBSITE_TITLE } from "~/root";
 import { useToast } from "~/components/ui/use-toast";
 import type { PrismaClientError } from "~/types/PrismaClientError";
 import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 interface Suggestion {
   name: string;
@@ -174,6 +176,13 @@ export default function Index() {
   const { toast } = useToast();
   const [toastDisplayed, setToastDisplayed] = useState(false);
 
+  // Pending UI
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+  const isNavProduct =
+    navigation.state === "loading" &&
+    navigation.location.pathname.includes("product");
+
   useEffect(() => {
     if (searchParams.get("code") && !toastDisplayed) {
       setToastDisplayed(true);
@@ -212,6 +221,7 @@ export default function Index() {
             as="div"
             className="text-tremor-default relative w-full min-w-[10rem]"
             value={searchProdName}
+            disabled={isSubmitting}
           >
             <Combobox.Button className="tremor-TextInput-root relative mb-3 flex w-full min-w-[10rem] items-center rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200">
               <Combobox.Input
@@ -282,8 +292,17 @@ export default function Index() {
             {actionData?.error}
           </p>
 
-          <Button className="my-3" type="submit">
-            <TbSearch className="mr-2 h-4 w-4" /> Search
+          <Button
+            className="my-3"
+            type="submit"
+            disabled={isSubmitting || isNavProduct}
+          >
+            {isSubmitting || isNavProduct ? (
+              <InlineLoadingSpinner show={true} />
+            ) : (
+              <TbSearch className="mr-2 h-4 w-4" />
+            )}
+            Search
           </Button>
         </Form>
       </div>

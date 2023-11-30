@@ -3,11 +3,17 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
+import {
+  useActionData,
+  useFetcher,
+  useLoaderData,
+  useNavigation,
+  useSubmit,
+} from "@remix-run/react";
 import type { DeltaType } from "@tremor/react";
 import { BadgeDelta, Card, Title } from "@tremor/react";
 import { Button } from "~/components/shadcn-ui-mod/button";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   clearParseQueue,
   clearToAnalyzeQueue,
@@ -20,6 +26,9 @@ import {
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
+import { useToast } from "~/components/ui/use-toast";
+import type { ToastVariant } from "~/components/ui/toast";
 
 const PAGE_TITLE = "Queue Status";
 
@@ -28,9 +37,18 @@ export const meta: MetaFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
+  const { supabase, headers } = createServerClient(request);
+
+  if (!(await isAdmin(supabase))) {
+    return json(
+      { error: "Requesting user is not an administrator or is not logged in" },
+      { status: 400, headers }
+    );
+  }
+
   const { type } = Object.fromEntries(await request.formData());
   if (typeof type !== "string" || type.length === 0) {
-    return null;
+    return json({ error: "Invalid request" }, { status: 400, headers });
   }
 
   switch (type) {
@@ -44,7 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
 
-  return null;
+  return json({ ok: true, action: type }, { headers });
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -68,6 +86,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Index() {
   const submit = useSubmit();
   const initialQueueData = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const nextQueueData = useFetcher<typeof loader>();
   const allQueueDataRef = useRef([initialQueueData]);
   const interval = useRef<NodeJS.Timeout>();
@@ -93,77 +112,135 @@ export default function Index() {
     initialQueueData;
   const nextData = nextQueueData.data;
 
+  // Pending UI
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+  const [action, setAction] = useState("");
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (navigation.state === "idle") {
+      setAction("");
+      if (actionData?.ok) {
+        let title: string;
+        let description: string;
+        let variant: ToastVariant;
+        switch (actionData?.action) {
+          case "clearParseQueue": {
+            title = "Success!";
+            description = "Scraper queue cleared.";
+            variant = "default";
+            break;
+          }
+          case "clearToAnalyzeQueue": {
+            title = "Success!";
+            description = "Analyzer queue cleared.";
+            variant = "default";
+            break;
+          }
+          default: {
+            title = "Error";
+            description = "Invalid Response";
+            variant = "destructive";
+            break;
+          }
+        }
+        toast({ title, description, variant });
+      } else if (actionData?.error) {
+        toast({
+          title: "Error",
+          description: actionData.error,
+          variant: "destructive",
+        });
+      }
+    }
+  }, [navigation, actionData, toast]);
+
   return (
     <div className="space-y-4 self-center px-6 text-center lg:w-3/5">
       <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
 
       <div className="grid grid-cols-2 space-x-4">
         <div className="col col-span-1">
-          <Card className="space-y-4">
+          <Card className="flex flex-col space-y-4">
             <Title>Product Scraping Queue</Title>
 
-            {getBadge(
-              nextData?.parseQueue?.messageCount,
-              previousData?.parseQueue?.messageCount,
-              "product"
-            )}
+            <div className="flex">
+              {getBadge(
+                nextData?.parseQueue?.messageCount,
+                previousData?.parseQueue?.messageCount,
+                "product"
+              )}
 
-            {getBadge(
-              nextData?.parseQueue?.consumerCount,
-              previousData?.parseQueue?.consumerCount,
-              "scraper instance"
-            )}
+              {getBadge(
+                nextData?.parseQueue?.consumerCount,
+                previousData?.parseQueue?.consumerCount,
+                "scraper instance"
+              )}
+            </div>
 
-            <Button
-              type="submit"
-              className="block"
-              size="sm"
-              onClick={() => {
-                submit(
-                  { type: "clearParseQueue" },
-                  {
-                    preventScrollReset: true,
-                    method: "post",
-                  }
-                );
-              }}
-            >
-              Clear Queue
-            </Button>
+            <div>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isSubmitting}
+                onClick={() => {
+                  const nextAction = "clearParseQueue";
+                  setAction(nextAction);
+                  submit(
+                    { type: nextAction },
+                    {
+                      preventScrollReset: true,
+                      method: "post",
+                    }
+                  );
+                }}
+              >
+                <InlineLoadingSpinner show={action === "clearParseQueue"} />
+                Clear Queue
+              </Button>
+            </div>
           </Card>
         </div>
         <div className="col col-span-1">
-          <Card className="space-y-4">
+          <Card className="flex flex-col space-y-4">
             <Title>Review Processing Queue</Title>
 
-            {getBadge(
-              nextData?.processQueue?.messageCount,
-              previousData?.processQueue?.messageCount,
-              "product"
-            )}
+            <div className="flex">
+              {getBadge(
+                nextData?.processQueue?.messageCount,
+                previousData?.processQueue?.messageCount,
+                "product"
+              )}
 
-            {getBadge(
-              nextData?.processQueue?.consumerCount,
-              previousData?.processQueue?.consumerCount,
-              "analyzer instance"
-            )}
+              {getBadge(
+                nextData?.processQueue?.consumerCount,
+                previousData?.processQueue?.consumerCount,
+                "analyzer instance"
+              )}
+            </div>
 
-            <Button
-              type="submit"
-              className="block"
-              size="sm"
-              onClick={() => {
-                submit(
-                  { type: "clearToAnalyzeQueue" },
-                  {
-                    preventScrollReset: true,
-                    method: "post",
-                  }
-                );
-              }}
-            >
-              Clear Queue
-            </Button>
+            <div>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isSubmitting}
+                onClick={() => {
+                  const nextAction = "clearToAnalyzeQueue";
+                  setAction(nextAction);
+                  submit(
+                    { type: nextAction },
+                    {
+                      preventScrollReset: true,
+                      method: "post",
+                    }
+                  );
+                }}
+              >
+                <InlineLoadingSpinner show={action === "clearToAnalyzeQueue"} />
+                Clear Queue
+              </Button>
+            </div>
           </Card>
         </div>
       </div>

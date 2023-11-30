@@ -1,4 +1,9 @@
-import { Link, useLocation, NavLink as RemixNavLink } from "@remix-run/react";
+import {
+  Link,
+  useLocation,
+  NavLink as RemixNavLink,
+  useNavigation,
+} from "@remix-run/react";
 import { NavLink } from "~/components/shadcn-ui-mod/navlink";
 import {
   DropdownMenu,
@@ -9,6 +14,7 @@ import {
 import { Button } from "~/components/shadcn-ui-mod/button";
 import type { RemixNavLinkProps } from "@remix-run/react/dist/components";
 import type { ReactNode } from "react";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 interface NavbarProps {
   isLoggedIn: boolean;
@@ -34,6 +40,24 @@ const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
   const adminPath = new RegExp(/\/admin\/.*/);
   const isAdminPage = adminPath.test(location.pathname);
 
+  // Pending UI
+  const navigation = useNavigation();
+
+  const isLoggingOut =
+    navigation.state === "loading" &&
+    navigation.location.pathname === "/auth/logout";
+
+  const isNavLoggingIn =
+    navigation.state === "loading" &&
+    navigation.location.pathname === "/auth/login";
+
+  const isNavHome =
+    navigation.state === "loading" && navigation.location.pathname === "/";
+
+  const isNavAdmin =
+    navigation.state === "loading" &&
+    navigation.location.pathname.includes("admin");
+
   return (
     <nav className="!mt-0 flex flex-wrap items-center justify-between bg-gradient-to-r from-cyan-700 to-cyan-500 to-90% p-4 text-slate-200">
       <div className="mr-6 flex flex-shrink-0 items-center">
@@ -43,7 +67,14 @@ const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
       </div>
       <div className="block flex-grow lg:flex lg:w-auto lg:items-center">
         <div className="space-x-3 text-sm lg:flex-grow">
-          <NavLink to="/" end>
+          <NavLink
+            to="/"
+            end
+            className={
+              isNavHome ? "disabled pointer-events-none opacity-50" : ""
+            }
+          >
+            <InlineLoadingSpinner show={isNavHome} />
             Home
           </NavLink>
           <span hidden={!isLoggedIn || !isAdmin}>
@@ -55,7 +86,9 @@ const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
                   className={
                     isAdminPage ? "active bg-gray-50 bg-opacity-25" : ""
                   }
+                  disabled={isNavAdmin}
                 >
+                  <InlineLoadingSpinner show={isNavAdmin} />
                   Admin Utilities
                 </Button>
               </DropdownMenuTrigger>
@@ -83,11 +116,22 @@ const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
           </span>
 
           {isLoggedIn ? (
-            <NavLink className="float-right" to="/auth/logout">
+            <NavLink
+              className={`float-right ${
+                isLoggingOut ? "disabled pointer-events-none opacity-50" : ""
+              }`}
+              to="/auth/logout"
+            >
+              <InlineLoadingSpinner show={isLoggingOut} />
               Log Out
             </NavLink>
           ) : (
-            <NavLink className="float-right" to="/auth/login">
+            <NavLink
+              className={`float-right ${
+                isNavLoggingIn ? "disabled pointer-events-none opacity-50" : ""
+              }`}
+              to="/auth/login"
+            >
               Login
             </NavLink>
           )}

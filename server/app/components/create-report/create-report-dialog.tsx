@@ -17,6 +17,8 @@ import { Button } from "~/components/shadcn-ui-mod/button";
 import { DatePickerControlled } from "~/components/shadcn-ui-mod/date-picker-controlled";
 import { Label } from "~/components/ui/label";
 import type { ReportFormRow } from "~/types/ReportFormRow";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
+import { useToast } from "~/components/ui/use-toast";
 import { Slider } from "~/components/ui/slider";
 
 interface CreateReportDialogProps {
@@ -38,15 +40,21 @@ export default function CreateReportDialog({
 
   const isSubmitting = fetcher.state === "submitting";
 
+  const { toast } = useToast();
+
   useEffect(() => {
-    if (!isSubmitting && !fetcher?.data?.errors) {
+    if (!isSubmitting && fetcher?.data?.ok) {
+      toast({
+        title: "Report submitted successfully!",
+        description: "Thanks for your help.",
+      });
       setOpen(false);
       setPurchaseDate(undefined);
       setFormRows([
         { id: createId(), eventDesc: "", date: undefined, criticality: [0.5] },
       ]);
     }
-  }, [isSubmitting, fetcher?.data?.errors]);
+  }, [isSubmitting, fetcher?.data?.ok, toast]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -102,6 +110,7 @@ export default function CreateReportDialog({
               <DatePickerControlled
                 className="basis-56"
                 date={purchaseDate}
+                disabled={isSubmitting}
                 setDate={(newDate) => setPurchaseDate(newDate)}
               />
               <span className="shrink-0 basis-52">
@@ -132,6 +141,7 @@ export default function CreateReportDialog({
                     }`}
                     name="eventDesc"
                     value={row.eventDesc}
+                    disabled={isSubmitting}
                     onChange={(event) => {
                       const nextFormRows = formRows.map((someRow) =>
                         someRow.id === row.id
@@ -148,6 +158,7 @@ export default function CreateReportDialog({
                         : ""
                     }`}
                     date={row.date}
+                    disabled={isSubmitting}
                     setDate={(newDate) => {
                       const nextFormRows = formRows.map((oldRow) =>
                         oldRow.id === row.id
@@ -182,6 +193,7 @@ export default function CreateReportDialog({
                     size="icon"
                     className="ml-auto shrink-0 grow-0"
                     type="button"
+                    disabled={isSubmitting}
                     onClick={() => {
                       setFormRows(
                         formRows.filter((someRow) => someRow.id !== row.id)
@@ -198,6 +210,7 @@ export default function CreateReportDialog({
                 variant="outline"
                 className="w-full"
                 type="button"
+                disabled={isSubmitting}
                 onClick={() =>
                   setFormRows([
                     ...formRows,
@@ -228,12 +241,8 @@ export default function CreateReportDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button
-              type="submit"
-              className="mt-3"
-              disabled={fetcher.state === "submitting"}
-            >
-              Submit Report
+            <Button type="submit" className="mt-3" disabled={isSubmitting}>
+              <InlineLoadingSpinner show={isSubmitting} /> Submit Report
             </Button>
           </DialogFooter>
         </fetcher.Form>

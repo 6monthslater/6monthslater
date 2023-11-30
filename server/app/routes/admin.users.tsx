@@ -46,6 +46,9 @@ import { WEBSITE_TITLE } from "~/root";
 import { parsePagination } from "~/utils/pagination.server";
 import PaginationBar from "~/components/pagination-bar";
 import { Prisma } from "@prisma/client";
+import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
+import { useEffect, useState } from "react";
+import { useToast } from "~/components/ui/use-toast";
 
 const PAGE_TITLE = "User Management";
 
@@ -149,7 +152,7 @@ export const action: ActionFunction = async ({ request }) => {
       },
     });
 
-    return json({ ok: true }, { headers });
+    return json({ ok: true, action, userId: id }, { headers });
   } else {
     const userId = formData.get("userId");
     if (!userId || !(typeof userId === "string")) {
@@ -176,7 +179,7 @@ export const action: ActionFunction = async ({ request }) => {
         }
       }
     }
-    return json({ ok: true }, { headers });
+    return json({ ok: true, action, userId }, { headers });
   }
 };
 
@@ -189,14 +192,41 @@ export default function Users() {
   const pageSize = parseInt(pageSizeStr, 10);
 
   const navigation = useNavigation();
+  const fetcher = useFetcher();
+
+  // Pending UI
+  const isDialogSubmitting = navigation.state === "submitting";
+  const isRoleSubmitting = fetcher.state === "submitting";
+  const [modUserId, setModUserId] = useState("");
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (fetcher.state === "idle") {
+      setModUserId("");
+      if (fetcher?.data?.ok) {
+        toast({
+          title:
+            fetcher?.data?.action === "role"
+              ? "User roles updated!"
+              : "User added!",
+          description: `User ID: ${fetcher?.data?.userId}`,
+        });
+      } else if (fetcher?.data?.error) {
+        toast({
+          title: "Error",
+          description: fetcher.data.error,
+          variant: "destructive",
+        });
+      }
+    }
+  }, [fetcher, toast]);
 
   // Table Data
   const { users, pageCount, ADMIN_ROLE_NAME } = useLoaderData<typeof loader>();
 
   // Action Handlers
-  const fetcher = useFetcher();
-
   const handleRoleUpdate = (id: string, role: string, checked: boolean) => {
+    setModUserId(id);
     fetcher.submit(
       { id: id, role: role, checked: checked, action: "role" },
       { method: "post" }
@@ -279,10 +309,14 @@ export default function Users() {
                     name="userId"
                     placeholder="User ID"
                     className="col-span-3"
+                    disabled={isDialogSubmitting}
                   />
                 </div>
                 <DialogFooter>
-                  <Button type="submit">Add</Button>
+                  <Button type="submit" disabled={isDialogSubmitting}>
+                    <InlineLoadingSpinner show={isDialogSubmitting} />
+                    Add
+                  </Button>
                 </DialogFooter>
               </div>
             </fetcher.Form>
@@ -294,16 +328,24 @@ export default function Users() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0"
+                disabled={isRoleSubmitting}
+              >
                 <span className="sr-only">Open menu</span>
-                <TbDots className="h-4 w-4" />
+                {isRoleSubmitting && modUserId === user.id ? (
+                  <InlineLoadingSpinner show={true} className="!mr-0" />
+                ) : (
+                  <TbDots className="h-4 w-4" />
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Edit Roles</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem
-                disabled={fetcher.state === "submitting"}
+                disabled={isRoleSubmitting}
                 checked={user.roles.includes(ADMIN_ROLE_NAME)}
                 onCheckedChange={(checked) => {
                   handleRoleUpdate(user.id, ADMIN_ROLE_NAME, checked);
