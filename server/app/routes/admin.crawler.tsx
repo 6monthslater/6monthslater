@@ -18,7 +18,7 @@ import {
   FORBIDDEN_ROUTE,
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 import { useToast } from "~/components/ui/use-toast";
 import type { ToastVariant } from "~/components/ui/toast";
@@ -88,6 +88,8 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const actionData = useActionData<typeof action>();
 
+  const formRef = useRef<HTMLFormElement>(null);
+
   // Pending UI
   const navigation = useNavigation();
   const { toast } = useToast();
@@ -100,6 +102,7 @@ export default function Index() {
     if (navigation.state === "idle") {
       setAction("");
       if (actionData?.ok) {
+        formRef?.current?.reset();
         let title: string;
         let description: string;
         let variant: ToastVariant;
@@ -132,7 +135,7 @@ export default function Index() {
     <div className="mx-4 h-full content-center items-center space-y-4 pt-4 text-center md:container md:mx-auto">
       <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
 
-      <Form method="post">
+      <Form method="post" ref={formRef}>
         <div className="mx-auto px-6 md:w-1/2">
           <label>
             <Textarea

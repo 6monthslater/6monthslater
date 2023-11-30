@@ -20,7 +20,7 @@ import {
 } from "~/utils/supabase.server";
 import { WEBSITE_TITLE } from "~/root";
 import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useToast } from "~/components/ui/use-toast";
 
 const PAGE_TITLE = "Add Product to Scraper Queue";
@@ -84,6 +84,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   const actionData = useActionData<typeof action>();
+  const formRef = useRef<HTMLFormElement>(null);
 
   // Pending UI
   const navigation = useNavigation();
@@ -94,6 +95,7 @@ export default function Index() {
 
   useEffect(() => {
     if (navigation.state === "idle" && actionData?.ok) {
+      formRef?.current?.reset();
       toast({
         title: "Success!",
         description: "Product added to scraper queue.",
@@ -105,7 +107,7 @@ export default function Index() {
     <div className="space-y-4 text-center">
       <h1 className="text-2xl font-bold">Admin: {PAGE_TITLE}</h1>
 
-      <Form method="post">
+      <Form method="post" ref={formRef}>
         <div className="mx-auto px-6 md:w-3/4 lg:w-3/5">
           <label>
             <Textarea
