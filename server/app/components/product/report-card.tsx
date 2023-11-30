@@ -105,21 +105,27 @@ export default function ReportCard({
                               return null;
                             } else if (issue.criticality > 0.8) {
                               return (
-                                <Badge className="bg-red-500">CRITICAL</Badge>
+                                <Badge className="bg-red-500 hover:bg-red-500/80">
+                                  CRITICAL
+                                </Badge>
                               );
                             } else if (issue.criticality > 0.5) {
                               return (
-                                <Badge className="bg-orange-500">SEVERE</Badge>
+                                <Badge className="bg-orange-500 hover:bg-orange-500/80">
+                                  SEVERE
+                                </Badge>
                               );
                             } else if (issue.criticality > 0.3) {
                               return (
-                                <Badge className="bg-yellow-500">
+                                <Badge className="bg-yellow-500 hover:bg-yellow-500/80">
                                   MODERATE
                                 </Badge>
                               );
                             } else if (issue.criticality > 0.0) {
                               return (
-                                <Badge className="bg-green-500">MINOR</Badge>
+                                <Badge className="bg-green-500 hover:bg-green-500/80">
+                                  MINOR
+                                </Badge>
                               );
                             } else {
                               return null;
