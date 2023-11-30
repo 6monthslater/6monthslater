@@ -84,7 +84,10 @@ export default function ReportCard({
                             showLabel
                             showTooltip={false}
                             colors={(() => {
-                              if (!issue.criticality || issue.criticality > 1) {
+                              if (
+                                issue.criticality == null ||
+                                issue.criticality > 1
+                              ) {
                                 return ["slate", "slate"];
                               } else if (issue.criticality > 0.8) {
                                 return ["red", "slate"];
@@ -92,7 +95,7 @@ export default function ReportCard({
                                 return ["orange", "slate"];
                               } else if (issue.criticality > 0.3) {
                                 return ["yellow", "slate"];
-                              } else if (issue.criticality > 0.0) {
+                              } else if (issue.criticality >= 0.0) {
                                 return ["green", "slate"];
                               } else {
                                 return ["cyan", "slate"];
@@ -101,7 +104,10 @@ export default function ReportCard({
                             className="h-20 w-20"
                           />
                           {(() => {
-                            if (!issue.criticality || issue.criticality > 1) {
+                            if (
+                              issue.criticality == null ||
+                              issue.criticality > 1
+                            ) {
                               return null;
                             } else if (issue.criticality > 0.8) {
                               return (
@@ -121,7 +127,7 @@ export default function ReportCard({
                                   MODERATE
                                 </Badge>
                               );
-                            } else if (issue.criticality > 0.0) {
+                            } else if (issue.criticality >= 0.0) {
                               return (
                                 <Badge className="bg-green-500 hover:bg-green-500/80">
                                   MINOR
