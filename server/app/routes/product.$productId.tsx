@@ -92,6 +92,14 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors }, { status: 400, headers });
   }
 
+  const purchaseDateTimestamp = Date.parse(purchaseDateStr);
+  if (Number.isNaN(purchaseDateTimestamp)) {
+    errors.purchaseDate = "Purchase date format is invalid";
+    return json({ errors }, { status: 400, headers });
+  }
+
+  const purchaseDate = new Date(purchaseDateTimestamp);
+
   const formRowsObj = JSON.parse(formRowsStr);
 
   if (!(formRowsObj satisfies ReportFormRow[])) {
@@ -103,6 +111,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   const eventDescErrText = "Descriptions are required for each event";
   const dateErrText = "Dates are required for each event";
+  const dateRangeErrText =
+    "Event dates cannot be earlier than the purchase date";
   const critErrText = "A badness rating is required for each event";
   const critRangeErrText =
     "Each badness rating must be a number between 0 and 1";
@@ -120,6 +130,15 @@ export const action: ActionFunction = async ({ request }) => {
     }
     if (!row.date) {
       !errors.main.includes(dateErrText) && errors.main.push(dateErrText);
+      errors.rows[row.id] = errors.rows[row.id] || {
+        eventDesc: false,
+        date: false,
+        criticality: false,
+      };
+      errors.rows[row.id].date = true;
+    } else if (row.date && new Date(row.date) < purchaseDate) {
+      !errors.main.includes(dateRangeErrText) &&
+        errors.main.push(dateRangeErrText);
       errors.rows[row.id] = errors.rows[row.id] || {
         eventDesc: false,
         date: false,
@@ -152,14 +171,6 @@ export const action: ActionFunction = async ({ request }) => {
   if (Object.keys(errors.rows).length > 0) {
     return json({ errors }, { status: 400, headers });
   }
-
-  const purchaseDateTimestamp = Date.parse(purchaseDateStr);
-  if (Number.isNaN(purchaseDateTimestamp)) {
-    errors.purchaseDate = "Purchase date format is invalid";
-    return json({ errors }, { status: 400, headers });
-  }
-
-  const purchaseDate = new Date(purchaseDateTimestamp);
 
   const issues = formRows.map((row) => {
     return {
