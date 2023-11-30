@@ -90,6 +90,7 @@ model Report {
   productId             String?
   purchaseDate          DateTime?
   authorId              String?
+  createdAt             DateTime              @default(now())
 }
 
 model ReliabilityKeyframe {

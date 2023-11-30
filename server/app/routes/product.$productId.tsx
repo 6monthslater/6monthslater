@@ -13,12 +13,12 @@ import type { User } from "@supabase/supabase-js";
 import ProductHeader from "~/components/product-header";
 import type { PrismaClientError } from "~/types/PrismaClientError";
 import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
-
-interface TopIssue {
-  text: string;
-  classification: string;
-  id: string;
-}
+import type { ProdPageReport } from "~/types/product";
+import { PRODUCT_INCLUDE } from "~/types/product";
+import { getRelativeTimestampDate, getTopIssues } from "~/utils/product";
+import { getSentenceCase } from "~/utils/format";
+import ReportCard from "~/components/product/report-card";
+import { buttonVariants } from "~/components/shadcn-ui-mod/button";
 
 interface IssueGraphData {
   date: string;
@@ -30,33 +30,8 @@ export const loader = async ({ params }: { params: { productId: string } }) => {
     where: {
       id: params.productId,
     },
-    include: {
-      manufacturer: true,
-      reports: {
-        include: {
-          review: true,
-          issues: {
-            include: {
-              images: true,
-            },
-          },
-        },
-      },
-      reviews: {
-        include: {
-          reports: {
-            include: {
-              review: true,
-              issues: {
-                include: {
-                  images: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+    // Spliced because ~/components/product-card also needs access to the include object
+    include: PRODUCT_INCLUDE,
   });
   const reports = (
     product?.reports.concat(
@@ -209,97 +184,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return { title: `Product: ${data.product?.name} - ${WEBSITE_TITLE}` };
 };
 
-function getSentenceCase(str: string): string {
-  // Fancy slicing done to combat issues with unicode causing strings to count multiple characters as one index
-  // So, it splits it to a character array first.
-  return str ? str.charAt(0).toUpperCase() + [...str].slice(1).join("") : str;
-}
-
-function getTopIssues(
-  reports: Array<{
-    issues: Array<{
-      text: string;
-      classification: string;
-    }>;
-    id: string;
-  }>
-): TopIssue[] {
-  const issues: TopIssue[] = [];
-
-  const addIssues = (
-    classificationCriteria: (classification: string) => boolean
-  ) => {
-    for (const report of reports) {
-      for (const issue of report.issues) {
-        if (
-          issue.text &&
-          !issues.some((i) => i.text === issue.text) &&
-          classificationCriteria(issue.classification)
-        ) {
-          issues.push({
-            text: issue.text,
-            classification: issue.classification,
-            id: report.id,
-          });
-        }
-
-        if (issues.length >= 5) {
-          return;
-        }
-      }
-    }
-  };
-
-  // Adds classified issues with priority
-  addIssues((classification) => classification !== "UNKNOWN_ISSUE");
-
-  // Adds unclassified issues if needed
-  if (issues.length < 5) {
-    addIssues((classification) => classification === "UNKNOWN_ISSUE");
-  }
-
-  return issues;
-}
-
-function getRelativeTimestampDate(
-  report: {
-    review: {
-      date_text: string;
-    };
-    purchaseDate: Date;
-  },
-  issue: {
-    text: string;
-    rel_timestamp: number | null;
-  }
-): Date {
-  if (!issue.rel_timestamp)
-    return new Date(report.purchaseDate ?? report.review.date_text);
-
-  if (issue.rel_timestamp > 1600000000) {
-    // Treat as unix
-    return new Date(issue.rel_timestamp * 1000);
-  } else {
-    // Treat as days since review was created
-    const reviewDate = new Date(report.purchaseDate ?? report.review.date_text);
-    reviewDate.setDate(reviewDate.getDate() + issue.rel_timestamp);
-
-    return reviewDate;
-  }
-}
-
-function getIssueGraphData(
-  reports: Array<{
-    issues: Array<{
-      text: string;
-      rel_timestamp: number | null;
-    }>;
-    purchaseDate: Date;
-    review: {
-      date_text: string;
-    };
-  }>
-): IssueGraphData[] {
+function getIssueGraphData(reports: ProdPageReport[]): IssueGraphData[] {
   const issueGraphData: IssueGraphData[] = [];
   const months: number[] = [];
   for (let i = 11; i >= 0; i--) {
@@ -379,26 +264,35 @@ export default function Route() {
       </div>
       <div className="mx-auto w-full space-y-4 md:h-[40vh] md:min-h-[calc(272px+16px+1.75rem+64px)] md:columns-2 lg:w-3/4 ">
         {topIssues.length > 0 && (
-          <Card className="break-inside-avoid md:h-full">
+          <Card className="flex break-inside-avoid flex-col space-y-3 md:h-full">
             <Title className="font-semibold">Top Issues</Title>
+            <p className="!mt-0 text-sm text-neutral-500 opacity-90">
+              Click on an issue to see more details.
+            </p>
 
-            {topIssues.map((issue, index) => (
-              <Link
-                to={`#${issue.id}`}
-                key={issue.text}
-                className="block py-1"
-                onClick={() => {
-                  setSelectedProduct(issue.id);
-                }}
-              >
-                {index + 1}.{" "}
-                {issue.classification &&
-                issue.classification !== "UNKNOWN_ISSUE" ? (
-                  <b>{issue.classification}:</b>
-                ) : null}{" "}
-                {issue.text}
-              </Link>
-            ))}
+            <div className="-mx-3 space-y-3 overflow-scroll px-3">
+              {topIssues.map((issue, index) => (
+                <Link
+                  to={`#${issue.id}`}
+                  key={issue.text}
+                  className={`${buttonVariants({
+                    variant: "secondary",
+                  })} h-min !justify-start !whitespace-normal`}
+                  onClick={() => {
+                    setSelectedProduct(issue.id);
+                  }}
+                >
+                  <span className="w-full">
+                    {index + 1}.{" "}
+                    {issue.classification &&
+                    issue.classification !== "UNKNOWN_ISSUE" ? (
+                      <b>{issue.classification}:</b>
+                    ) : null}{" "}
+                    {issue.text}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </Card>
         )}
 
@@ -419,93 +313,13 @@ export default function Route() {
       </div>
       <div className="spacing-y-4 mx-auto columns-sm">
         {reports.map(
-          (report) =>
-            report.issues?.length > 0 && (
-              <Card
+          (report: ProdPageReport) =>
+            report.issues.length > 0 && (
+              <ReportCard
                 key={report.id}
-                className="mb-4 break-inside-avoid-column"
-                id={report.id}
-                decoration={selectedProduct === report.id ? "left" : ""}
-              >
-                <Title className="font-semibold">{report?.review?.title}</Title>
-                <div>
-                  {report.issues.map(
-                    (issue) =>
-                      issue.text && (
-                        <div
-                          key={issue.id}
-                          className="my-3 rounded border-2 border-slate-100 bg-slate-50 p-2"
-                        >
-                          <div>
-                            <b>Report</b>: {issue.text}
-                          </div>
-                          {issue.classification &&
-                            issue.classification !== "UNKNOWN_ISSUE" && (
-                              <div>
-                                <b>Classification</b>: {issue.classification}
-                              </div>
-                            )}
-                          {issue.criticality && (
-                            <div>
-                              <b>Criticality</b>: {issue.criticality}
-                            </div>
-                          )}
-                          <div>
-                            <b>Date</b>:{" "}
-                            {getRelativeTimestampDate(
-                              report,
-                              issue
-                            ).toLocaleString("en-US", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })}
-                          </div>
-                          {issue.frequency && (
-                            <div>
-                              <b>Frequency</b>: {issue.frequency}
-                            </div>
-                          )}
-                          {issue.images?.length > 0 && (
-                            <div>
-                              <b>Images</b>:{" "}
-                              {issue.images.map((image) => (
-                                <img
-                                  key={image.image_url}
-                                  src={image.image_url}
-                                  alt="Product"
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )
-                  )}
-                </div>
-                {report?.review?.is_top_positive_review ? (
-                  <p>
-                    <b>Top Positive Review</b>
-                  </p>
-                ) : null}
-                {report?.review?.is_top_critical_review ? (
-                  <p>
-                    <b>Top Critical Review</b>
-                  </p>
-                ) : null}
-                <p>
-                  <b>Date: </b>
-                  {report?.review?.date_text}
-                </p>
-                <p>
-                  <b>Verified Purchase: </b>
-                  {report?.review?.verified_purchase ? "Yes" : "No"}
-                </p>
-                <p>
-                  <b>"Found Helpful" Votes: </b>
-                  {report?.review?.found_helpful_count}
-                </p>
-                <hr className="my-2" />
-              </Card>
+                report={report}
+                selectedProduct={selectedProduct}
+              />
             )
         )}
       </div>
