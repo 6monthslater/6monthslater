@@ -14,12 +14,19 @@ def test_parse_reviews() -> None:
     assert reviews[0].review_id is not None
     assert len(reviews[0].attributes) >= 4
     assert reviews[0].verified_purchase
+    assert reviews[0].manufacturer_id is not None and len(reviews[0].manufacturer_id) > 0
     assert sum(1 for review in reviews if review.is_top_positive_review) == 1
     # assert sum(1 for review in reviews if review.is_top_critical_review) == 1 # TODO: Find an example with a top critical review on screen
     assert any(len(review.images) > 0 and len(review.images[0]) > 0 for review in reviews) > 0
     assert any(review.country_reviewed_in for review in reviews) > 0
     assert reviews[0].region == AmazonRegion.CA
     assert reviews[0].product_image_url is not None and len(reviews[0].product_image_url) > 0
+
+def test_parse_reviews_manfacturer_id() -> None:
+    reviews = amazon.parse_reviews(AmazonRegion.CA, "B00DBL0NLQ", 5)
+
+    # Test alternative manufacturer id parsing
+    assert reviews[0].manufacturer_id is not None and len(reviews[0].manufacturer_id) > 0
 
 def test_parse_votes_number() -> None:
     assert amazon.__parse_votes("2 people found this helpful") == 2 # pyright: ignore
