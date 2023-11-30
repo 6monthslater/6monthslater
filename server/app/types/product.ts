@@ -47,5 +47,6 @@ export type ProdPageIssue = Prisma.IssueGetPayload<{
 
 export interface TopIssue {
   text: string;
+  classification: string;
   id: string;
 }

@@ -283,7 +283,14 @@ export default function Route() {
                   }}
                 >
                   <span className="w-full">
-                    {index + 1}. {issue.text}
+                    {index + 1}.{" "}
+                    {issue.classification &&
+                    issue.classification !== "UNKNOWN_ISSUE" ? (
+                      <span className="font-semibold">
+                        {issue.classification}:
+                      </span>
+                    ) : null}{" "}
+                    {issue.text}
                   </span>
                 </Link>
               ))}

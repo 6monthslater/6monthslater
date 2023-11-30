@@ -1,20 +1,46 @@
 import type { ProdPageIssue, ProdPageReport, TopIssue } from "~/types/product";
 
-export function getTopIssues(reports: ProdPageReport[]): TopIssue[] {
+export function getTopIssues(
+  reports: Array<{
+    issues: Array<{
+      text: string;
+      classification: string;
+    }>;
+    id: string;
+  }>
+): TopIssue[] {
   const issues: TopIssue[] = [];
-  for (const report of reports) {
-    for (const issue of report.issues) {
-      if (issue.text && !issues.some((i) => i.text === issue.text)) {
-        issues.push({
-          text: issue.text,
-          id: report.id,
-        });
-      }
 
-      if (issues.length >= 5) {
-        return issues;
+  const addIssues = (
+    classificationCriteria: (classification: string) => boolean
+  ) => {
+    for (const report of reports) {
+      for (const issue of report.issues) {
+        if (
+          issue.text &&
+          !issues.some((i) => i.text === issue.text) &&
+          classificationCriteria(issue.classification)
+        ) {
+          issues.push({
+            text: issue.text,
+            classification: issue.classification,
+            id: report.id,
+          });
+        }
+
+        if (issues.length >= 5) {
+          return;
+        }
       }
     }
+  };
+
+  // Adds classified issues with priority
+  addIssues((classification) => classification !== "UNKNOWN_ISSUE");
+
+  // Adds unclassified issues if needed
+  if (issues.length < 5) {
+    addIssues((classification) => classification === "UNKNOWN_ISSUE");
   }
 
   return issues;
