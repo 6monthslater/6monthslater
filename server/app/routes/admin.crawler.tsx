@@ -23,11 +23,6 @@ import { InlineLoadingSpinner } from "~/components/inline-loading-spinner";
 
 const PAGE_TITLE = "Control Product Crawler";
 
-interface ActionData {
-  data?: string;
-  formError?: string;
-}
-
 export const meta: MetaFunction = () => {
   return { title: `${PAGE_TITLE} - ${WEBSITE_TITLE}` };
 };
@@ -46,9 +41,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   );
 };
 
-export const action: ActionFunction = async ({
-  request,
-}): Promise<Response | ActionData> => {
+export const action: ActionFunction = async ({ request }) => {
   const { supabase, headers } = createServerClient(request);
 
   if (!(await isAdmin(supabase))) {
@@ -91,7 +84,7 @@ export const action: ActionFunction = async ({
 };
 
 export default function Index() {
-  const actionData = useActionData<ActionData | undefined>();
+  const actionData = useActionData<typeof action>();
 
   // Pending UI
   const navigation = useNavigation();

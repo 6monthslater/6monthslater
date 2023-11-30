@@ -41,14 +41,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   );
 };
 
-interface ActionData {
-  data?: string;
-  formError?: string;
-}
-
-export const action: ActionFunction = async ({
-  request,
-}): Promise<Response | ActionData> => {
+export const action: ActionFunction = async ({ request }) => {
   const { supabase, headers } = createServerClient(request);
 
   if (!(await isAdmin(supabase))) {
@@ -88,7 +81,7 @@ export const action: ActionFunction = async ({
 };
 
 export default function Index() {
-  const actionData = useActionData<ActionData | undefined>();
+  const actionData = useActionData<typeof action>();
 
   // Pending UI
   const navigation = useNavigation();
