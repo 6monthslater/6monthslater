@@ -307,7 +307,7 @@ function AdminProductCard({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="mx-auto flex max-w-[225px] flex-col gap-2">
         <Link
           to={`/admin/product/${product.id}`}
           className={`${buttonVariants({ size: "sm" })} ${
