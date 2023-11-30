@@ -154,7 +154,11 @@ export default function CreateReportDialog({
                     min={0}
                     max={1}
                     step={0.1}
-                    className="basis-52"
+                    className={`basis-52 ${
+                      fetcher?.data?.errors?.rows[row.id]?.criticality
+                        ? "!ring-ring !ring-2 !ring-red-500"
+                        : ""
+                    }`}
                     value={row.criticality}
                     onValueChange={(newCrit) => {
                       const nextFormRows = formRows.map((someRow) =>
