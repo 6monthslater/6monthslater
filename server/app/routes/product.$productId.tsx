@@ -225,46 +225,37 @@ function getTopIssues(
   }>
 ): TopIssue[] {
   const issues: TopIssue[] = [];
-  // First pass: adding classified issues with priority
-  for (const report of reports) {
-    for (const issue of report.issues) {
-      if (
-        issue.text &&
-        !issues.some((i) => i.text === issue.text) &&
-        issue.classification !== "UNKNOWN_ISSUE"
-      ) {
-        issues.push({
-          text: issue.text,
-          classification: issue.classification,
-          id: report.id,
-        });
+
+  const addIssues = (
+    classificationCriteria: (classification: string) => boolean
+  ) => {
+    for (const report of reports) {
+      for (const issue of report.issues) {
+        if (
+          issue.text &&
+          !issues.some((i) => i.text === issue.text) &&
+          classificationCriteria(issue.classification)
+        ) {
+          issues.push({
+            text: issue.text,
+            classification: issue.classification,
+            id: report.id,
+          });
+        }
+
+        if (issues.length >= 5) {
+          return;
+        }
       }
     }
+  };
 
-    if (issues.length >= 5) {
-      return issues;
-    }
-  }
+  // Adds classified issues with priority
+  addIssues((classification) => classification !== "UNKNOWN_ISSUE");
 
-  // Second pass: adding unclassified issues if needed
-  for (const report of reports) {
-    for (const issue of report.issues) {
-      if (
-        issue.text &&
-        !issues.some((i) => i.text === issue.text) &&
-        issue.classification === "UNKNOWN_ISSUE"
-      ) {
-        issues.push({
-          text: issue.text,
-          classification: issue.classification,
-          id: report.id,
-        });
-      }
-
-      if (issues.length >= 5) {
-        return issues;
-      }
-    }
+  // Adds unclassified issues if needed
+  if (issues.length < 5) {
+    addIssues((classification) => classification === "UNKNOWN_ISSUE");
   }
 
   return issues;
