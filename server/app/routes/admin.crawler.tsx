@@ -144,6 +144,7 @@ export default function Index() {
               cols={100}
               className="resize-y border-2"
               disabled={isSubmitting}
+              placeholder="New Crawler Category"
             />
           </label>
         </div>
