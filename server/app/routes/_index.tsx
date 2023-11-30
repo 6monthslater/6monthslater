@@ -179,6 +179,9 @@ export default function Index() {
   // Pending UI
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const isNavProduct =
+    navigation.state === "loading" &&
+    navigation.location.pathname.includes("product");
 
   useEffect(() => {
     if (searchParams.get("code") && !toastDisplayed) {
@@ -289,8 +292,12 @@ export default function Index() {
             {actionData?.error}
           </p>
 
-          <Button className="my-3" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
+          <Button
+            className="my-3"
+            type="submit"
+            disabled={isSubmitting || isNavProduct}
+          >
+            {isSubmitting || isNavProduct ? (
               <InlineLoadingSpinner show={true} />
             ) : (
               <TbSearch className="mr-2 h-4 w-4" />
