@@ -49,6 +49,14 @@ export const loader: LoaderFunction = async ({ request }) => {
 export const action: ActionFunction = async ({
   request,
 }): Promise<Response | ActionData> => {
+  const { supabase, headers } = createServerClient(request);
+
+  if (!(await isAdmin(supabase))) {
+    return json(
+      { error: "Requesting user is not an administrator or is not logged in" },
+      { status: 400, headers }
+    );
+  }
   const formData = Object.fromEntries(await request.formData());
   switch (formData.command) {
     case "set": {
@@ -56,7 +64,7 @@ export const action: ActionFunction = async ({
       if (typeof url !== "string" || url.length === 0) {
         return json(
           { error: "Missing or invalid URL provided" },
-          { status: 400 }
+          { status: 400, headers }
         );
       }
 
@@ -79,7 +87,7 @@ export const action: ActionFunction = async ({
       break;
   }
 
-  return json({ ok: true });
+  return json({ ok: true }, { headers });
 };
 
 export default function Index() {

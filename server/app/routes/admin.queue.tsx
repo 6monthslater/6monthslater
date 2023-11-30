@@ -49,9 +49,18 @@ interface ActionData {
 export const action: ActionFunction = async ({
   request,
 }): Promise<Response | ActionData> => {
+  const { supabase, headers } = createServerClient(request);
+
+  if (!(await isAdmin(supabase))) {
+    return json(
+      { error: "Requesting user is not an administrator or is not logged in" },
+      { status: 400, headers }
+    );
+  }
+
   const { data } = Object.fromEntries(await request.formData());
   if (typeof data !== "string" || data.length === 0) {
-    return json({ error: "Request cannot be empty" }, { status: 400 });
+    return json({ error: "Request cannot be empty" }, { status: 400, headers });
   }
 
   const lines = data.split("\n");
@@ -68,11 +77,14 @@ export const action: ActionFunction = async ({
 
       await sendProductToQueue(product);
     } else {
-      return json({ error: `Invalid product ID: ${line}\n` }, { status: 400 });
+      return json(
+        { error: `Invalid product ID: ${line}\n` },
+        { status: 400, headers }
+      );
     }
   }
 
-  return json({ ok: true });
+  return json({ ok: true }, { headers });
 };
 
 export default function Index() {

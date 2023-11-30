@@ -34,9 +34,18 @@ export const meta: MetaFunction = () => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
+  const { supabase, headers } = createServerClient(request);
+
+  if (!(await isAdmin(supabase))) {
+    return json(
+      { error: "Requesting user is not an administrator or is not logged in" },
+      { status: 400, headers }
+    );
+  }
+
   const { type } = Object.fromEntries(await request.formData());
   if (typeof type !== "string" || type.length === 0) {
-    return json({ error: "Invalid request" }, { status: 400 });
+    return json({ error: "Invalid request" }, { status: 400, headers });
   }
 
   switch (type) {
@@ -50,7 +59,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
 
-  return json({ ok: true });
+  return json({ ok: true }, { headers });
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
