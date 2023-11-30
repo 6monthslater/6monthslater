@@ -82,6 +82,7 @@ export default function ReportCard({
                             ]}
                             label={`${(issue.criticality * 100).toString()}%`}
                             showLabel
+                            showTooltip={false}
                             colors={(() => {
                               if (!issue.criticality || issue.criticality > 1) {
                                 return ["slate", "slate"];
