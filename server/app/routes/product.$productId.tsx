@@ -137,6 +137,23 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const purchaseDate = new Date(purchaseDateTimestamp);
+  const dateErrNegative = "Event dates cannot be set before purchase date";
+
+  for (const row of formRows) {
+    if (!row.date || new Date(row.date) < purchaseDate) {
+      !errors.main.includes(dateErrNegative) &&
+        errors.main.push(dateErrNegative);
+      errors.rows[row.id] = errors.rows[row.id] || {
+        eventDesc: false,
+        date: false,
+      };
+      errors.rows[row.id].date = true;
+    }
+  }
+
+  if (Object.keys(errors.rows).length > 0) {
+    return json({ errors }, { status: 400, headers });
+  }
 
   const issues = formRows.map((row) => {
     return {
