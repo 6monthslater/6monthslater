@@ -59,6 +59,7 @@ export default function CreateReportDialog({
       <DialogContent className="md:max-w-[850px]">
         <fetcher.Form
           method="post"
+          className="flex flex-col items-center"
           onSubmit={(event) => {
             event.preventDefault();
             const purchaseDateStr = purchaseDate?.toISOString();
@@ -72,19 +73,25 @@ export default function CreateReportDialog({
             );
           }}
         >
-          <DialogHeader>
-            <DialogTitle>Create Report</DialogTitle>
-            <DialogDescription>
+          <DialogHeader className="md:max-w-xl">
+            <DialogTitle className="text-center">Create Report</DialogTitle>
+            <DialogDescription className="text-center">
               Add any significant events you've experienced with your product,
               both good and bad. <br />
               Not sure exactly when something happened? That's ok! Just put in
               your best estimate.
             </DialogDescription>
           </DialogHeader>
-          <p>You're adding a report for the following product:</p>
-          <p className="text-xs text-neutral-500">{productName}</p>
+          <div className="md:max-w-md">
+            <p className="text-center">
+              You're adding a report for the following product:
+            </p>
+            <p className="text-center text-xs text-neutral-500">
+              {productName}
+            </p>
+          </div>
           <Separator className="my-3" />
-          <div className="space-y-3">
+          <div className="w-full space-y-3">
             <div className="flex flex-row items-center gap-4 px-2">
               <Label
                 htmlFor="purchaseDate"
