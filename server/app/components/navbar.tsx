@@ -54,6 +54,10 @@ const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
   const isNavHome =
     navigation.state === "loading" && navigation.location.pathname === "/";
 
+  const isNavAdmin =
+    navigation.state === "loading" &&
+    navigation.location.pathname.includes("admin");
+
   return (
     <nav className="!mt-0 flex flex-wrap items-center justify-between bg-gradient-to-r from-cyan-700 to-cyan-500 to-90% p-4 text-slate-200">
       <div className="mr-6 flex flex-shrink-0 items-center">
@@ -82,7 +86,9 @@ const Navbar = ({ isLoggedIn, isAdmin }: NavbarProps) => {
                   className={
                     isAdminPage ? "active bg-gray-50 bg-opacity-25" : ""
                   }
+                  disabled={isNavAdmin}
                 >
+                  <InlineLoadingSpinner show={isNavAdmin} />
                   Admin Utilities
                 </Button>
               </DropdownMenuTrigger>
