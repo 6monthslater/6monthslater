@@ -12,18 +12,18 @@ from parsing.amazon import Review
 nlp = spacy.load("en_core_web_sm")
 
 # Split to avoid line length warnings
-mouse_example = "I have tried a lot of gaming mice. A lot. The shape of the original Deathadder was miles ahead for comfort, but it was enormous and I have"
-mouse_example += " small hands. I did a circuit of popular smaller mice and heard of this, instant buy from me. Scroll wheel is solid, side buttons are"
-mouse_example += " clicky. The left/right clicks are a little sensitive/soft (too much so) which takes some getting used to, but overall build quality is"
-mouse_example += " solid enough. The included grip tape is high quality and the cable lies mostly flat, which is nice if you don't want to paracord your"
-mouse_example += " mouse.This isn't the fanciest gaming mouse, it isn't wireless, doesn't have crazy dpi settings, and it looks very 'Razer', which may not"
-mouse_example += " be to your taste. But it works really well, and the intense thumb pain that I had using very popular mice like the gpw is gone."
+mouse_example = "I have tried a lot of gaming mice. A lot. The shape of the original Deathadder was miles ahead for comfort, but it was enormous and I have" \
+                " small hands. I did a circuit of popular smaller mice and heard of this, instant buy from me. Scroll wheel is solid, side buttons are" \
+                " clicky. The left/right clicks are a little sensitive/soft (too much so) which takes some getting used to, but overall build quality is" \
+                " solid enough. The included grip tape is high quality and the cable lies mostly flat, which is nice if you don't want to paracord your" \
+                " mouse.This isn't the fanciest gaming mouse, it isn't wireless, doesn't have crazy dpi settings, and it looks very 'Razer', which may not" \
+                " be to your taste. But it works really well, and the intense thumb pain that I had using very popular mice like the gpw is gone."
 
-hdd_example = "Complete trash. I used it to transfer confidential documents from my laptop and while it worked well for"
-hdd_example += " a day it suddenly decided to stop working and all my computers can’t even read it anymore. The kicker"
-hdd_example += " is I can’t return it because I’m unable to delete the files and I don’t want to put them out there in"
-hdd_example += " case someone else can recover them. Bottom line - Don’t try to save money by buying this piece of junk"
-hdd_example += " and go with a more reputable brand."
+hdd_example = "Complete trash. I used it to transfer confidential documents from my laptop and while it worked well for" \
+              " a day it suddenly decided to stop working and all my computers can’t even read it anymore. The kicker" \
+              " is I can’t return it because I’m unable to delete the files and I don’t want to put them out there in" \
+              " case someone else can recover them. Bottom line - Don’t try to save money by buying this piece of junk" \
+              " and go with a more reputable brand."
 
 def produce_sample_review(
     author_id: str | None = "",

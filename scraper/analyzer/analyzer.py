@@ -133,8 +133,10 @@ def _extract_keyframes(clauses: list[Span], review_text_doc: Doc, review_date: i
                 if result['value'] != 'PRESENT_REF':
                     print(f"WARNING: Failed to parse expression '{result['value']}' from SUTime result; defaulting to review date.")
                 relative_date = datetime.utcfromtimestamp(review_date)
-            except OSError: #weird incorrect parses
-                continue
+            except OSError:
+                # SUTime sometimes parses a number from review text as a time expression when it shouldn't
+                # If this happens, isoparse will yield an "OSError: Invalid argument" on Windows
+                continue # Skip false-positives from SUTime
 
             if _debug:
                 print(f"DEBUG | Type {result['type']} | Value {result['value']} => Parsed {relative_date}")
