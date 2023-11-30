@@ -11,6 +11,6 @@ export function InlineLoadingSpinner({
   ...props
 }: InlineLoadingSpinnerProps) {
   return show ? (
-    <Loader2 {...props} className={`${className} mr-2 h-4 w-4`} />
+    <Loader2 {...props} className={`${className} mr-2 h-4 w-4 animate-spin`} />
   ) : null;
 }
