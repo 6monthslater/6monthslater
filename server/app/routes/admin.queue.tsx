@@ -51,10 +51,8 @@ export const action: ActionFunction = async ({
 }): Promise<Response | ActionData> => {
   const { data } = Object.fromEntries(await request.formData());
   if (typeof data !== "string" || data.length === 0) {
-    return { formError: `Data missing` };
+    return json({ error: "Request cannot be empty" }, { status: 400 });
   }
-
-  let errors = "";
 
   const lines = data.split("\n");
   for (const line of lines) {
@@ -70,15 +68,11 @@ export const action: ActionFunction = async ({
 
       await sendProductToQueue(product);
     } else {
-      errors += `Invalid product ID: ${line}\n`;
+      return json({ error: `Invalid product ID: ${line}\n` }, { status: 400 });
     }
   }
 
-  if (errors.length > 0) {
-    return { formError: errors };
-  }
-
-  return redirect("");
+  return json({ ok: true });
 };
 
 export default function Index() {
@@ -107,7 +101,7 @@ export default function Index() {
           </label>
         </div>
         {actionData?.formError && (
-          <div className="text-red-500">{actionData.formError}</div>
+          <div className="text-red-500">{actionData.error}</div>
         )}
         <Button type="submit" className="mt-4" disabled={isSubmitting}>
           <InlineLoadingSpinner show={isSubmitting} />

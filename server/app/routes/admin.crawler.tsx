@@ -54,7 +54,10 @@ export const action: ActionFunction = async ({
     case "set": {
       const { url } = formData;
       if (typeof url !== "string" || url.length === 0) {
-        return { formError: `Data missing` };
+        return json(
+          { error: "Missing or invalid URL provided" },
+          { status: 400 }
+        );
       }
 
       await sendCrawlerCommand({
@@ -76,7 +79,7 @@ export const action: ActionFunction = async ({
       break;
   }
 
-  return redirect("");
+  return json({ ok: true });
 };
 
 export default function Index() {
@@ -111,8 +114,8 @@ export default function Index() {
             />
           </label>
         </div>
-        {actionData?.formError && (
-          <div className="text-red-500">{actionData.formError}</div>
+        {actionData?.error && (
+          <div className="text-red-500">{actionData.error}</div>
         )}
         <Button
           type="submit"

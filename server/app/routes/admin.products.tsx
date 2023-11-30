@@ -48,7 +48,7 @@ export const action: ActionFunction = async ({ request }) => {
     typeof productId !== "string" ||
     productId.length === 0
   ) {
-    return null;
+    return json({ error: "Invalid request" }, { status: 400 });
   }
 
   switch (type) {
@@ -88,7 +88,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
 
-  return null;
+  return json({ ok: true });
 };
 
 export const loader: LoaderFunction = async ({ request }) => {

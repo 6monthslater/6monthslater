@@ -36,7 +36,7 @@ export const meta: MetaFunction = () => {
 export const action: ActionFunction = async ({ request }) => {
   const { type } = Object.fromEntries(await request.formData());
   if (typeof type !== "string" || type.length === 0) {
-    return null;
+    return json({ error: "Invalid request" }, { status: 400 });
   }
 
   switch (type) {
@@ -50,7 +50,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
 
-  return null;
+  return json({ ok: true });
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
