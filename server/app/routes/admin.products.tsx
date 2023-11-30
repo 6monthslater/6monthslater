@@ -323,8 +323,8 @@ function AdminProductCard({
           size="sm"
           disabled={isSubmitting}
           onClick={() => {
-            setAction(`clear-${product.id}`);
             if (confirm("Are you sure you would like to clear all reports?")) {
+              setAction(`clear-${product.id}`);
               submit(
                 { type: "clearReport", productId: product.id },
                 {
