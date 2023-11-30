@@ -120,7 +120,7 @@ export default function Index() {
             />
           </label>
         </div>
-        {actionData?.formError && (
+        {actionData?.error && (
           <div className="text-red-500">{actionData.error}</div>
         )}
         <Button type="submit" className="mt-4" disabled={isSubmitting}>
