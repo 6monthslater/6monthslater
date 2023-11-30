@@ -140,7 +140,10 @@ def __parse_review(page: bs4.element.Tag, reviewElem: bs4.element.Tag, region: A
     manufacturer_name = manufacturer_name_elem.text.strip() if manufacturer_name_elem else None
     manufacturer_attrs = manufacturer_name_elem.attrs if manufacturer_name_elem else None
     manufacturer_id_regex = re.search("(?<=page\\/)[^?\\/]+", manufacturer_attrs["href"]) if manufacturer_attrs else None
-    manufacturer_id = manufacturer_id_regex.group(0) if manufacturer_id_regex else None
+    manufacturer_id_try_1 = manufacturer_id_regex.group(0) if manufacturer_id_regex else None
+    manufacturer_id_regex_2 = re.search(r"^\/(.[^\/]+)", manufacturer_attrs["href"]) if manufacturer_attrs else None
+    manufacturer_id_try_2 = manufacturer_id_regex_2.group(1) if manufacturer_id_regex_2 else None
+    manufacturer_id = manufacturer_id_try_1 or manufacturer_id_try_2
 
     return Review(
         author_id=author_id,

@@ -165,11 +165,11 @@ def _extract_keyframes(clauses: list[Span], review_text_doc: Doc, review_date: i
                             rel_phrase.append(t)
 
                     # Exclude leading punctuation and conjunctions
-                    while rel_phrase[0].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
+                    while rel_phrase and rel_phrase[0].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
                         rel_phrase.pop(0)
 
                     # Exclude trailing punctuation and conjunctions
-                    while rel_phrase[-1].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
+                    while rel_phrase and rel_phrase[-1].pos_ in ['CCONJ', 'PUNCT', 'ADP']:
                         rel_phrase.pop()
 
                     relevant_phrase = ''.join(t.text + t.whitespace_ for t in rel_phrase).strip()
@@ -380,7 +380,7 @@ def _extract_clauses(doc: Doc) -> list[Span]:
     # Merges clauses related by an SCONJ & orphans
     final_clauses: list[Span] = []
     for i, clause in enumerate(filtered_clauses):
-        if i > 0 and ((clause[0].pos_ == 'SCONJ' and clause[0].i - final_clauses[-1][-1].i == 1) or (clause[-1].i == clause[0].i)):
+        if i > 0 and clause and ((clause[0].pos_ == 'SCONJ' and clause[0].i - final_clauses[-1][-1].i == 1) or (clause[-1].i == clause[0].i)):
             merged_clause = doc[final_clauses[-1][0].i : clause[-1].i + 1]
             final_clauses[-1] = merged_clause
 
