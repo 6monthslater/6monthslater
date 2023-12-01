@@ -314,6 +314,9 @@ function AdminProductCard({
   const isNavProdInfo =
     navigation.state === "loading" &&
     navigation.location.pathname === `/admin/product/${product.id}`;
+  const isNavPubProd =
+    navigation.state === "loading" &&
+    navigation.location.pathname === `/product/${product.id}`;
   return (
     <Card className="m-5 flex grow basis-72 flex-col">
       <Title>{product.name}</Title>
@@ -340,13 +343,22 @@ function AdminProductCard({
 
       <div className="mx-auto mt-auto flex max-w-[225px] flex-col gap-2">
         <Link
+          to={`/product/${product.id}`}
+          className={`${buttonVariants({ size: "sm" })} ${
+            isNavPubProd ? "disabled pointer-events-none opacity-50" : ""
+          }`}
+        >
+          <InlineLoadingSpinner show={isNavPubProd} />
+          View Product
+        </Link>
+        <Link
           to={`/admin/product/${product.id}`}
           className={`${buttonVariants({ size: "sm" })} ${
             isNavProdInfo ? "disabled pointer-events-none opacity-50" : ""
           }`}
         >
           <InlineLoadingSpinner show={isNavProdInfo} />
-          View Product Information
+          View Raw Reports
         </Link>
 
         <Button
