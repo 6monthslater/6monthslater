@@ -91,6 +91,7 @@ export default function CreateReportDialog({
             </DialogDescription>
           </DialogHeader>
           <div className="lg:max-w-md">
+            <Separator className="my-2" />
             <p className="text-center">
               You're adding a report for the following product:
             </p>
