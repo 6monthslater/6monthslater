@@ -309,7 +309,7 @@ export default function Route() {
                   key={issue.text}
                   className={`${buttonVariants({
                     variant: "secondary",
-                  })} h-min !justify-start !whitespace-normal`}
+                  })} h-min w-full !justify-start !whitespace-normal`}
                   onClick={() => {
                     setSelectedProduct(issue.id);
                   }}

@@ -36,11 +36,15 @@ export function getTopIssues(
   };
 
   // Adds classified issues with priority
-  addIssues((classification) => classification !== "UNKNOWN_ISSUE");
+  addIssues(
+    (classification) => !!classification && classification !== "UNKNOWN_ISSUE"
+  );
 
   // Adds unclassified issues if needed
   if (issues.length < 5) {
-    addIssues((classification) => classification === "UNKNOWN_ISSUE");
+    addIssues(
+      (classification) => !classification || classification === "UNKNOWN_ISSUE"
+    );
   }
 
   return issues;
