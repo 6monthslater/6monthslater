@@ -13,7 +13,7 @@ import type {
 } from "~/types/ReportFormErrors";
 import { createServerClient } from "~/utils/supabase.server";
 import type { User } from "@supabase/supabase-js";
-import ProductHeader from "~/components/product-header";
+import ProductHeader from "~/components/product/product-header";
 import type { PrismaClientError } from "~/types/PrismaClientError";
 import { PRISMA_ERROR_MSG } from "~/types/PrismaClientError";
 import type { ProdPageReport } from "~/types/product";
