@@ -1,7 +1,7 @@
 
 
 # Analyzer
-The analyzer module is responsible with parsing scraped reviews for time-sensitive and issue-relevant product data to generate actionable reports. It receives reviews from the scraper and its reports are submitted to our database. 
+The analyzer module is responsible with parsing scraped reviews for time-sensitive and issue-relevant product data to generate actionable reports. It receives reviews from the Scraper and its reports are submitted to our database. 
 
 ## Overview
 ### Main Libraries

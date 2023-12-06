@@ -1,16 +1,29 @@
 # 6 Months Later
 
-A Long-term Product Reliability Review Platform
+The Long-term Product Reliability Assessment Assistant.
 
-6 Months Later a web application where various consumer goods are given reliability ratings over longer periods of time (6+ months). Most reviews written these days only cover the product at launch and not how it holds up several months (or years) later.
+Most reviews written these days only cover the product at launch
+and not how it holds up several months (or years) later.
 
-More information available in our [wiki](https://github.com/6monthslater/6monthslater/wiki)
+6 Months Later is a web application storing longer-term (6+ months) reports
+on product .
+
+More information on the architecture is available in our
+[wiki](https://github.com/6monthslater/6monthslater/wiki), as well as the 
+dedicated READMEs in each module folder.
+
+A demo of 6 Months Later is available on YouTube. Click on the thumbnail below or [this link](https://youtu.be/qtHc23TtdbE)
+to watch the video.
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/qtHc23TtdbE/hq1.jpg)](https://youtu.be/qtHc23TtdbE)
+
+6 Months Later was created as part of a Software Engineering capstone project at the University of Ottawa.
 
 ## Building and Running
 
 Folder Structure:
 
-`├── server` The Remix web server application
+`├── server` The Remix web server application (frontend + backend)
 
 `├── docker` Configuration files for running Postgres and RabbitMQ in docker
 
@@ -18,21 +31,31 @@ Folder Structure:
 
 `│   ├── crawler.py` The Python Crawler application. Starts a daemon that waits for messages in RabbitMQ
 
-`│   ├── scraper.py` The Python Scraper application.  Starts a daemon that waits for messages in RabbitMQ
+`│   ├── scraper.py` The Python Scraper application. Starts a daemon that waits for messages in RabbitMQ
 
-`│   ├── analyzer.py` The Python Analysis application
+`│   ├── analyzer.py` The Python Analysis application. Starts a daemon that waits for messages in RabbitMQ
 
 ### Postgres and RabbitMQ
 
-Postgres is used by the web server to store data and RabbitMQ is used by all services to communicate with eachother.
+Postgres is used by the web server to store data.
 
-These can be started with docker using `docker-compose up -d database queue`.
+RabbitMQ is used by all services to communicate with each other.
+
+Before the first start in development, 
+you must create the database schema. 
+This can be done by running `npx prisma migrate dev` in the `server` folder.
+
+These can be started during development with docker using
+`docker-compose up -d database queue`.
 
 ### Web Server
 
-The web server is a remix application.
+The web server is a [Remix](https://remix.run/) application.
 
-You first must install the dependencies.
+Owing to the structure of Remix and fullstack, 
+the server is simultaneously the frontend as well as the backend.
+
+You first must install the Node.js dependencies.
 
 ```bash
 cd server
@@ -41,18 +64,22 @@ npm install
 
 Check to see if `./server/.husky` exists with the expected contents. 
 
-If it's missing, you must also run `npm run prepare` in `./server/` to enable the pre-commit hooks.
+If it's missing, you must also run `npm run prepare` to enable the pre-commit hooks.
 
-Then you can start the server with `npm run dev` or `npm run start` in production.
+Then you can start the server with `npm run dev`.
 
-#### First run
+`npm run start` can be used to start the Remix server in production mode,
+but 6 Months Later as a whole should be deployed using Docker Compose, discussed
+below. When using Docker Compose, this command is not necessary.
 
-For a first run, you must create the database schema. This can be done by running `npx prisma migrate dev` in the `server` folder.
+Note that all server-related commands (such as `npm`) MUST be executed in
+the `server` folder.
 
 ### Creating a local admin account
 
-The web server is access controlled. You will need to grant yourself admin privileges when setting up a 
-local copy of the repository.
+All admin pages on the web server are access controlled. 
+You will need to grant yourself admin privileges when setting up a 
+local copy of the repository in order to gain access to these pages.
 
 1. Start the web server (detailed above).
 2. Sign up for an account (Login --> Sign Up)
@@ -75,7 +102,8 @@ Future admins can be added (and removed) directly from that page.
 
 The scraper is a Python application and is divided into three parts.
 
-Firstly, run the `setup.sh` bash script to install the SUTime library used by the analyzer. The script may fail if Maven is not installed on your system: if `mvn -v` is not recognized as a command, please first [install Maven](https://maven.apache.org/install.html). If the script succeeds, the folder `analyzer/jars` should now exist.
+Firstly, run the `setup.sh` bash script to install the SUTime library used by the analyzer. 
+The script may fail if Maven is not installed on your system: if `mvn -v` is not recognized as a command, please first [install Maven](https://maven.apache.org/install.html). If the script succeeds, the folder `analyzer/jars` should now exist.
 
 You must then install create a Python Virtual Environment and install the remaining dependencies.
 
@@ -92,19 +120,21 @@ cp .env.example .env # Create environment variables file based on the example
 
 Then you can start the daemons with `python crawler.py` and `python scraper.py`.
 
-These daemons will wait for messages in RabbitMQ, and execute accordingly.
+These daemons will wait for messages in RabbitMQ, and execute their tasks accordingly.
 
-For more information on running and testing the analyzer, see its [README file](./scraper/analyzer/README.md).
+For more information on running and testing the analyzer, see the [Analyzer documentation](./scraper/analyzer/README.md).
 
-Automated tests are available for the parser and analyzer, and can be executed by running `pytest`.
+Automated tests are available for the parser and analyzer.
+These can be executed by running `pytest`.
 
-Further information about how the scraper works can be found in [it's dedicated documentation](./scraper/README.md).
+Further information about how the scraper works can be found in the [Scraper documentation](./scraper/README.md).
 
 ## Deployment
 
-Deployment is done through the docker compose file. You must first install docker, then setup the environment variable configurations.
+Deployment is done through the docker compose file. You must first install docker, 
+then set values for all of the environment variables.
 
-To setup the configuration files, run the following command:
+To set up the configuration files, run the following command:
 
 ```bash
 cd docker
