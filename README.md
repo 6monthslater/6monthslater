@@ -75,6 +75,8 @@ below. When using Docker Compose, this command is not necessary.
 Note that all server-related commands (such as `npm`) MUST be executed in
 the `server` folder.
 
+For more information on the web server, see the [Web Server documentation](./server/README.md).
+
 ### Creating a local admin account
 
 All admin pages on the web server are access controlled. 
@@ -131,7 +133,7 @@ Further information about how the scraper works can be found in the [Scraper doc
 
 ## Deployment
 
-Deployment is done through the docker compose file. You must first install docker, 
+The deployment configuration of the app is defined in the [docker-compose file](./docker-compose.yaml). You must first install [Docker](https://www.docker.com/), 
 then set values for all of the environment variables.
 
 To set up the configuration files, run the following command:
